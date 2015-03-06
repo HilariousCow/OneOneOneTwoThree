@@ -9,6 +9,7 @@ public class CameraAccelerometerControl : MonoBehaviour {
 
 
     private Quaternion startRotation;
+    private WebCamTexture webCamTexture;
 	IEnumerator Start ()
 	{
 	    Input.gyro.enabled = true;
@@ -17,7 +18,7 @@ public class CameraAccelerometerControl : MonoBehaviour {
         WebCamDevice[] devices = WebCamTexture.devices;
 
 	    if (devices.Length > 0) {
-		    WebCamTexture webCamTexture =new WebCamTexture(320, 240, 12);
+		    webCamTexture =new WebCamTexture(320, 240, 12);
             _webCamRenderer.material.mainTexture = webCamTexture;
             webCamTexture.Play();
 	    } else {
@@ -43,13 +44,34 @@ public class CameraAccelerometerControl : MonoBehaviour {
     {
         //almost worked. next time have a "last rot/this rot" comparison and add the yaw component.
         startRotation *= Quaternion.AngleAxis( -Input.gyro.rotationRate.y , Vector3.forward);
-        _webCamRenderer.enabled = true;
+        
     }
 	
 	// Update is called once per frame
 	void Update ()
 	{
-        _webCamRenderer.enabled = false;
+        
+        if(Input.GetMouseButtonDown(0))
+        {
+            
+
+            if (webCamTexture != null)
+            {
+                _webCamRenderer.enabled = true;
+                //webCamTexture.Play();
+            }
+        }
+
+        if (Input.GetMouseButtonUp(0))
+        {
+
+
+            if (webCamTexture != null)
+            {
+                _webCamRenderer.enabled = false;
+             //   webCamTexture.Stop();
+            }
+        }
         if(Input.GetMouseButton(0))
         {
             
@@ -60,11 +82,8 @@ public class CameraAccelerometerControl : MonoBehaviour {
         //almost there. just a bit of a mind fuck i guess
         Quaternion rot = ConvertRotation(Input.gyro.attitude);
 
-       // rot = Quaternion.Euler(rot.eulerAngles.x, -rot.eulerAngles.y, rot.eulerAngles.z);
-
-    //    transform.position = startRotation * startGyro * rot * Vector3.forward * -transform.position.magnitude;
-        //transform.rotation = Quaternion.LookRotation(-transform.position.normalized, startRotation*rot * Vector3.up);
-        rot = ConvertRotation(rot);
+   
+         rot = ConvertRotation(rot);
 	    rot = Quaternion.Euler(-rot.eulerAngles.x, -rot.eulerAngles.y, rot.eulerAngles.z);
 
         rot = startRotation * rot;
