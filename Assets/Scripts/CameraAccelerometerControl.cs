@@ -5,29 +5,55 @@ public class CameraAccelerometerControl : MonoBehaviour {
 
 	// Use this for initialization
     public float SmoothAmount = 300f;
+    public Renderer _webCamRenderer;
+
 
     private Quaternion startRotation;
-    private Quaternion startGyro;
-	void Start ()
+	IEnumerator Start ()
 	{
-	    startRotation = Quaternion.Inverse(transform.rotation);
 	    Input.gyro.enabled = true;
+	    LockGyroYaw();
+	    startRotation = Quaternion.AngleAxis(90f, Vector3.right);
+        WebCamDevice[] devices = WebCamTexture.devices;
 
-	    ResetGyro();
-	    startGyro = ConvertRotation(Quaternion.Inverse(Input.gyro.attitude));
+	    if (devices.Length > 0) {
+		    WebCamTexture webCamTexture =new WebCamTexture(320, 240, 12);
+            _webCamRenderer.material.mainTexture = webCamTexture;
+            webCamTexture.Play();
+	    } else {
+		    Debug.LogError("No webcam devices found");
+	    }
+
+	    _webCamRenderer.enabled = false;
+
+#if UNITY_WEBPLAYER
+        yield return Application.RequestUserAuthorization(UserAuthorization.WebCam );
+        if (Application.HasUserAuthorization(UserAuthorization.WebCam))
+        {
+        }
+        else
+        {
+        }
+#else
+	    yield return null;
+#endif
 	}
 
-    private void ResetGyro()
+    private void LockGyroYaw()
     {
-        startGyro = Quaternion.Inverse(Input.gyro.attitude);
+        //almost worked. next time have a "last rot/this rot" comparison and add the yaw component.
+        startRotation *= Quaternion.AngleAxis( -Input.gyro.rotationRate.y , Vector3.forward);
+        _webCamRenderer.enabled = true;
     }
 	
 	// Update is called once per frame
 	void Update ()
 	{
-        if(Input.GetMouseButtonDown(0))
+        _webCamRenderer.enabled = false;
+        if(Input.GetMouseButton(0))
         {
-            ResetGyro();
+            
+            LockGyroYaw();
         }
 
 
@@ -41,7 +67,7 @@ public class CameraAccelerometerControl : MonoBehaviour {
         rot = ConvertRotation(rot);
 	    rot = Quaternion.Euler(-rot.eulerAngles.x, -rot.eulerAngles.y, rot.eulerAngles.z);
 
-        rot = Quaternion.AngleAxis(90f, Vector3.right) * rot;
+        rot = startRotation * rot;
 
 	    float angle = Quaternion.Angle(rot, transform.rotation);
 	    angle /= 180.0f;
@@ -60,7 +86,12 @@ public class CameraAccelerometerControl : MonoBehaviour {
      
     void OnGUI()
     {
-        GUILayout.Label("Gyro: " + Input.gyro.attitude.ToString());
-        GUILayout.Label("Gyro Euler: " + Input.gyro.attitude.eulerAngles.ToString());
+        if (Input.GetMouseButton(0))
+        {
+            GUI.color = Color.red;
+            GUILayout.Label("Gyro: " + Input.gyro.attitude.ToString());
+            GUILayout.Label("Gyro Euler: " + Input.gyro.attitude.eulerAngles.ToString());
+            GUI.color = Color.white;
+        }
     }
 }
