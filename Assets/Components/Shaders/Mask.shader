@@ -1,9 +1,9 @@
-﻿Shader "OneOneOneTwoThree/VertexColor" {
+﻿Shader "OneOneOneTwoThree/Mask" {
 	Properties {
 		
 	}
 	SubShader {
-		Tags {"Queue" = "Transparent" "RenderType"="Transparent" }
+		Tags {"Queue" = "Geometry-1" "RenderType"="Opaque" }
 		
 		Pass{
 			
@@ -11,7 +11,7 @@
 			
 			ZWrite Off
 			ZTest LEqual
-			
+			Offset -10,-10
 			Blend SrcAlpha OneMinusSrcAlpha
 			
 			CGPROGRAM
@@ -54,7 +54,7 @@
 			float4 frag (v2f i) : COLOR
 			{
 				float4 outColor = i.color;
-				
+				outColor.a = 0.0f;
 				return outColor;
 			}
 			

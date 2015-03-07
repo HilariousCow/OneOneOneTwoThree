@@ -11,10 +11,12 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
     private Stack _previewStack;
     private Renderer _rend;
     private Collider _col;
+
+    //drag behaviours
     private Transform _previousParentWhenDragging;
 	public void Init(CardSO cardSo, StackSO stackSo, PlayerSO playerSo)
 	{
-	    gameObject.name = cardSo.name;
+	    gameObject.name = "Card:"+cardSo.name;
 	    _cardSoRef = cardSo;
 	    _playerSoRef = playerSo;
 	    _rend = renderer;
@@ -22,7 +24,14 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 	    _rend.material = playerSo.CardMaterial;
 	    _col = collider;
 
-	    //_previewStack = //hmm. how to make this work as preview and as main stack
+	    _previewStack = transform.InstantiateChild(StackPrefab);
+        _previewStack.Init(stackSo);
+
+	    _previewStack.transform.localRotation = Quaternion.AngleAxis(-90f, Vector3.right);
+	    Bounds stackBounds = _previewStack.transform.RenderBounds();
+
+	    _previewStack.transform.localPosition = Vector3.up * (stackBounds.size.y*0.5f + 0.125f);
+
 	}
 
     #region IBeginDragHandler Members

@@ -72,7 +72,22 @@ public class MainGame : MonoBehaviour
                 CardSlot playSlot = stack.transform.InstantiateChild(CardSlotPrefab);
                 playSlotsForPlayer.Add(playSlot);
                 _slotsToHands.Add(playSlot, hand);
+
+               
+
             }
+
+            for (int index = 0; index < playSlotsForPlayer.Count; index++)
+            {
+                float frac = index / (float)playSlotsForPlayer.Count;
+               
+                CardSlot slot = playSlotsForPlayer[index];
+                Bounds bounds = slot.transform.RenderBounds();
+
+                slot.transform.position = slot.transform.position.SinCosY(frac) * bounds.size.x;
+                slot.transform.LookAt(Vector3.zero, Vector3.up);
+            }
+
             _handsToPlaySlots.Add(hand, playSlotsForPlayer);
 
             foreach (Card card in cardsForThisHand)
@@ -93,11 +108,12 @@ public class MainGame : MonoBehaviour
         //POSITIONING OF ROOT ELEMENTS
         for (int index = 0; index < _hands.Count; index++)
         {
-            float fracion = index/(float)_hands.Count;
+            float frac = index/(float)_hands.Count;
+           
             Hand hand = _hands[index];
             Bounds bounds = hand.transform.RenderBounds();
 
-            hand.transform.position = hand.transform.position.SinCosY(fracion) * bounds.size.x;
+            hand.transform.position = hand.transform.position.SinCosY(frac) * bounds.size.x;
             hand.transform.LookAt(Vector3.zero, Vector3.up);
         }
 

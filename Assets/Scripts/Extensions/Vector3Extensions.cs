@@ -4,6 +4,11 @@ using System.Collections;
 public static class Vector3Extensions {
 	
     //note: may be wrong. use flatz
+    public static float MinAxis(this Vector3 vec3)
+    {
+        return Mathf.Min(vec3.x, vec3.y, vec3.z);
+    }
+
 	public static Vector3 Flattened(this Vector3 vec, Vector3 planeNormal)
 	{
 		return Vector3.ProjectOnPlane(Vector3.right, planeNormal);

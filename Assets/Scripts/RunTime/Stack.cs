@@ -22,18 +22,9 @@ public class Stack : MonoBehaviour {
             Token toke = transform.InstantiateChild<Token>(TokenPrefab);
             _stackOfTokens.Add(toke);
         }
+        
+       _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.125f ,Vector3.zero);
 
-        Bounds allBounds = _stackOfTokens.WorldBounds();
-
-        for (int index = 0; index < _stackOfTokens.Count; index++)
-        {
-            
-            Token token = _stackOfTokens[index];
-
-            Bounds tokenBounds = token.transform.RenderBounds();
-            float heightOffset = (tokenBounds.size.y + Gap) * (float)index;
-            token.transform.localPosition = Vector3.up*(tokenBounds.size.y*0.5f + heightOffset);
-        }
     }
 
 
