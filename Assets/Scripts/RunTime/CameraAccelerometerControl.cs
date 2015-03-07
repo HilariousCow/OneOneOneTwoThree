@@ -57,7 +57,7 @@ public class CameraAccelerometerControl : MonoBehaviour {
 
             if (webCamTexture != null)
             {
-                _webCamRenderer.enabled = true;
+            //    _webCamRenderer.enabled = true;
                 //webCamTexture.Play();
             }
         }

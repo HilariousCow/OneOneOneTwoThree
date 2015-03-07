@@ -46,6 +46,34 @@ public static class TransformExtensions
         }
     }
 
+    public static void PositionAlongLineCentered<T>(this List<T> things, Vector3 direction, float gap , Vector3 offset) where T :MonoBehaviour
+    {
+        Dictionary<T, Bounds> eachThingsChildBounds = new  Dictionary<T, Bounds> ();
+        float totalLenghOfTheThingsInDirection = 0f;
+        foreach (T thing in things)
+        {
+            Bounds boundsOfThing = thing.transform.RenderBounds();
+            eachThingsChildBounds.Add(thing,boundsOfThing);
+            totalLenghOfTheThingsInDirection += Vector3.Dot(boundsOfThing.size, direction);
+        }
+
+        float totalLengthPlusGaps = totalLenghOfTheThingsInDirection + gap*(things.Count - 1);
+
+        Vector3 localStartPoint = direction*-totalLengthPlusGaps*0.5f;
+        float posAlongLine = 0.0f;
+        foreach (T thing in things)
+        {
+            float boundsInDirection = Vector3.Dot(eachThingsChildBounds[thing].size, direction);//something of an assumption about centered objects.
+            float halfBoundsInDirection = boundsInDirection*0.5f;
+
+            thing.transform.localPosition = localStartPoint + direction * (posAlongLine + halfBoundsInDirection) + offset;
+
+            posAlongLine += boundsInDirection;
+            posAlongLine += gap;
+        }
+
+    }
+
 	public static void SetLayer(this Transform trans, int layer) 
 	{
 		trans.gameObject.layer = layer;

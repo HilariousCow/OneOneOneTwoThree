@@ -40,12 +40,14 @@ public class MainGame : MonoBehaviour
             stack.Init(_matchSettings.StackStyle);
             _stacks.Add(stack);
         }
+        _stacks.PositionAlongLineCentered(Vector3.forward, 0.5f, Vector3.up * 0.5f);
 
         //spawn hands
         _hands = new List<Hand>();
         _cards = new List<Card>();
         _handsToPlaySlots = new Dictionary<Hand, List<CardSlot>>();
         _slotsToHands = new Dictionary<CardSlot, Hand>();
+
         foreach (PlayerSO playerSo in _matchSettings.Players)
         {
             Hand hand = transform.InstantiateChild(HandPrefab);
@@ -81,13 +83,23 @@ public class MainGame : MonoBehaviour
             _cards.AddRange(cardsForThisHand);
         }
 
+
+
         //spawn score hand
         _scoreHand = transform.InstantiateChild(ScoreHandPrefab);
         _scoreHand.Init(_hands, _matchSettings);
 
         
         //POSITIONING OF ROOT ELEMENTS
+        for (int index = 0; index < _hands.Count; index++)
+        {
+            float fracion = index/(float)_hands.Count;
+            Hand hand = _hands[index];
+            Bounds bounds = hand.transform.RenderBounds();
 
+            hand.transform.position = hand.transform.position.SinCosY(fracion) * bounds.size.x;
+            hand.transform.LookAt(Vector3.zero, Vector3.up);
+        }
 
         //spawn cards but don't put them anywhere or maybe put them on the score hand
 

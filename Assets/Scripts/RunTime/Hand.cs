@@ -30,6 +30,8 @@ public class Hand : MonoBehaviour
         }
 
         //do a reorganize here.
+        _slots.PositionAlongLineCentered(Vector3.right, 0.0f, Vector3.zero);
+
         //added a renderer just in case. hopefully it being unenabled doesn't mean it doesn't have render bounds
     }
 
