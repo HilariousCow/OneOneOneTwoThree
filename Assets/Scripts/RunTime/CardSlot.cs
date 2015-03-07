@@ -1,15 +1,27 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.EventSystems;
 
-public class CardSlot : MonoBehaviour {
+//need to look at inventory code examples.
+public class CardSlot : MonoBehaviour
+{
 
-	// Use this for initialization
-	void Start () {
-	
+    private Card _card;
+    public bool IsEmpty
+    {
+        get { return _card == null; }
+    }
+	public void AddCardToSlot(Card card)
+	{
+	    _card = card;
+	    _card.transform.parent = transform;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+    public Card RemoveCardFromSlot()
+    {
+        Card removeMe = _card;
+        removeMe.transform.parent = null;
+        _card = null;
+        return removeMe;
+    }
 }

@@ -6,14 +6,20 @@ using System.Collections.Generic;
 public class MainGame : MonoBehaviour
 {
     public MatchSettingsSO MatchToUseDefault;
+
     public Hand HandPrefab;//hands are effectively "the player"
     public Card CardPrefab;
     public Stack StackPrefab;
+    public CardSlot CardSlotPrefab;
 
     //need cards sos
     private MatchSettingsSO _matchSettings;
     private List<Hand> _hands;
     private List<Card> _cards;//all cards
+    private List<Stack> _stacks;//all cards
+
+    private Dictionary<Hand,List<CardSlot>> _handsToPlaySlots;
+    private Dictionary<CardSlot, Hand> _slotsToHands;
 
     public void Init(MatchSettingsSO matchSettings)
     {
@@ -21,6 +27,7 @@ public class MainGame : MonoBehaviour
 
         //spawn stack
         //spawn hands
+        //spawn playSlots (per hand per stack)
         //spawn cards
 
 

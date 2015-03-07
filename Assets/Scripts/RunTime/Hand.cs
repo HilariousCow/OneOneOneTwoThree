@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+//this is like an inventory.
 public class Hand : MonoBehaviour
 {
     public CardSlot CardSlotPrefab;
@@ -8,7 +9,7 @@ public class Hand : MonoBehaviour
     private CardSlot[] _slots;
     private Camera _cam;
 
-	// Use this for initialization
+    // Use this for initialization
 	void Start ()
 	{
 	    _cam = Camera.main;
