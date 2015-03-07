@@ -1,22 +1,65 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 //this is like an inventory.
 public class Hand : MonoBehaviour
 {
     public CardSlot CardSlotPrefab;
 
-    private CardSlot[] _slots;
+    private List<CardSlot> _slots;
     private Camera _cam;
 
     // Use this for initialization
 	void Start ()
 	{
 	    _cam = Camera.main;
-	    _slots = GetComponentsInChildren<CardSlot>();
+	    
 
 	}
-	
+    public void Init(PlayerSO player, MatchSettingsSO matchSettings)
+    {
+        gameObject.name = player.name;
+        //create slots based on match settings' card values
+        _slots = new List<CardSlot>();
+        foreach (CardSO cardSo in matchSettings.CardsPerHand)
+        {
+            CardSlot slot = transform.InstantiateChild(CardSlotPrefab);
+            _slots.Add(slot);
+        }
+
+        //do a reorganize here.
+        //added a renderer just in case. hopefully it being unenabled doesn't mean it doesn't have render bounds
+    }
+
+
+    internal void AddCardToHand(Card card)
+    {
+        List<CardSlot> closest = new List<CardSlot>(from CardSlot slot in _slots
+                                                    orderby (slot.transform.position - card.transform.position).sqrMagnitude ascending
+                                                    select slot);
+
+        //find closest slot to incoming card
+
+        foreach (CardSlot cardSlot in closest)
+        {
+            if (cardSlot.IsEmpty)
+            {
+                cardSlot.AddCardToSlot(card);
+                break;
+            }
+            else
+            {
+                Card swapOut = cardSlot.RemoveCardFromSlot();
+                cardSlot.AddCardToSlot(card);
+                card = swapOut;
+            }
+
+        
+        }
+    }
+
 	// Update is called once per frame
 	void Update () {
 
@@ -37,12 +80,7 @@ public class Hand : MonoBehaviour
         
 	}
 
-    public void Init(PlayerSO player, MatchSettingsSO matchSettings)
-    {
-        //create slots based on match settings' card values
+    
 
-        //do not create cards create cards using match settings
-        //wait for game to create them and assign them to you.
-    }
 
 }

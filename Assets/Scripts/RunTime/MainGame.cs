@@ -6,39 +6,100 @@ using System.Collections.Generic;
 public class MainGame : MonoBehaviour
 {
     public MatchSettingsSO MatchToUseDefault;
-
+  
     public Hand HandPrefab;//hands are effectively "the player"
     public Card CardPrefab;
     public Stack StackPrefab;
     public CardSlot CardSlotPrefab;
+    public ScoreHand ScoreHandPrefab;
 
     //need cards sos
     private MatchSettingsSO _matchSettings;
     private List<Hand> _hands;
     private List<Card> _cards;//all cards
     private List<Stack> _stacks;//all cards
+    private ScoreHand _scoreHand;
 
     private Dictionary<Hand,List<CardSlot>> _handsToPlaySlots;
     private Dictionary<CardSlot, Hand> _slotsToHands;
 
+
+    void Awake()
+    {
+        Init(MatchToUseDefault);
+    }
     public void Init(MatchSettingsSO matchSettings)
     {
         _matchSettings = matchSettings;
 
         //spawn stack
+        _stacks = new List<Stack>();
+        for (int i = 0; i < _matchSettings.NumberOfStacks; i++)
+        {
+            Stack stack = transform.InstantiateChild(StackPrefab);
+            stack.Init(_matchSettings.StackStyle);
+            _stacks.Add(stack);
+        }
+
         //spawn hands
-        //spawn playSlots (per hand per stack)
-        //spawn cards
+        _hands = new List<Hand>();
+        _cards = new List<Card>();
+        _handsToPlaySlots = new Dictionary<Hand, List<CardSlot>>();
+        _slotsToHands = new Dictionary<CardSlot, Hand>();
+        foreach (PlayerSO playerSo in _matchSettings.Players)
+        {
+            Hand hand = transform.InstantiateChild(HandPrefab);
+            hand.Init(playerSo, _matchSettings);
+
+            _hands.Add(hand);
+
+            //spawn cards
+            List<Card> cardsForThisHand = new List<Card>();
+            foreach (CardSO cardSo in _matchSettings.CardsPerHand)
+            {
+                Card card = transform.InstantiateChild(CardPrefab);
+                card.Init(cardSo, _matchSettings.StackStyle, playerSo);
+                cardsForThisHand.Add(card);
+            }
+
+            //spawn playSlots (per hand per stack)
+
+            List<CardSlot> playSlotsForPlayer = new List<CardSlot>();
+            foreach (Stack stack in _stacks)
+            {
+                CardSlot playSlot = stack.transform.InstantiateChild(CardSlotPrefab);
+                playSlotsForPlayer.Add(playSlot);
+                _slotsToHands.Add(playSlot, hand);
+            }
+            _handsToPlaySlots.Add(hand, playSlotsForPlayer);
+
+            foreach (Card card in cardsForThisHand)
+            {
+                hand.AddCardToHand(card);
+            }
+
+            _cards.AddRange(cardsForThisHand);
+        }
+
+        //spawn score hand
+        _scoreHand = transform.InstantiateChild(ScoreHandPrefab);
+        _scoreHand.Init(_hands, _matchSettings);
+
+        
+        //POSITIONING OF ROOT ELEMENTS
+
+
+        //spawn cards but don't put them anywhere or maybe put them on the score hand
 
 
         //reposition stacks
         //reposition hands around a circle
-        
+
 
 
         //begin match - call to initiate
 
-        
+
     }
 
     //phases/signals

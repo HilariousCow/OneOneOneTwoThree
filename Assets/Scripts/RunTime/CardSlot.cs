@@ -15,6 +15,7 @@ public class CardSlot : MonoBehaviour
 	{
 	    _card = card;
 	    _card.transform.parent = transform;
+        _card.transform.ResetToParent();
 	}
 
     public Card RemoveCardFromSlot()

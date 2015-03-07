@@ -17,5 +17,9 @@ public class CamerFOVController : MonoBehaviour {
         float dot = Vector3.Dot(Vector3.down, transform.forward);
 
         _cam.fieldOfView = RelationshipBetweenSideAndTopFOV.Evaluate(dot);
+
+	    float dotLR = Vector3.Dot(Vector3.right, transform.forward);
+	    dotLR = (dotLR*0.5f + 1.0f)/2f;
+	    RenderSettings.fogColor = Color.Lerp(Color.black, Color.white, dotLR);
 	}
 }

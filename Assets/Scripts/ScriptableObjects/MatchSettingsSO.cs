@@ -5,7 +5,9 @@ using System.Collections.Generic;
 
 public class MatchSettingsSO : ScriptableObject
 {
-    public List<StackSO> Stacks;
+
+    public int NumberOfStacks = 1;
+    public StackSO StackStyle;
    
     public List<CardSO> CardsPerHand;
 
