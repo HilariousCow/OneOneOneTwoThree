@@ -5,7 +5,7 @@ using System.Collections;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class FTGAssetUtility : AssetPostprocessor {
+public class OOOTTAssetUtility : AssetPostprocessor {
 
     ///Stringy Bits. Point to know directories. Used exclusively by editor tools. 
 
@@ -21,12 +21,26 @@ public class FTGAssetUtility : AssetPostprocessor {
 
  
 
-  /*
-    [MenuItem("Assets/Create/FTG/FTGDatabase")]
-    public static void CreateDatabaseAsset()
+  
+    [MenuItem("Assets/Create/11123/Card")]
+    public static void CreateCardAsset()
     {
-        ScriptableObjectUtility.CreateAsset<FTGAssetSO>();
-    }*/
+        ScriptableObjectUtility.CreateAsset<CardSO>();
+    }
+
+    [MenuItem("Assets/Create/11123/Player")]
+    public static void CreatePlayerAsset()
+    {
+        ScriptableObjectUtility.CreateAsset<PlayerSO>();
+    }
+
+    
+
+    [MenuItem("Assets/Create/11123/MatchSettings")]
+    public static void CreateMatchSettingsAsset()
+    {
+        ScriptableObjectUtility.CreateAsset<MatchSettingsSO>();
+    }
 
     
    
