@@ -34,7 +34,12 @@ public class OOOTTAssetUtility : AssetPostprocessor {
         ScriptableObjectUtility.CreateAsset<PlayerSO>();
     }
 
-    
+
+    [MenuItem("Assets/Create/11123/Stack")]
+    public static void CreateStackAsset()
+    {
+        ScriptableObjectUtility.CreateAsset<StackSO>();
+    }
 
     [MenuItem("Assets/Create/11123/MatchSettings")]
     public static void CreateMatchSettingsAsset()

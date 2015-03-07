@@ -3,8 +3,11 @@ using System.Collections;
 
 public class Hand : MonoBehaviour
 {
+    public CardSlot CardSlotPrefab;
+
     private CardSlot[] _slots;
     private Camera _cam;
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -32,4 +35,13 @@ public class Hand : MonoBehaviour
 	    }
         
 	}
+
+    public void Init(PlayerSO player, MatchSettingsSO matchSettings)
+    {
+        //create slots based on match settings' card values
+
+        //do not create cards create cards using match settings
+        //wait for game to create them and assign them to you.
+    }
+
 }
