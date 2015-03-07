@@ -7,7 +7,7 @@ public class CameraAccelerometerControl : MonoBehaviour {
     public float SmoothAmount = 300f;
     public Renderer _webCamRenderer;
 
-
+    private Quaternion keyboardRotation = Quaternion.identity;
     private Quaternion startRotation;
     private WebCamTexture webCamTexture;
 	IEnumerator Start ()
@@ -77,7 +77,8 @@ public class CameraAccelerometerControl : MonoBehaviour {
             
             LockGyroYaw();
         }
-
+	    keyboardRotation *= Quaternion.AngleAxis(Input.GetAxis("Horizontal") * Time.deltaTime*90f, Vector3.forward)*
+                            Quaternion.AngleAxis(Input.GetAxis("Vertical") * Time.deltaTime * 90f, Vector3.right);
 
         //almost there. just a bit of a mind fuck i guess
         Quaternion rot = ConvertRotation(Input.gyro.attitude);
@@ -86,7 +87,7 @@ public class CameraAccelerometerControl : MonoBehaviour {
          rot = ConvertRotation(rot);
 	    rot = Quaternion.Euler(-rot.eulerAngles.x, -rot.eulerAngles.y, rot.eulerAngles.z);
 
-        rot = startRotation * rot;
+        rot = keyboardRotation*startRotation * rot;
 
 	    float angle = Quaternion.Angle(rot, transform.rotation);
 	    angle /= 180.0f;

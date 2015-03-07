@@ -20,7 +20,7 @@ public class Stack : MonoBehaviour {
         for (int i = 0; i < _stackSoRef.NumberOfTokens; i++)
         {
             Token toke = transform.InstantiateChild<Token>(TokenPrefab);
-            _stackOfTokens.Add();
+            _stackOfTokens.Add(toke);
         }
 
         Bounds allBounds = _stackOfTokens.WorldBounds();
