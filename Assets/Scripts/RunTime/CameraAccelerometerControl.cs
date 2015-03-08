@@ -75,7 +75,7 @@ public class CameraAccelerometerControl : MonoBehaviour {
         if(Input.GetMouseButton(0))
         {
             
-            LockGyroYaw();
+       //     LockGyroYaw();
         }
 	    keyboardRotation *= Quaternion.AngleAxis(Input.GetAxis("Horizontal") * Time.deltaTime*90f, Vector3.forward)*
                             Quaternion.AngleAxis(Input.GetAxis("Vertical") * Time.deltaTime * 90f, Vector3.right);
