@@ -109,7 +109,7 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
         Ray ray = eventData.pressEventCamera.ScreenPointToRay(eventData.position);
 
 
-        transform.position = eventData.pressEventCamera.transform.position + ray.direction * (_startDifferenceToCamera.magnitude + 5f);
+        transform.position = eventData.pressEventCamera.transform.position + ray.direction * (_startDifferenceToCamera.magnitude + 10f);
 
         //todo: rule breaking
         transform.rotation = eventData.pressEventCamera.transform.rotation * Quaternion.AngleAxis(90f, Vector3.right);

@@ -190,8 +190,16 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
         Debug.Log("Got here");
         Hand hand = _slotsToHands[slotDisplaced];
 
+        
+
         if (displacingCard.PlayerSoRef == hand.PlayerSoRef)
         {
+            if (!slotDisplaced.IsEmpty)
+            {
+                Card swapOut = slotDisplaced.RemoveCardFromSlot();
+                hand.AddCardToHand(swapOut);
+            }
+
             slotDisplaced.AddCardToSlot(displacingCard);
         }
         //else, let it snap back. clean itself up
