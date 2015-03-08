@@ -1,9 +1,9 @@
-﻿Shader "OneOneOneTwoThree/Mask" {
+﻿Shader "OneOneOneTwoThree/Sky" {
 	Properties {
-		
+		_MainTex ("Sprite Texture", 2D) = "white" {}
 	}
 	SubShader {
-		Tags {"Queue" = "Geometry-1" "RenderType"="Opaque" }
+		Tags {"Queue" = "Geometry-2" "RenderType"="Opaque" }
 		
 		Pass{
 			
@@ -23,7 +23,7 @@
 			
 			
 		
-			
+			sampler2D _MainTex;
 			
 			struct appdata {
 				float4 vertex	: POSITION;
@@ -53,8 +53,8 @@
 
 			float4 frag (v2f i) : COLOR
 			{
-				float4 outColor = i.color;
-				outColor.a = 0.0f;
+				float4 outColor = tex2D(_MainTex, i.uv) * i.color;
+				
 				return outColor;
 			}
 			

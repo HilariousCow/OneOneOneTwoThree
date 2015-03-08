@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public Stack StackPrefab;
+    public Renderer RedrawCard;
     private CardSO _cardSoRef;
     private PlayerSO _playerSoRef;
 
@@ -21,7 +22,8 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 	    _playerSoRef = playerSo;
 	    _rend = renderer;
 
-	    _rend.material = playerSo.CardMaterial;
+        RedrawCard.material = _rend.material = playerSo.CardMaterial;
+
 	    _col = collider;
 
 	    _previewStack = transform.InstantiateChild(StackPrefab);

@@ -1,17 +1,17 @@
-﻿Shader "OneOneOneTwoThree/Mask" {
+﻿Shader "OneOneOneTwoThree/CardBackColor" {
 	Properties {
-		
+		_Color ("Color", Color) = (1,1,1,1)
 	}
 	SubShader {
-		Tags {"Queue" = "Geometry-1" "RenderType"="Opaque" }
+		Tags {"Queue" = "Geometry" "RenderType"="Opaque" }
 		
 		Pass{
 			
 			Cull Back
 			
-			ZWrite On
+			ZWrite Off
 			ZTest LEqual
-			
+			//Offset -10,-10
 			Blend SrcAlpha OneMinusSrcAlpha
 			
 			CGPROGRAM
@@ -21,7 +21,7 @@
 			#pragma fragmentoption ARB_precision_hint_fastest
 			#include "UnityCG.cginc"
 			
-			
+			float4 _Color;
 		
 			
 			
@@ -53,9 +53,8 @@
 
 			float4 frag (v2f i) : COLOR
 			{
-				float4 outColor = i.color;
-				outColor.a = 0.0f;
-				return outColor;
+				
+				return _Color;
 			}
 			
 			ENDCG
