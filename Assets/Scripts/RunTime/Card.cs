@@ -36,6 +36,10 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 
 	}
 
+    void LateUpdate()
+    {
+        _previewStack.transform.localRotation = _previewStack.transform.localRotation * Quaternion.AngleAxis(Time.deltaTime * 360f, Vector3.forward);
+    }
     #region IBeginDragHandler Members
 
     public void OnBeginDrag(PointerEventData eventData)
