@@ -1,18 +1,17 @@
-﻿Shader "OneOneOneTwoThree/PreviewTokens" {
-	Properties {
-		
+﻿Shader "OneOneOneTwoThree/CardRedrawLate" {
+		Properties {
+		_Color ("Color", Color) = (1,1,1,1)
 	}
 	SubShader {
-		Tags {"Queue" = "Geometry" "RenderType"="Opaque" }
+		Tags {"Queue" = "Geometry-1" "RenderType"="Transparent" }
 		
-		//depth mask first
 		Pass{
 			
-			Cull Back
+			Cull front
 			
 			ZWrite On
 			ZTest LEqual
-			
+			Offset -10,-10
 			Blend SrcAlpha OneMinusSrcAlpha
 			
 			CGPROGRAM
@@ -22,7 +21,7 @@
 			#pragma fragmentoption ARB_precision_hint_fastest
 			#include "UnityCG.cginc"
 			
-			
+			float4 _Color;
 		
 			
 			
@@ -35,7 +34,7 @@
 			};
  
 			struct v2f {
-				float4 pos		: SV_POSITION;
+				float4 pos		: SV_POSITION; 
 				float4 color : COLOR;
 				float3 normal	: NORMAL;
 				float2 uv		: TEXCOORD0;
@@ -54,22 +53,22 @@
 
 			float4 frag (v2f i) : COLOR
 			{
-				float4 outColor = i.color;
+				float4 outColor  = _Color;
 				outColor.a = 0;
-				return outColor;
+				return _Color;
 			}
 			
 			ENDCG
 		}
-		//shell pass
 		Pass{
 			
-			Cull Front
+			Cull Back
 			
 			ZWrite Off
 			ZTest LEqual
 			//Fog Disable
-			Blend OneMinusDstColor OneMinusSrcColor 
+			Blend SrcAlpha OneMinusSrcAlpha
+			//Blend OneMinusDstColor OneMinusSrcColor 
 			
 			CGPROGRAM
 
@@ -78,7 +77,8 @@
 			#pragma fragmentoption ARB_precision_hint_fastest
 			#include "UnityCG.cginc"
 			
-			
+			float4 _Color;
+		
 			struct appdata {
 				float4 vertex	: POSITION;
 				float4 color : COLOR;
@@ -99,12 +99,10 @@
 				v2f o;
 				
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
-				
 				o.normal   = mul ((float3x3)UNITY_MATRIX_IT_MV, v.normal);
 				float2 offset = TransformViewToProjection(o.normal.xy);
 			 
-				o.pos.xy += offset * o.pos.z * 0.005f;
-	
+				o.pos.xy += offset * o.pos.z * 0.015f;
 				o.color = v.color;
 				o.uv = MultiplyUV (UNITY_MATRIX_TEXTURE0, v.texcoord);
 				return o; 
@@ -112,13 +110,13 @@
 
 			float4 frag (v2f i) : COLOR
 			{
-				float4 outColor  = float4(1,1,1,1);
-				
+				float4 outColor  = _Color;
+				outColor.xyz= 1 - outColor.xyz;
 				return outColor;
 			}
 			
 			ENDCG
 		}
-	} 
+	}
 	FallBack "Diffuse"
 }

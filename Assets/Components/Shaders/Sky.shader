@@ -3,7 +3,7 @@
 		_MainTex ("Sprite Texture", 2D) = "white" {}
 	}
 	SubShader {
-		Tags {"Queue" = "Geometry-2" "RenderType"="Opaque" }
+		Tags {"Queue" = "Geometry-3" "RenderType"="Opaque" }
 		
 		Pass{
 			

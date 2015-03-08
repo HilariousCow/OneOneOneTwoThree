@@ -22,24 +22,47 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 	    _playerSoRef = playerSo;
 	    _rend = renderer;
 
-        RedrawCard.material = _rend.material = playerSo.CardMaterial;
+	    RedrawCard.material = playerSo.CardMaterial;
+        _rend.material = playerSo.CardMaterialRedraw;
 
 	    _col = collider;
 
-	    _previewStack = transform.InstantiateChild(StackPrefab);
-        _previewStack.Init(stackSo);
 
-	    _previewStack.transform.localRotation = Quaternion.AngleAxis(-90f, Vector3.right);
-	    Bounds stackBounds = _previewStack.transform.RenderBounds();
 
-	    _previewStack.transform.localPosition = Vector3.up * (stackBounds.size.y*0.5f + 0.125f);
+
+        if (_cardSoRef.FlipBottom || _cardSoRef.FlipTop || _cardSoRef.FlipStack)
+        {
+            _previewStack = transform.InstantiateChild(StackPrefab);
+            _previewStack.Init(stackSo);
+
+            _previewStack.transform.localRotation = Quaternion.AngleAxis(-90f, Vector3.right);
+            Bounds stackBounds = _previewStack.transform.RenderBounds();
+
+            _previewStack.transform.localPosition = Vector3.up*(stackBounds.size.y*0.5f + 0.125f);
+        }
+
 
 	}
 
+
+
     void LateUpdate()
     {
-        _previewStack.transform.localRotation = _previewStack.transform.localRotation * Quaternion.AngleAxis(Time.deltaTime * 360f, Vector3.forward);
+        if (_cardSoRef.FlipStack)
+        {
+            _previewStack.transform.localRotation = _previewStack.transform.localRotation*
+                                                    Quaternion.AngleAxis(Time.deltaTime*360f, Vector3.forward);
+        }
+        if(_cardSoRef.FlipTop)
+        {
+            
+        }
+        if (_cardSoRef.FlipBottom)
+        {
+
+        }
     }
+
     #region IBeginDragHandler Members
 
     public void OnBeginDrag(PointerEventData eventData)

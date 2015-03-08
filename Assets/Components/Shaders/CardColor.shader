@@ -1,17 +1,17 @@
-﻿Shader "OneOneOneTwoThree/CardBackColor" {
+﻿Shader "OneOneOneTwoThree/CardRenderEarly" {
 	Properties {
 		_Color ("Color", Color) = (1,1,1,1)
 	}
 	SubShader {
-		Tags {"Queue" = "Geometry" "RenderType"="Opaque" }
+		Tags {"Queue" = "Geometry-2" "RenderType"="Transparent" }
 		
 		Pass{
 			
 			Cull Back
 			
 			ZWrite Off
-			ZTest LEqual
-			//Offset -10,-10
+			ZTest Always
+		//	Offset -10,-10
 			Blend SrcAlpha OneMinusSrcAlpha
 			
 			CGPROGRAM
@@ -59,6 +59,7 @@
 			
 			ENDCG
 		}
+		
 	} 
 	FallBack "Diffuse"
 }

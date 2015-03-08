@@ -3,7 +3,7 @@
 		
 	}
 	SubShader {
-		Tags {"Queue" = "Geometry-1" "RenderType"="Opaque" }
+		Tags {"Queue" = "Geometry-1" "RenderType"="Transparent" }
 		
 		Pass{
 			
