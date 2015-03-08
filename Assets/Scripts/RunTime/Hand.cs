@@ -7,7 +7,7 @@ using System.Collections.Generic;
 public class Hand : MonoBehaviour
 {
     public CardSlot CardSlotPrefab;
-
+    public float Gap = 0.25f;
     private List<CardSlot> _slots;
     private Camera _cam;
 
@@ -30,7 +30,7 @@ public class Hand : MonoBehaviour
         }
 
         //do a reorganize here.
-        _slots.PositionAlongLineCentered(Vector3.right, 0.0f, Vector3.zero);
+        _slots.PositionAlongLineCentered(Vector3.right, Gap, Vector3.zero);
 
         //added a renderer just in case. hopefully it being unenabled doesn't mean it doesn't have render bounds
     }

@@ -3,15 +3,15 @@
 		_Color ("Color", Color) = (1,1,1,1)
 	}
 	SubShader {
-		Tags {"Queue" = "Geometry-2" "RenderType"="Transparent" }
+		Tags {"Queue" = "Geometry-2" "RenderType"="Opaque" }
 		
 		Pass{
 			
 			Cull Back
 			
 			ZWrite Off
-			ZTest Always
-		//	Offset -10,-10
+			ZTest LEqual
+			//Offset -100,-100
 			Blend SrcAlpha OneMinusSrcAlpha
 			
 			CGPROGRAM
