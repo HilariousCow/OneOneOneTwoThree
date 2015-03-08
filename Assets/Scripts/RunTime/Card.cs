@@ -19,7 +19,12 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
     private Vector3 _clickOriginOffset = Vector3.zero;
     private Vector3 _startDifferenceToCamera = Vector3.zero;
 
-	public void Init(CardSO cardSo, StackSO stackSo, PlayerSO playerSo)
+    public PlayerSO PlayerSoRef
+    {
+        get { return _playerSoRef; }
+    }
+
+    public void Init(CardSO cardSo, StackSO stackSo, PlayerSO playerSo)
 	{
 	    gameObject.name = "Card:"+cardSo.name;
 	    _cardSoRef = cardSo;
@@ -104,13 +109,17 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
         Ray ray = eventData.pressEventCamera.ScreenPointToRay(eventData.position);
 
 
-        transform.position = eventData.pressEventCamera.transform.position  + ray.direction * delta.magnitude;
+        transform.position = eventData.pressEventCamera.transform.position + ray.direction * (_startDifferenceToCamera.magnitude + 5f);
+
+        //todo: rule breaking
+        transform.rotation = eventData.pressEventCamera.transform.rotation * Quaternion.AngleAxis(90f, Vector3.right);
     }
 
     #endregion
 
     #region IEndDragHandler Members
 
+    //should really only reposition if you weren't reassigned by others.
     public void OnEndDrag(PointerEventData eventData)
     {
         _clickOriginOffset = Vector3.zero;

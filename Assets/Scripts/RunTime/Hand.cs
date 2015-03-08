@@ -11,7 +11,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
     public float Gap = 0.25f;
     private List<CardSlot> _slots;
     private Camera _cam;
-
+    private PlayerSO _playerSoRef;
     // Use this for initialization
 	void Start ()
 	{
@@ -21,7 +21,8 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 	}
     public void Init(PlayerSO player, MatchSettingsSO matchSettings)
     {
-        gameObject.name = player.name;
+        _playerSoRef = player;
+        gameObject.name = _playerSoRef.name;
         //create slots based on match settings' card values
         _slots = new List<CardSlot>();
         foreach (CardSO cardSo in matchSettings.CardsPerHand)

@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 //override for different game rules.
-public class MainGame : MonoBehaviour
+public class MainGame : MonoBehaviour, IDropCardOnCardSlot
 {
     public MatchSettingsSO MatchToUseDefault;
   
@@ -183,5 +184,16 @@ public class MainGame : MonoBehaviour
 
     //Phase: Final resolutions
     //quick rematch/back to main menu
-    
+
+    public void DroppedCardOnCardSlot(Card displacingCard, CardSlot slotDisplaced)
+    {
+        Debug.Log("Got here");
+        Hand hand = _slotsToHands[slotDisplaced];
+
+        if (displacingCard.PlayerSoRef == hand.PlayerSoRef)
+        {
+            slotDisplaced.AddCardToSlot(displacingCard);
+        }
+        //else, let it snap back. clean itself up
+    }
 }
