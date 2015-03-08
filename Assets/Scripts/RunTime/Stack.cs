@@ -112,5 +112,10 @@ public class Stack : MonoBehaviour {
 
         }
     }
-	
+
+
+    internal void PlayOperationAnimation()
+    {
+        
+    }
 }

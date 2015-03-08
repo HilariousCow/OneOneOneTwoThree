@@ -12,9 +12,13 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
     private Stack _previewStack;
     private Renderer _rend;
     private Collider _col;
-
+    private Camera _cam;
+    
     //drag behaviours
     private Transform _previousParentWhenDragging;
+    private Vector3 _clickOriginOffset = Vector3.zero;
+    private Vector3 _startDifferenceToCamera = Vector3.zero;
+
 	public void Init(CardSO cardSo, StackSO stackSo, PlayerSO playerSo)
 	{
 	    gameObject.name = "Card:"+cardSo.name;
@@ -27,7 +31,7 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 
 	    _col = collider;
 
-
+	    _cam = Camera.main;
 
 
         if (_cardSoRef.FlipBottom || _cardSoRef.FlipTop || _cardSoRef.FlipStack)
@@ -39,6 +43,8 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
             Bounds stackBounds = _previewStack.transform.RenderBounds();
 
             _previewStack.transform.localPosition = Vector3.up*(stackBounds.size.y*0.5f + 0.125f);
+
+            _previewStack.PlayOperationAnimation();
         }
 
 
@@ -48,6 +54,16 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 
     void LateUpdate()
     {
+        //hide from peekers
+
+        float dot = Mathf.Clamp01(Vector3.Dot(Vector3.down, -transform.up)*2f);
+        if(_previewStack != null)
+        {
+            _previewStack.transform.localScale = Vector3.one*(1.0f-dot);
+        }
+
+
+        //todo: this should be done in the stack. get IT to trigger animations.
         if (_cardSoRef.FlipStack)
         {
             _previewStack.transform.localRotation = _previewStack.transform.localRotation*
@@ -67,10 +83,12 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        Debug.Log("Beginning drag on" + gameObject.name);
+       // Debug.Log("Beginning drag on" + gameObject.name);
         _col.enabled = true;
         _previousParentWhenDragging = transform.parent;
         transform.parent = null;
+        _clickOriginOffset = transform.InverseTransformPoint(eventData.worldPosition);
+        _startDifferenceToCamera = eventData.worldPosition - eventData.pressEventCamera.transform.position;
     }
 
     #endregion
@@ -79,13 +97,14 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 
     public void OnDrag(PointerEventData eventData)
     {
-        Debug.Log("Dragging on" + gameObject.name);
+      //  
 
-        Vector3 delta = transform.position - eventData.pressEventCamera.transform.position;
+        Vector3 delta = transform.TransformPoint(_clickOriginOffset) - eventData.pressEventCamera.transform.position;
 
         Ray ray = eventData.pressEventCamera.ScreenPointToRay(eventData.position);
-        
-        transform.position = ray.GetPoint(delta.magnitude);
+
+
+        transform.position = eventData.pressEventCamera.transform.position  + ray.direction * delta.magnitude;
     }
 
     #endregion
@@ -94,8 +113,9 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        _clickOriginOffset = Vector3.zero;
         _col.enabled = true;
-
+        Debug.Log("Ended Drag" + gameObject.name);
         //ExecuteEvents.ExecuteHierarchy<IRefreshView>(_previousOwner.gameObject, null, (x, y) => x.RefreshView());//todo
 
         //need to snap back if we weren't claimed by any other thing.

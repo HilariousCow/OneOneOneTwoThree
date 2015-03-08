@@ -2,9 +2,10 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.EventSystems;
 
 //this is like an inventory.
-public class Hand : MonoBehaviour
+public class Hand : MonoBehaviour, IDropCardOnCardSlot
 {
     public CardSlot CardSlotPrefab;
     public float Gap = 0.25f;
@@ -26,6 +27,7 @@ public class Hand : MonoBehaviour
         foreach (CardSO cardSo in matchSettings.CardsPerHand)
         {
             CardSlot slot = transform.InstantiateChild(CardSlotPrefab);
+            slot.name = gameObject.name + "_Hand";
             _slots.Add(slot);
         }
 
@@ -38,6 +40,13 @@ public class Hand : MonoBehaviour
 
     internal void AddCardToHand(Card card)
     {
+
+        CardSlot oldItemSlot = _slots.FirstOrDefault(x => x.Card == card);
+
+        if (oldItemSlot != null)
+        { //was already in a slot
+            oldItemSlot.RemoveCardFromSlot();//free it up
+        }
         List<CardSlot> closest = new List<CardSlot>(from CardSlot slot in _slots
                                                     orderby (slot.transform.position - card.transform.position).sqrMagnitude ascending
                                                     select slot);
@@ -46,6 +55,7 @@ public class Hand : MonoBehaviour
 
         foreach (CardSlot cardSlot in closest)
         {
+            //repeat until no cards left to place
             if (cardSlot.IsEmpty)
             {
                 cardSlot.AddCardToSlot(card);
@@ -82,7 +92,43 @@ public class Hand : MonoBehaviour
         
 	}
 
-    
 
+    public void DroppedCardOnCardSlot(Card displacingCard, CardSlot slotDisplaced)
+    {
+        Debug.Log("Dropped card on card slot. finding best position and shuffling the rest");
+        AddCardToHand(displacingCard);
+
+        /*CardSlot oldItemSlot = _slots.FirstOrDefault(x => x.Card == displacingCard);
+
+        if (oldItemSlot != null)
+        {
+            Debug.Log("Found item's old slot. Clear item from old slot. ");
+            //found item's previous displaceItemInSlot.
+            oldItemSlot.RemoveCardFromSlot(); //remove references to the one we're dropping so that other things can be added.
+
+            //grab the target slot's current item, if any.
+            if (displaceItemInSlot != null)
+            {
+                ItemDragAndDrop dd = displaceItemInSlot.RemoveItemFromSlot();
+                if (dd != null)
+                {
+                    Debug.Log("Found object to swap: " + dd.gameObject.name + " with " + displacingItem.gameObject.name);
+                    oldItemSlot.Attach(dd); //note: both slots are empty when calling this to avoid infinite loop
+                }
+            }
+
+        }
+        else
+            Debug.Log("No previous slot found?");
+         * */
+    }
+}
+namespace UnityEngine.EventSystems
+{
+    //Displaced item is the leftover item.
+    public interface IDropCardOnCardSlot : IEventSystemHandler
+    {
+        void DroppedCardOnCardSlot(Card displacingCard, CardSlot slotDisplaced);
+    }
 
 }

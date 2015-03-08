@@ -23,6 +23,8 @@ public class MainGame : MonoBehaviour
     private Dictionary<Hand,List<CardSlot>> _handsToPlaySlots;
     private Dictionary<CardSlot, Hand> _slotsToHands;
 
+    private Dictionary<Stack, List<CardSlot>> _stacksToSlots;
+
 
     void Awake()
     {
@@ -47,7 +49,7 @@ public class MainGame : MonoBehaviour
         _cards = new List<Card>();
         _handsToPlaySlots = new Dictionary<Hand, List<CardSlot>>();
         _slotsToHands = new Dictionary<CardSlot, Hand>();
-
+        _stacksToSlots = new Dictionary<Stack, List<CardSlot>>();
         foreach (PlayerSO playerSo in _matchSettings.Players)
         {
             Hand hand = transform.InstantiateChild(HandPrefab);
@@ -69,24 +71,21 @@ public class MainGame : MonoBehaviour
             List<CardSlot> playSlotsForPlayer = new List<CardSlot>();
             foreach (Stack stack in _stacks)
             {
+                
                 CardSlot playSlot = stack.transform.InstantiateChild(CardSlotPrefab);
+                playSlot.name = stack.gameObject.name + " slot for " + hand.gameObject.name;
                 playSlotsForPlayer.Add(playSlot);
                 _slotsToHands.Add(playSlot, hand);
 
-               
+                if(!_stacksToSlots.ContainsKey(stack))
+                {
+                    _stacksToSlots.Add(stack, new List<CardSlot>());
+                }
+               _stacksToSlots[stack].Add(playSlot);
 
             }
 
-            for (int index = 0; index < playSlotsForPlayer.Count; index++)
-            {
-                float frac = index / (float)playSlotsForPlayer.Count;
-               
-                CardSlot slot = playSlotsForPlayer[index];
-                Bounds bounds = slot.transform.RenderBounds();
-
-                slot.transform.position = slot.transform.position.SinCosY(frac) * bounds.size.x;
-                slot.transform.LookAt(Vector3.zero, Vector3.up);
-            }
+           
 
             _handsToPlaySlots.Add(hand, playSlotsForPlayer);
 
@@ -106,6 +105,7 @@ public class MainGame : MonoBehaviour
 
         
         //POSITIONING OF ROOT ELEMENTS
+        //reposition hands around a circle
         for (int index = 0; index < _hands.Count; index++)
         {
             float frac = index/(float)_hands.Count;
@@ -119,9 +119,27 @@ public class MainGame : MonoBehaviour
 
         //spawn cards but don't put them anywhere or maybe put them on the score hand
 
+        //reposition slots infront of stacks
 
-        //reposition stacks
-        //reposition hands around a circle
+        foreach (Stack stack in _stacks)
+        {
+            List<CardSlot> slots = _stacksToSlots[stack];
+            //slots.PositionAlongLineCentered(Vector3.right, 0.5f, Vector3.up * 0.5f);
+            for (int index = 0; index < slots.Count; index++)
+            {
+                float frac = index / (float)_hands.Count;
+
+                CardSlot slot = slots[index];
+                Bounds bounds = slot.transform.RenderBounds();
+
+                slot.transform.position = slot.transform.position.SinCosY(frac) * bounds.size.z;
+                slot.transform.LookAt(Vector3.zero, Vector3.up);
+            }
+
+        }
+       
+        
+        
 
 
 
