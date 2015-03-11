@@ -185,22 +185,25 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
     //Phase: Final resolutions
     //quick rematch/back to main menu
 
-    public void DroppedCardOnCardSlot(Card displacingCard, CardSlot slotDisplaced)
+    public void DroppedCardOnCardSlot(Card displacingCard, CardSlot targetSlot, CardSlot previousSlot)
     {
         Debug.Log("Got here");
-        Hand hand = _slotsToHands[slotDisplaced];
-
-        
+        Hand hand = _slotsToHands[targetSlot];
 
         if (displacingCard.PlayerSoRef == hand.PlayerSoRef)
         {
-            if (!slotDisplaced.IsEmpty)
+            if (previousSlot != null)
             {
-                Card swapOut = slotDisplaced.RemoveCardFromSlot();
+                previousSlot.RemoveCardFromSlot();
+            }
+
+            if (!targetSlot.IsEmpty)
+            {
+                Card swapOut = targetSlot.RemoveCardFromSlot();
                 hand.AddCardToHand(swapOut);
             }
 
-            slotDisplaced.AddCardToSlot(displacingCard);
+            targetSlot.AddCardToSlot(displacingCard);
         }
         //else, let it snap back. clean itself up
     }

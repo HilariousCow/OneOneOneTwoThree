@@ -46,7 +46,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                 ExecuteEvents.ExecuteHierarchy<IDropCardOnCardSlot>(
                     transform.parent.gameObject,
                     null,
-                    (x, y) => x.DroppedCardOnCardSlot(card, this)
+                    (x, y) => x.DroppedCardOnCardSlot(card, this, card.GetSlotOwner())
                     );
             }
         }

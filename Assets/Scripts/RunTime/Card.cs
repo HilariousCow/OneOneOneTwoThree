@@ -38,9 +38,8 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 
 	    _cam = Camera.main;
 
-
-        if (_cardSoRef.FlipBottom || _cardSoRef.FlipTop || _cardSoRef.FlipStack)
-        {
+        //this is to fake the void, but maybe void should just set its scale zero.
+        
             _previewStack = transform.InstantiateChild(StackPrefab);
             _previewStack.Init(stackSo);
 
@@ -49,8 +48,8 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 
             _previewStack.transform.localPosition = Vector3.up*(stackBounds.size.y*0.5f + 0.125f);
 
-            _previewStack.PlayOperationAnimation();
-        }
+            //_previewStack.PlayOperationAnimation();
+        
 
 
 	}
@@ -62,26 +61,15 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
         //hide from peekers
 
         float dot = Mathf.Clamp01(Vector3.Dot(Vector3.down, -transform.up)*2f);
-        if(_previewStack != null)
-        {
-            _previewStack.transform.localScale = Vector3.one*(1.0f-dot);
-        }
+       
+        _previewStack.transform.localScale = Vector3.one*(1.0f-dot);
+        _previewStack.PlayOperationAnimation(_cardSoRef);
+        
 
 
-        //todo: this should be done in the stack. get IT to trigger animations.
-        if (_cardSoRef.FlipStack)
-        {
-            _previewStack.transform.localRotation = _previewStack.transform.localRotation*
-                                                    Quaternion.AngleAxis(Time.deltaTime*360f, Vector3.forward);
-        }
-        if(_cardSoRef.FlipTop)
-        {
-            
-        }
-        if (_cardSoRef.FlipBottom)
-        {
-
-        }
+      
+      
+     
     }
 
     #region IBeginDragHandler Members
@@ -132,7 +120,7 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
         {
             transform.SetParent(_previousParentWhenDragging);//redundant?
             transform.localPosition = Vector3.zero;
-            _previousParentWhenDragging = null;
+
 
         }
         else if (transform.parent == null)//still no parent, meaning it didn't find a home, meaning it should snap back to where it came from
@@ -140,7 +128,21 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
             transform.parent = _previousParentWhenDragging;
             transform.ResetToParent();
         }
+
+        _previousParentWhenDragging = null;
     }
 
     #endregion
+
+    internal CardSlot GetSlotOwner()
+    {
+        if(_previousParentWhenDragging!=null)
+        {
+            return _previousParentWhenDragging.GetComponent<CardSlot>();
+        }
+        else
+        {
+            return null;
+        }
+    }
 }

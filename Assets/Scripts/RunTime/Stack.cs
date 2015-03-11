@@ -113,9 +113,59 @@ public class Stack : MonoBehaviour {
         }
     }
 
-
-    internal void PlayOperationAnimation()
+    //this is an update rather than a nice trigger, bleurgh
+    //i just want to be able to tell which is which from a glance
+    internal void PlayOperationAnimation(CardSO _cardSoRef)
     {
-        
+     
+        //todo: this should be done in the stack. get IT to trigger animations.
+
+        //flip stack
+        if (_cardSoRef.FlipStack && !_cardSoRef.FlipBottom && !_cardSoRef.FlipTop)
+        {
+            transform.localRotation = transform.localRotation *
+                                                    Quaternion.AngleAxis(Time.deltaTime * 360f, Vector3.forward);
+        }
+
+        //swap
+        if (_cardSoRef.FlipStack && _cardSoRef.FlipBottom && _cardSoRef.FlipTop)
+        {
+            for (int index = 0; index < _stackOfTokens.Count; index++)
+            {
+                if (index != 0 || index != _stackOfTokens.Count - 1) continue;
+                
+                
+                Token token = _stackOfTokens[index];
+                float fraction = index/(float) _stackOfTokens.Count;
+
+                Vector3 pos = Vector3.zero;
+                pos = pos.SinCosZ(Time.deltaTime + fraction );
+                pos *= token.transform.localPosition.magnitude;
+                token.transform.localPosition = pos;
+
+                _stackOfTokens[index].transform.localRotation = _stackOfTokens[index].transform.localRotation *
+                                                    Quaternion.AngleAxis(Time.deltaTime * 360f, Vector3.forward);
+            }
+        }
+
+
+        if (_cardSoRef.FlipTop && !_cardSoRef.FlipStack)
+        {
+            _stackOfTokens[_stackOfTokens.Count - 1].transform.localRotation = _stackOfTokens[_stackOfTokens.Count - 1].transform.localRotation *
+                                                    Quaternion.AngleAxis(Time.deltaTime * 360f, Vector3.forward);
+            _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);
+        }
+        if (_cardSoRef.FlipBottom && !_cardSoRef.FlipStack)
+        {
+            _stackOfTokens[0].transform.localRotation = _stackOfTokens[0].transform.localRotation *
+                                                    Quaternion.AngleAxis(Time.deltaTime * 360f, Vector3.forward);
+            _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);
+        }
+
+        //void
+        if (!_cardSoRef.FlipStack && !_cardSoRef.FlipBottom && !_cardSoRef.FlipTop)
+        {
+            transform.localScale = Vector3.zero;
+        }
     }
 }
