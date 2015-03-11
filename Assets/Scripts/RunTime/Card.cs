@@ -24,10 +24,16 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
         get { return _playerSoRef; }
     }
 
+    public CardSO CardSoRef
+    {
+        get { return _cardSoRef; }
+       
+    }
+
     public void Init(CardSO cardSo, StackSO stackSo, PlayerSO playerSo)
 	{
 	    gameObject.name = "Card:"+cardSo.name;
-	    _cardSoRef = cardSo;
+        _cardSoRef = cardSo;
 	    _playerSoRef = playerSo;
 	    _rend = renderer;
 
@@ -67,7 +73,7 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 
         if (_playPreview)
         {
-            _previewStack.PlayOperationAnimation(_cardSoRef);
+            _previewStack.PlayOperationAnimation(CardSoRef);
         }
 
 

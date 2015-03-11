@@ -25,11 +25,72 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
     private Dictionary<CardSlot, Hand> _slotsToHands;
 
     private Dictionary<Stack, List<CardSlot>> _stacksToSlots;
-
+    private List<CardSlot> _allCommitCardSlots;
 
     void Awake()
     {
         Init(MatchToUseDefault);
+    }
+
+    void Start()
+    {
+        StartCoroutine("WaitForAllCommitSlotsToBeFull");
+        
+    }
+
+    IEnumerator WaitForAllCommitSlotsToBeFull()
+    {
+        Debug.LogWarning("Watching for all slots to be filled");
+        bool all = (_allCommitCardSlots.FindAll(x => !x.IsEmpty).Count == _allCommitCardSlots.Count);
+        while (!all)
+        {
+
+            yield return null;
+            all = (_allCommitCardSlots.FindAll(x => !x.IsEmpty).Count == _allCommitCardSlots.Count);
+        }
+
+        Debug.LogWarning("All slots filled, resolving gameplay");
+        foreach (Stack stack in _stacks)
+        {
+            //find whose is applied first for this stack
+            TokenSide side = stack.GetTopTokenSide();
+            
+
+
+
+            List<CardSlot> slotsForStack = new List<CardSlot>(_stacksToSlots[stack] );
+
+            //todo: extract token side orders. yeah. much nicer. but how will black/white determin multiple players? arhgh.
+            //so, big assumptions here.
+
+
+            CardSlot firstCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide == side);
+
+            Card firstCard = firstCardSlot.RemoveCardFromSlot();
+
+            stack.ApplyCardToStack(firstCard);
+            slotsForStack.Remove(firstCardSlot);
+
+            CardSlot secondCardSlot = slotsForStack.Peek();//whatever is left
+            Card secondCard = secondCardSlot.RemoveCardFromSlot();
+
+            stack.ApplyCardToStack(secondCard);
+            slotsForStack.Remove(secondCardSlot);
+
+            if(stack.GetTopTokenSide() == firstCard.PlayerSoRef.DesiredTokenSide)
+            {
+                _scoreHand.AddRound(stack, firstCard, secondCard);
+            }
+            else
+            {
+                _scoreHand.AddRound(stack, secondCard, firstCard);
+            }
+
+        }
+
+
+        StartCoroutine("WaitForAllCommitSlotsToBeFull");//go again.
+
     }
     public void Init(MatchSettingsSO matchSettings)
     {
@@ -51,6 +112,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
         _handsToPlaySlots = new Dictionary<Hand, List<CardSlot>>();
         _slotsToHands = new Dictionary<CardSlot, Hand>();
         _stacksToSlots = new Dictionary<Stack, List<CardSlot>>();
+        _allCommitCardSlots = new List<CardSlot>();
         foreach (PlayerSO playerSo in _matchSettings.Players)
         {
             Hand hand = transform.InstantiateChild(HandPrefab);
@@ -73,16 +135,16 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
             foreach (Stack stack in _stacks)
             {
                 
-                CardSlot playSlot = stack.transform.InstantiateChild(CardSlotPrefab);
-                playSlot.name = stack.gameObject.name + " slot for " + hand.gameObject.name;
-                playSlotsForPlayer.Add(playSlot);
-                _slotsToHands.Add(playSlot, hand);
-
+                CardSlot commitSlot = stack.transform.InstantiateChild(CardSlotPrefab);
+                commitSlot.name = stack.gameObject.name + " slot for " + hand.gameObject.name;
+                playSlotsForPlayer.Add(commitSlot);
+                _slotsToHands.Add(commitSlot, hand);
+                _allCommitCardSlots.Add(commitSlot);
                 if(!_stacksToSlots.ContainsKey(stack))
                 {
                     _stacksToSlots.Add(stack, new List<CardSlot>());
                 }
-               _stacksToSlots[stack].Add(playSlot);
+               _stacksToSlots[stack].Add(commitSlot);
 
             }
 

@@ -7,4 +7,12 @@ public class ScoreHand : MonoBehaviour {
     {
        
     }
+
+    
+
+    internal void AddRound(Stack stack, Card firstCard, Card secondCard)
+    {
+        Destroy(firstCard.gameObject);
+        Destroy(secondCard. gameObject);
+    }
 }

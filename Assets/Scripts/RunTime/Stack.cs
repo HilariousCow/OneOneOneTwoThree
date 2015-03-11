@@ -28,8 +28,10 @@ public class Stack : MonoBehaviour {
     }
 
 
-    public void ApplyCardToStack(CardSO cardOp)
+    public void ApplyCardToStack(Card card)
     {
+        CardSO cardOp = card.CardSoRef;
+        
         if (cardOp.FlipBottom)
         {
             List<Token> topSet = GetBottomGroup();
@@ -62,7 +64,11 @@ public class Stack : MonoBehaviour {
 
         if (cardOp.FlipStack)
         {
-
+            _stackOfTokens.Reverse();
+            foreach (Token token in _stackOfTokens)
+            {
+                token.Flip();
+            }
         }
     }
 
@@ -172,5 +178,10 @@ public class Stack : MonoBehaviour {
         {
             transform.localScale = Vector3.zero;
         }
+    }
+
+    internal TokenSide GetTopTokenSide()
+    {
+        return _stackOfTokens.Peek().CurrentSide;
     }
 }
