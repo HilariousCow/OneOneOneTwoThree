@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 
-public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHandler
+public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public Stack StackPrefab;
     public Renderer RedrawCard;
@@ -18,7 +18,7 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
     private Transform _previousParentWhenDragging;
     private Vector3 _clickOriginOffset = Vector3.zero;
     private Vector3 _startDifferenceToCamera = Vector3.zero;
-
+    private bool _playPreview = false;
     public PlayerSO PlayerSoRef
     {
         get { return _playerSoRef; }
@@ -61,15 +61,20 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
         //hide from peekers
 
         float dot = Mathf.Clamp01(Vector3.Dot(Vector3.down, -transform.up)*2f);
+
        
         _previewStack.transform.localScale = Vector3.one*(1.0f-dot);
-        _previewStack.PlayOperationAnimation(_cardSoRef);
-        
+
+        if (_playPreview)
+        {
+            _previewStack.PlayOperationAnimation(_cardSoRef);
+        }
 
 
-      
-      
-     
+
+
+
+
     }
 
     #region IBeginDragHandler Members
@@ -77,7 +82,7 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
     public void OnBeginDrag(PointerEventData eventData)
     {
        // Debug.Log("Beginning drag on" + gameObject.name);
-        _col.enabled = true;
+        _col.enabled = false;
         _previousParentWhenDragging = transform.parent;
         transform.parent = null;
         _clickOriginOffset = transform.InverseTransformPoint(eventData.worldPosition);
@@ -88,6 +93,8 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 
     #region IDragHandler Members
 
+    //really i need to do a different way as this only updates when the mouse moves or input changes, but
+    //this doesn't take into account the camera moving.
     public void OnDrag(PointerEventData eventData)
     {
       //  
@@ -97,7 +104,7 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
         Ray ray = eventData.pressEventCamera.ScreenPointToRay(eventData.position);
 
 
-        transform.position = eventData.pressEventCamera.transform.position + ray.direction * (_startDifferenceToCamera.magnitude + 10f);
+        transform.position = eventData.pressEventCamera.transform.position + ray.direction * (_startDifferenceToCamera.magnitude );
 
         //todo: rule breaking
         transform.rotation = eventData.pressEventCamera.transform.rotation * Quaternion.AngleAxis(90f, Vector3.right);
@@ -144,5 +151,15 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
         {
             return null;
         }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        _playPreview = true;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        _playPreview = false;
     }
 }

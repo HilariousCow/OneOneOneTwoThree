@@ -130,9 +130,11 @@ public class Stack : MonoBehaviour {
         //swap
         if (_cardSoRef.FlipStack && _cardSoRef.FlipBottom && _cardSoRef.FlipTop)
         {
+            transform.localRotation = transform.localRotation *
+                                                    Quaternion.AngleAxis(-Time.deltaTime * 360f, Vector3.forward);
             for (int index = 0; index < _stackOfTokens.Count; index++)
             {
-                if (index != 0 || index != _stackOfTokens.Count - 1) continue;
+                //if (index != 0 || index != _stackOfTokens.Count - 1) continue;
                 
                 
                 Token token = _stackOfTokens[index];
@@ -143,8 +145,11 @@ public class Stack : MonoBehaviour {
                 pos *= token.transform.localPosition.magnitude;
                 token.transform.localPosition = pos;
 
+
                 _stackOfTokens[index].transform.localRotation = _stackOfTokens[index].transform.localRotation *
                                                     Quaternion.AngleAxis(Time.deltaTime * 360f, Vector3.forward);
+                _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);
+
             }
         }
 
