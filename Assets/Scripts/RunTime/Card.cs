@@ -71,10 +71,21 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
        
         _previewStack.transform.localScale = Vector3.one*(1.0f-dot);
 
-        if (_playPreview)
+        if (Application.isEditor)
         {
-            _previewStack.PlayOperationAnimation(CardSoRef);
+            if ((!CardSoRef.FlipBottom && !CardSoRef.FlipTop && !CardSoRef.FlipStack) //if "nothing"
+                || _playPreview)
+            {
+                _previewStack.PlayOperationAnimation(CardSoRef);
+            }
         }
+        else
+        {
+           //no hover over on mobile?
+            _previewStack.PlayOperationAnimation(CardSoRef);
+            
+        }
+
 
 
 

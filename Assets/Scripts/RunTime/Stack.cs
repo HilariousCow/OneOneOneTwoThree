@@ -123,21 +123,24 @@ public class Stack : MonoBehaviour {
     //i just want to be able to tell which is which from a glance
     internal void PlayOperationAnimation(CardSO _cardSoRef)
     {
-     
+
+        float centerOfScreen = Mathf.Clamp01(Vector3.Dot(Camera.main.transform.forward,
+                                           (transform.position - Camera.main.transform.position).normalized));
+        float rotateSpeed = Mathf.SmoothStep(0.0f, 360.0f, centerOfScreen * centerOfScreen);
         //todo: this should be done in the stack. get IT to trigger animations.
 
         //flip stack
         if (_cardSoRef.FlipStack && !_cardSoRef.FlipBottom && !_cardSoRef.FlipTop)
         {
             transform.localRotation = transform.localRotation *
-                                                    Quaternion.AngleAxis(Time.deltaTime * 360f, Vector3.forward);
+                                                    Quaternion.AngleAxis(Time.deltaTime * rotateSpeed, Vector3.forward);
         }
 
         //swap
         if (_cardSoRef.FlipStack && _cardSoRef.FlipBottom && _cardSoRef.FlipTop)
         {
             transform.localRotation = transform.localRotation *
-                                                    Quaternion.AngleAxis(-Time.deltaTime * 360f, Vector3.forward);
+                                                    Quaternion.AngleAxis(-Time.deltaTime * rotateSpeed, Vector3.forward);
             for (int index = 0; index < _stackOfTokens.Count; index++)
             {
                 //if (index != 0 || index != _stackOfTokens.Count - 1) continue;
@@ -153,7 +156,7 @@ public class Stack : MonoBehaviour {
 
 
                 _stackOfTokens[index].transform.localRotation = _stackOfTokens[index].transform.localRotation *
-                                                    Quaternion.AngleAxis(Time.deltaTime * 360f, Vector3.forward);
+                                                    Quaternion.AngleAxis(Time.deltaTime * rotateSpeed, Vector3.forward);
                 _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);
 
             }
@@ -163,13 +166,13 @@ public class Stack : MonoBehaviour {
         if (_cardSoRef.FlipTop && !_cardSoRef.FlipStack)
         {
             _stackOfTokens[_stackOfTokens.Count - 1].transform.localRotation = _stackOfTokens[_stackOfTokens.Count - 1].transform.localRotation *
-                                                    Quaternion.AngleAxis(Time.deltaTime * 360f, Vector3.forward);
+                                                    Quaternion.AngleAxis(Time.deltaTime * rotateSpeed, Vector3.forward);
             _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);
         }
         if (_cardSoRef.FlipBottom && !_cardSoRef.FlipStack)
         {
             _stackOfTokens[0].transform.localRotation = _stackOfTokens[0].transform.localRotation *
-                                                    Quaternion.AngleAxis(Time.deltaTime * 360f, Vector3.forward);
+                                                    Quaternion.AngleAxis(Time.deltaTime * rotateSpeed, Vector3.forward);
             _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);
         }
 
