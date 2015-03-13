@@ -8,7 +8,7 @@ public class ScoreHand : MonoBehaviour
     public CardSlot CardSlotScoreKeepingPrefab;
 
 
-    public bool FinishedRound { get { return roundNumber == numberOfRounds - 1; } }
+    public bool FinishedRound { get { return roundNumber == numberOfRounds; } }
     public bool GameIsATie { get
         {
             
@@ -77,7 +77,8 @@ public class ScoreHand : MonoBehaviour
                 scores.Add(0);
             }
             _scores.Add(hand, scores);
-            trackers.PositionAlongLineCentered(Vector3.left, 0.125f, Vector3.left * trackers.WorldBounds().size.x);
+            trackers.PositionAlongLineCentered(Vector3.right, 0.5f, Vector3.zero);
+            trackers.PositionAlongLineCentered(Vector3.left, 0.5f, Vector3.right * trackers.WorldBounds().size.x);
 
             _roundScoresPerHand.Add(hand, trackers);
             

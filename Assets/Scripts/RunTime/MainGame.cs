@@ -67,15 +67,26 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
 
             CardSlot firstCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide == currentTop);
             Card firstCard = firstCardSlot.RemoveCardFromSlot();
-            Debug.Log("Removing first card" + firstCard.gameObject.name + " from slot: " + firstCardSlot.gameObject.name);
+            Debug.Log("Showing first card" + firstCard.gameObject.name + " from slot: " + firstCardSlot.gameObject.name);
+            firstCard.transform.rotation *= Quaternion.AngleAxis(180f, firstCardSlot.transform.forward);
+            firstCard.transform.position = firstCardSlot.transform.position + Vector3.up * 0.5f;
+            yield return new WaitForSeconds(0.5f);//show top for 0.5
+            firstCard.transform.position = firstCardSlot.transform.position;
+            yield return new WaitForSeconds(0.5f);//show top for 0.5
+            
             stack.ApplyCardToStack(firstCard);
             
             yield return new WaitForSeconds(0.5f);
 
             CardSlot secondCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide != currentTop);
             Card secondCard = secondCardSlot.RemoveCardFromSlot();
-            Debug.Log("Removing second card" + secondCard.gameObject.name + " from slot: " + secondCardSlot.gameObject.name);
-
+            Debug.Log("Showing second card" + secondCard.gameObject.name + " from slot: " + secondCardSlot.gameObject.name);
+            secondCard.transform.rotation *= Quaternion.AngleAxis(180f, secondCardSlot.transform.forward);
+            secondCard.transform.position = secondCardSlot.transform.position + Vector3.up*0.5f;
+            yield return new WaitForSeconds(0.5f);//show top for 0.5
+            secondCard.transform.position = secondCardSlot.transform.position ;
+            yield return new WaitForSeconds(0.5f);//show top for 0.5
+            
             stack.ApplyCardToStack(secondCard);
 
             yield return new WaitForSeconds(0.5f);
