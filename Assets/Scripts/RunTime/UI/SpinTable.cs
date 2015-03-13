@@ -19,7 +19,11 @@ public class SpinTable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!_allowDrag) return;
+        if (!_allowDrag)
+        {
+            _lastDragPos = eventData.worldPosition;
+            return;
+        }
         
         Vector3 pos = eventData.worldPosition;
         Vector3 delta = pos - _lastDragPos;

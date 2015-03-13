@@ -57,6 +57,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         //todo: lockout changes. focus camera, or have it above in the first place.
         yield return new WaitForSeconds(1f);
 
+        //todo: if both stacks are not the same on top, send back the cards.
 
         foreach (Stack stack in _stacks)
         {
