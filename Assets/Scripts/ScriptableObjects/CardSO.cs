@@ -7,5 +7,6 @@ public class CardSO : ScriptableObject
 
     public bool FlipTop;
     public bool FlipBottom;
+    public bool ReverseStack;//swap
     public bool FlipStack;
 }

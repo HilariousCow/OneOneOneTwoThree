@@ -72,7 +72,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
             {
                 Card swapOut = cardSlot.RemoveCardFromSlot();
                 cardSlot.AddCardToSlot(card);
-                Debug.Log("Swapping out" + swapOut.gameObject.name + " for " + card.gameObject.name);
+          //      Debug.Log("Swapping out" + swapOut.gameObject.name + " for " + card.gameObject.name);
                 card = swapOut;
                 
             }

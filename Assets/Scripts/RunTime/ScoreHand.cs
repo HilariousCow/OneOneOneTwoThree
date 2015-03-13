@@ -102,7 +102,7 @@ public class ScoreHand : MonoBehaviour
 
         if (stack.GetTopTokenSide() == firstCard.PlayerSoRef.DesiredTokenSide)
         {
-            
+            Debug.Log(firstCard.PlayerSoRef.name + " wins round " + (roundNumber + 1) + " for " + _roundScores[roundNumber] + "point(s)");
             _scores[firstHand][roundNumber] = _roundScores[roundNumber];//claim the points
 
             firstCard.transform.localPosition = firstCard.transform.localPosition + Vector3.up * 0.125f;
@@ -114,6 +114,7 @@ public class ScoreHand : MonoBehaviour
         }
         else
         {
+            Debug.Log(secondCard.PlayerSoRef.name + " wins round " + (roundNumber+1) + " for " + _roundScores[roundNumber] + "point(s)");
             secondCard.transform.localPosition = secondCard.transform.localPosition + Vector3.up*0.125f;
             _scores[secondHand][roundNumber] = _roundScores[roundNumber];//claim the points
             secondCard.transform.localPosition = secondCard.transform.localPosition +

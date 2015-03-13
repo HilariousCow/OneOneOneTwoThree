@@ -44,15 +44,17 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
     {
         Debug.LogWarning("Watching for all slots to be filled");
         bool all = (_allCommitCardSlots.FindAll(x => !x.IsEmpty).Count == _allCommitCardSlots.Count);
-        while (!all)
+        bool pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
+        while (!all || !pointDownMosty)
         {
 
             yield return null;
+            pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
             all = (_allCommitCardSlots.FindAll(x => !x.IsEmpty).Count == _allCommitCardSlots.Count);
         }
 
         Debug.LogWarning("All slots filled, resolving gameplay");
-
+        //todo: lockout changes. focus camera, or have it above in the first place.
         yield return new WaitForSeconds(1f);
 
 
@@ -99,11 +101,12 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
 
         if (_scoreHand.FinishedRound)
         {
-            Debug.Log("Starting new round");
+            Debug.Log("Rounds are over");
             StartCoroutine("ResolutionPhase");
         }
         else
         {
+            Debug.Log("Starting new round");
             StartCoroutine("LoopPhase");//go again.    
         }
 
@@ -122,8 +125,14 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
             {
                 Card tieBreaker = transform.InstantiateChild(CardPrefab);
                 tieBreaker.Init(_matchSettings.TieBreakerCard, _matchSettings.StackStyle, _matchSettings.TieBreakerPlayer);
-
+                yield return new WaitForSeconds(0.5f);
+                tieBreaker.transform.position = Vector3.up*2f;
+                yield return new WaitForSeconds(0.5f);
+                tieBreaker.transform.rotation = tieBreaker.transform.rotation*
+                                                Quaternion.AngleAxis(180f, Vector3.forward);
+                yield return new WaitForSeconds(0.5f);
                 stack.ApplyCardToStack(tieBreaker);
+                yield return new WaitForSeconds(0.5f);
                
 
                 
@@ -323,7 +332,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
 
     public void DroppedCardOnCardSlot(Card displacingCard, CardSlot targetSlot, CardSlot previousSlot)
     {
-        Debug.Log("Got here");
+       
         Hand hand = _slotsToHands[targetSlot];
 
         if (displacingCard.PlayerSoRef == hand.PlayerSoRef)

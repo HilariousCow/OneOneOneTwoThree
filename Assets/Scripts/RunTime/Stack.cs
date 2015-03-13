@@ -34,10 +34,10 @@ public class Stack : MonoBehaviour {
         
         if (cardOp.FlipBottom)
         {
-            List<Token> topSet = GetBottomGroup();
-            topSet.Reverse();
+            List<Token> bottomSet = GetBottomGroup();
+            bottomSet.Reverse();
 
-            foreach (Token token in topSet)
+            foreach (Token token in bottomSet)
             {
                 token.Flip();
             }
@@ -61,6 +61,14 @@ public class Stack : MonoBehaviour {
             }
 
         }
+
+        //i think i do need a swap! It's a reverse without flips
+
+        if (cardOp.ReverseStack)
+        {
+            _stackOfTokens.Reverse();
+        }
+
 
         if (cardOp.FlipStack)
         {
@@ -113,7 +121,7 @@ public class Stack : MonoBehaviour {
         {
         }
 
-        if (lastOp.FlipStack)
+        if (lastOp.ReverseStack)
         {
 
         }
@@ -130,57 +138,48 @@ public class Stack : MonoBehaviour {
         //todo: this should be done in the stack. get IT to trigger animations.
 
         //flip stack
-        if (_cardSoRef.FlipStack && !_cardSoRef.FlipBottom && !_cardSoRef.FlipTop)
+        if (_cardSoRef.FlipStack)
         {
             transform.localRotation = transform.localRotation *
                                                     Quaternion.AngleAxis(Time.deltaTime * rotateSpeed, Vector3.forward);
+            //_stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);    
         }
 
         //swap
-        if (_cardSoRef.FlipStack && _cardSoRef.FlipBottom && _cardSoRef.FlipTop)
+        if (_cardSoRef.ReverseStack)
         {
-            transform.localRotation = transform.localRotation *
-                                                    Quaternion.AngleAxis(-Time.deltaTime * rotateSpeed, Vector3.forward);
-            for (int index = 0; index < _stackOfTokens.Count; index++)
+
+            Vector3 dir = Quaternion.AngleAxis(Time.time * 60f, Vector3.forward)*Vector3.right;
+
+            List<Token> _flippedOrNot = new List<Token>(_stackOfTokens);
+            if(Vector3.Dot(dir, Vector3.down) < 0.0f)
             {
-                //if (index != 0 || index != _stackOfTokens.Count - 1) continue;
-                
-                
-                Token token = _stackOfTokens[index];
-                float fraction = index/(float) _stackOfTokens.Count;
-
-                Vector3 pos = Vector3.zero;
-                pos = pos.SinCosZ(Time.deltaTime + fraction );
-                pos *= token.transform.localPosition.magnitude;
-                token.transform.localPosition = pos;
-
-
-                _stackOfTokens[index].transform.localRotation = _stackOfTokens[index].transform.localRotation *
-                                                    Quaternion.AngleAxis(Time.deltaTime * rotateSpeed, Vector3.forward);
-                _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);
-
+                _flippedOrNot.Reverse();
             }
+            _flippedOrNot.PositionAlongLineCentered(dir, 0.25f, Vector3.zero);
         }
 
 
-        if (_cardSoRef.FlipTop && !_cardSoRef.FlipStack)
+        if (_cardSoRef.FlipTop )
         {
             _stackOfTokens[_stackOfTokens.Count - 1].transform.localRotation = _stackOfTokens[_stackOfTokens.Count - 1].transform.localRotation *
                                                     Quaternion.AngleAxis(Time.deltaTime * rotateSpeed, Vector3.forward);
             _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);
         }
-        if (_cardSoRef.FlipBottom && !_cardSoRef.FlipStack)
+        if (_cardSoRef.FlipBottom )
         {
             _stackOfTokens[0].transform.localRotation = _stackOfTokens[0].transform.localRotation *
                                                     Quaternion.AngleAxis(Time.deltaTime * rotateSpeed, Vector3.forward);
-            _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);
+            _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);    
         }
 
         //void
-        if (!_cardSoRef.FlipStack && !_cardSoRef.FlipBottom && !_cardSoRef.FlipTop)
+        if (!_cardSoRef.ReverseStack && !_cardSoRef.FlipBottom && !_cardSoRef.FlipTop && !_cardSoRef.FlipStack)
         {
             transform.localScale = Vector3.zero;
         }
+
+        
     }
 
     internal TokenSide GetTopTokenSide()

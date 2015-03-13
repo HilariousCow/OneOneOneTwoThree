@@ -73,7 +73,7 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 
         if (Application.isEditor)
         {
-            if ((!CardSoRef.FlipBottom && !CardSoRef.FlipTop && !CardSoRef.FlipStack) //if "nothing"
+            if ((!CardSoRef.FlipBottom && !CardSoRef.FlipTop && !CardSoRef.ReverseStack) //if "nothing"
                 || _playPreview)
             {
                 _previewStack.PlayOperationAnimation(CardSoRef);
@@ -136,7 +136,7 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
     {
         _clickOriginOffset = Vector3.zero;
         _col.enabled = true;
-        Debug.Log("Ended Drag" + gameObject.name);
+     //   Debug.Log("Ended Drag" + gameObject.name);
         //ExecuteEvents.ExecuteHierarchy<IRefreshView>(_previousOwner.gameObject, null, (x, y) => x.RefreshView());//todo
 
         //need to snap back if we weren't claimed by any other thing.

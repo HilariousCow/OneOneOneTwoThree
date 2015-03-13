@@ -103,7 +103,7 @@
 				o.normal   = mul ((float3x3)UNITY_MATRIX_IT_MV, v.normal);
 				float2 offset = TransformViewToProjection(o.normal.xy);
 			 
-				o.pos.xy += offset * o.pos.z * 0.005f;
+				o.pos.xy += offset * o.pos.z * 0.004f;
 	
 				o.color = v.color;
 				o.uv = MultiplyUV (UNITY_MATRIX_TEXTURE0, v.texcoord);

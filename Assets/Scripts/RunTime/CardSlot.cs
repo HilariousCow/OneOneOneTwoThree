@@ -38,7 +38,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     {
         if (eventData.pointerDrag != null)
         {
-            Debug.Log(eventData.pointerDrag.name + " Dropped On Reciever: " + gameObject.name);
+         //   Debug.Log(eventData.pointerDrag.name + " Dropped On Reciever: " + gameObject.name);
             Card card = eventData.pointerDrag.GetComponent<Card>();
             card.transform.position = eventData.worldPosition;
             if(card != null)
