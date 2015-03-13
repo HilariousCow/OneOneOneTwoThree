@@ -105,7 +105,7 @@ public class CameraAccelerometerControl : MonoBehaviour {
     }
 
      
-    void OnGUI()
+   /* void OnGUI()
     {
         if (Input.GetMouseButton(0))
         {
@@ -114,5 +114,5 @@ public class CameraAccelerometerControl : MonoBehaviour {
             GUILayout.Label("Gyro Euler: " + Input.gyro.attitude.eulerAngles.ToString());
             GUI.color = Color.white;
         }
-    }
+    }*/
 }

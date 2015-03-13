@@ -71,7 +71,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
        
         _previewStack.transform.localScale = Vector3.one*(1.0f-dot);
 
-        if (Application.isEditor)
+      /*  if (Application.isEditor)
         {
             if ((!CardSoRef.FlipBottom && !CardSoRef.FlipTop && !CardSoRef.ReverseStack && !CardSoRef.FlipStack) //if "nothing"
                 || _playPreview)
@@ -79,7 +79,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
                 _previewStack.PlayOperationAnimation(CardSoRef);
             }
         }
-        else
+        else*/
         {
            //no hover over on mobile?
             _previewStack.PlayOperationAnimation(CardSoRef);

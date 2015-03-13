@@ -4,10 +4,19 @@ ModelImporter:
   serializedVersion: 16
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Token
+    100004: Token_Split
     400000: //RootNode
+    400002: Token
+    400004: Token_Split
     2300000: //RootNode
+    2300002: Token
+    2300004: Token_Split
     3300000: //RootNode
+    3300002: Token
+    3300004: Token_Split
     4300000: Token
+    4300002: Token_Split
     7400000: Default Take
     9500000: //RootNode
   materials:

@@ -71,8 +71,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             CardSlot firstCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide == currentTop);
             Card firstCard = firstCardSlot.Card;
             Debug.Log("Showing first card" + firstCard.gameObject.name + " from slot: " + firstCardSlot.gameObject.name);
-            
-            firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, firstCardSlot.transform.forward);
+
+            firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.forward);
             firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.forward);
             
             yield return new WaitForSeconds(1.0f);//show top for 0.5
@@ -80,7 +80,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             stack.ApplyCardToStack(firstCard);
             yield return new WaitForSeconds(0.250f);//show top for 0.5
 
-            firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, firstCardSlot.transform.forward);
+            firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.forward);
             firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.forward);
             
             yield return new WaitForSeconds(1.0f);//show top for 0.5
@@ -93,7 +93,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             Debug.Log("Showing second card" + secondCard.gameObject.name + " from slot: " + secondCardSlot.gameObject.name);
 
 
-            secondCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, secondCardSlot.transform.forward);
+            secondCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.forward);
             secondCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.forward);
             
             
@@ -101,7 +101,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             stack.ApplyCardToStack(secondCard);
             yield return new WaitForSeconds(0.250f);//show top for 0.5
 
-            secondCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, secondCardSlot.transform.forward);
+            secondCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.forward);
             secondCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.forward);
             
 

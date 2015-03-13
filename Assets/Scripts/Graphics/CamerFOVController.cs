@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CamerFOVController : MonoBehaviour {
+public class CamerFOVController : MonoBehaviour
+{
 
+    public MainGame MainGameInstance;
     public AnimationCurve RelationshipBetweenSideAndTopFOV;
     public float AdditionalMindistance = 10;
+    public Color BlackSideFog;
+    public Color WhiteSideFog;
     private Camera[] _cams;
     private MainGame _game;
 
@@ -32,9 +36,9 @@ public class CamerFOVController : MonoBehaviour {
 	    }
         transform.localPosition = Vector3.back * (Mathf.Lerp(MinorDistance, MajorDistance, 1f - dot) + AdditionalMindistance);
 
-	    float dotLR = Vector3.Dot(Vector3.right, transform.forward);
-	    dotLR = (dotLR*0.5f + 1.0f)/2f;
-	    RenderSettings.fogColor = Color.Lerp(Color.black, Color.white, dotLR);
+        float dotLR = Vector3.Dot(MainGameInstance.transform.forward, transform.forward);
+	    dotLR = (dotLR + 1.0f)/2f;
+        RenderSettings.fogColor = Color.Lerp(BlackSideFog, WhiteSideFog, dotLR);
 
 	    
 	}

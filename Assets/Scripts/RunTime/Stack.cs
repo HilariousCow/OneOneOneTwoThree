@@ -136,14 +136,17 @@ public class Stack : MonoBehaviour {
 
         float centerOfScreen = Mathf.Clamp01(Vector3.Dot(Camera.main.transform.forward,
                                            (transform.position - Camera.main.transform.position).normalized));
-        float rotateSpeed = Mathf.SmoothStep(0.0f, 360.0f, centerOfScreen * centerOfScreen);
+        float rotateSpeed = 180.0f;
+        float cosSpeed = rotateSpeed * (Mathf.Cos(Time.time*Mathf.PI) + 1.0f) * 0.5f;
+        float sinSpeed =  rotateSpeed * (Mathf.Sin(Time.time*Mathf.PI) + 1.0f) * 0.5f;
+
         //todo: this should be done in the stack. get IT to trigger animations.
 
         //flip stack
         if (_cardSoRef.FlipStack)
         {
             transform.localRotation = transform.localRotation *
-                                                    Quaternion.AngleAxis(Time.deltaTime * rotateSpeed, Vector3.forward);
+                                                    Quaternion.AngleAxis(Time.deltaTime * sinSpeed, Vector3.forward);
             //_stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);    
         }
 
@@ -151,28 +154,25 @@ public class Stack : MonoBehaviour {
         if (_cardSoRef.ReverseStack)
         {
 
-            Vector3 dir = Quaternion.AngleAxis(Time.time * 60f, Vector3.forward)*Vector3.right;
+            Vector3 dir = Quaternion.AngleAxis(Time.time * rotateSpeed , Vector3.forward) * Vector3.right;
 
             List<Token> _flippedOrNot = new List<Token>(_stackOfTokens);
-            if(Vector3.Dot(dir, Vector3.down) < 0.0f)
-            {
-                _flippedOrNot.Reverse();
-            }
-            _flippedOrNot.PositionAlongLineCentered(dir, 0.25f, Vector3.zero);
+           
+            _flippedOrNot.PositionAlongLineCentered(dir, 0.0f, Vector3.zero);
         }
 
 
         if (_cardSoRef.FlipTop )
         {
             _stackOfTokens[_stackOfTokens.Count - 1].transform.localRotation = _stackOfTokens[_stackOfTokens.Count - 1].transform.localRotation *
-                                                    Quaternion.AngleAxis(Time.deltaTime * rotateSpeed, Vector3.forward);
-            _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);
+                                                    Quaternion.AngleAxis(Time.deltaTime * sinSpeed, Vector3.forward);
+            _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.125f, Vector3.zero);
         }
         if (_cardSoRef.FlipBottom )
         {
             _stackOfTokens[0].transform.localRotation = _stackOfTokens[0].transform.localRotation *
-                                                    Quaternion.AngleAxis(Time.deltaTime * rotateSpeed, Vector3.forward);
-            _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);    
+                                                    Quaternion.AngleAxis(Time.deltaTime * sinSpeed, Vector3.forward);
+            _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.125f, Vector3.zero);    
         }
 
         //void
