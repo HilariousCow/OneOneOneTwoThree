@@ -143,6 +143,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
                 
             }
 
+            yield return new WaitForSeconds(1f);
+
             //are all sides the same?
             TokenSide firstSide = sides.PeekFront();
             if(sides.Count(x=>x == firstSide) == sides.Count)
@@ -169,6 +171,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
     {
         Debug.Log("Winner Is: " + winner.ToString());
 
+        Application.LoadLevel(0);
     }
 
     
