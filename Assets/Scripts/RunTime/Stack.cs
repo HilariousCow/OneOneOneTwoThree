@@ -78,6 +78,8 @@ public class Stack : MonoBehaviour {
                 token.Flip();
             }
         }
+        _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.125f, Vector3.zero);
+
     }
 
     private List<Token> GetBottomGroup()
