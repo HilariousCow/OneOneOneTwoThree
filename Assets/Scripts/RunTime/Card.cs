@@ -37,8 +37,8 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 	    _playerSoRef = playerSo;
 	    _rend = renderer;
 
-	    RedrawCard.material = playerSo.CardMaterial;
-        _rend.material = playerSo.CardMaterialRedraw;
+        RedrawCard.material = _playerSoRef.CardMaterial;
+        _rend.material = _playerSoRef.CardMaterialRedraw;
 
 	    _col = collider;
 

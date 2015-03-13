@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
@@ -7,7 +8,8 @@ using UnityEngine.EventSystems;
 public class MainGame : MonoBehaviour, IDropCardOnCardSlot
 {
     public MatchSettingsSO MatchToUseDefault;
-  
+    
+
     public Hand HandPrefab;//hands are effectively "the player"
     public Card CardPrefab;
     public Stack StackPrefab;
@@ -34,11 +36,11 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
 
     void Start()
     {
-        StartCoroutine("WaitForAllCommitSlotsToBeFull");
+        StartCoroutine("LoopPhase");
         
     }
 
-    IEnumerator WaitForAllCommitSlotsToBeFull()
+    IEnumerator LoopPhase()
     {
         Debug.LogWarning("Watching for all slots to be filled");
         bool all = (_allCommitCardSlots.FindAll(x => !x.IsEmpty).Count == _allCommitCardSlots.Count);
@@ -50,48 +52,103 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
         }
 
         Debug.LogWarning("All slots filled, resolving gameplay");
+
+        yield return new WaitForSeconds(1f);
+
+
         foreach (Stack stack in _stacks)
         {
             //find whose is applied first for this stack
-            TokenSide side = stack.GetTopTokenSide();
-            
-
-
-
+            TokenSide currentTop = stack.GetTopTokenSide();
             List<CardSlot> slotsForStack = new List<CardSlot>(_stacksToSlots[stack] );
 
             //todo: extract token side orders. yeah. much nicer. but how will black/white determin multiple players? arhgh.
             //so, big assumptions here.
 
-
-            CardSlot firstCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide == side);
-
+            CardSlot firstCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide == currentTop);
             Card firstCard = firstCardSlot.RemoveCardFromSlot();
-
+            Debug.Log("Removing first card" + firstCard.gameObject.name + " from slot: " + firstCardSlot.gameObject.name);
             stack.ApplyCardToStack(firstCard);
-            slotsForStack.Remove(firstCardSlot);
+            
+            yield return new WaitForSeconds(0.5f);
 
-            CardSlot secondCardSlot = slotsForStack.Peek();//whatever is left
+            CardSlot secondCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide != currentTop);
             Card secondCard = secondCardSlot.RemoveCardFromSlot();
+            Debug.Log("Removing second card" + secondCard.gameObject.name + " from slot: " + secondCardSlot.gameObject.name);
 
             stack.ApplyCardToStack(secondCard);
-            slotsForStack.Remove(secondCardSlot);
 
-            if(stack.GetTopTokenSide() == firstCard.PlayerSoRef.DesiredTokenSide)
+            yield return new WaitForSeconds(0.5f);
+           
+            _scoreHand.AddRound(stack, firstCard, secondCard);
+          
+
+        }
+        if (_scoreHand.FinishedRound)
+        {
+            StartCoroutine("ResolutionPhase");
+        }
+        else
+        {
+            StartCoroutine("LoopPhase");//go again.    
+        }
+
+        
+
+    }
+
+    IEnumerator ResolutionPhase()
+    {
+        yield return new WaitForSeconds(1f);
+        if(_scoreHand.GameIsATie)
+        {
+            Debug.Log("Game is a draw");
+            List<TokenSide> sides = new List<TokenSide>();
+            foreach (Stack stack in _stacks)
             {
-                _scoreHand.AddRound(stack, firstCard, secondCard);
+                Card tieBreaker = transform.InstantiateChild(CardPrefab);
+                tieBreaker.Init(_matchSettings.TieBreakerCard, _matchSettings.StackStyle, _matchSettings.TieBreakerPlayer);
+
+                stack.ApplyCardToStack(tieBreaker);
+               
+
+                
+                
+                Destroy(tieBreaker.gameObject);
+                //find whose is applied first for this stack
+                sides.Add(stack.GetTopTokenSide());
+                
+            }
+
+            //are all sides the same?
+            TokenSide firstSide = sides.PeekFront();
+            if(sides.Count(x=>x == firstSide) == sides.Count)
+            {
+                DeclareWinner(firstSide);
             }
             else
             {
-                _scoreHand.AddRound(stack, secondCard, firstCard);
+                //now what?
             }
 
         }
+        else
+        {
+            
+            List<KeyValuePair<Hand, int>> sortedDict = (from entry in _scoreHand.TotalledScores orderby entry.Value descending select entry).ToList();
+            DeclareWinner(sortedDict.PeekFront().Key.PlayerSoRef.DesiredTokenSide);
 
+        }
+    }
 
-        StartCoroutine("WaitForAllCommitSlotsToBeFull");//go again.
+    private void DeclareWinner(TokenSide winner)
+    {
+        Debug.Log("Winner Is: " + winner.ToString());
 
     }
+
+    
+
     public void Init(MatchSettingsSO matchSettings)
     {
         _matchSettings = matchSettings;
@@ -136,7 +193,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
             {
                 
                 CardSlot commitSlot = stack.transform.InstantiateChild(CardSlotPrefab);
-                commitSlot.name = stack.gameObject.name + " slot for " + hand.gameObject.name;
+                commitSlot.name = "Commit slot for " + hand.gameObject.name;
                 playSlotsForPlayer.Add(commitSlot);
                 _slotsToHands.Add(commitSlot, hand);
                 _allCommitCardSlots.Add(commitSlot);
@@ -162,9 +219,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
 
 
 
-        //spawn score hand
-        _scoreHand = transform.InstantiateChild(ScoreHandPrefab);
-        _scoreHand.Init(_hands, _matchSettings);
+       
 
         
         //POSITIONING OF ROOT ELEMENTS
@@ -179,6 +234,10 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
             hand.transform.position = hand.transform.position.SinCosY(frac) * bounds.size.x;
             hand.transform.LookAt(Vector3.zero, Vector3.up);
         }
+
+        //spawn score hand
+        _scoreHand = transform.InstantiateChild(ScoreHandPrefab);
+        _scoreHand.Init(_hands, _matchSettings);
 
         //spawn cards but don't put them anywhere or maybe put them on the score hand
 
