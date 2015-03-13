@@ -97,7 +97,7 @@ public class ScoreHand : MonoBehaviour
 
 
         _roundScoresPerHand[firstHand][roundNumber].AddCardToSlot(firstCard);
-        _roundScoresPerHand[secondHand][roundNumber].AddCardToSlot(firstCard);
+        _roundScoresPerHand[secondHand][roundNumber].AddCardToSlot(secondCard);
 
         if (stack.GetTopTokenSide() == firstCard.PlayerSoRef.DesiredTokenSide)
         {

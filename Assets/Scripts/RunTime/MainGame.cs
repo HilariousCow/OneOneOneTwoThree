@@ -81,11 +81,14 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
             yield return new WaitForSeconds(0.5f);
            
             _scoreHand.AddRound(stack, firstCard, secondCard);
-          
+
+            yield return new WaitForSeconds(0.5f);
 
         }
+
         if (_scoreHand.FinishedRound)
         {
+            Debug.Log("Starting new round");
             StartCoroutine("ResolutionPhase");
         }
         else
@@ -129,6 +132,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
             else
             {
                 //now what?
+                Debug.LogError("Don't know how to resolve tie for multi stack games");
             }
 
         }
