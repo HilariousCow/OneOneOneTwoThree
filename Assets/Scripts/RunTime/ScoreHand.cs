@@ -96,30 +96,39 @@ public class ScoreHand : MonoBehaviour
         Hand firstHand = _roundScoresPerHand.Keys.FirstOrDefault(x => x.PlayerSoRef == firstCard.PlayerSoRef);
         Hand secondHand = _roundScoresPerHand.Keys.FirstOrDefault(x => x.PlayerSoRef == secondCard.PlayerSoRef);
 
+        CardSlot firstSlot = _roundScoresPerHand[firstHand][roundNumber];
+        CardSlot secondSlot = _roundScoresPerHand[secondHand][roundNumber];
 
-        _roundScoresPerHand[firstHand][roundNumber].AddCardToSlot(firstCard);
-        _roundScoresPerHand[secondHand][roundNumber].AddCardToSlot(secondCard);
+        firstSlot.AddCardToSlot(firstCard);
+        secondSlot.AddCardToSlot(secondCard);
 
         if (stack.GetTopTokenSide() == firstCard.PlayerSoRef.DesiredTokenSide)
         {
             Debug.Log(firstCard.PlayerSoRef.name + " wins round " + (roundNumber + 1) + " for " + _roundScores[roundNumber] + "point(s)");
             _scores[firstHand][roundNumber] = _roundScores[roundNumber];//claim the points
 
-            firstCard.transform.localPosition = firstCard.transform.localPosition + Vector3.up * 0.125f;
-            //move card to reveal dots below
-            firstCard.transform.localPosition = firstCard.transform.localPosition +
-                                                Vector3.back*firstCard.transform.RenderBounds().size.z *
-                                                (float) _roundScores[roundNumber]/5f;
+            firstSlot.transform.position =
+                firstSlot.transform.position + Vector3.up * 0.125f;
+
+            firstSlot.transform.position =
+                firstSlot.transform.position +
+                Vector3.back*firstCard.transform.RenderBounds().size.z*
+                (float) _roundScores[roundNumber]/5f;
 
         }
         else
         {
             Debug.Log(secondCard.PlayerSoRef.name + " wins round " + (roundNumber+1) + " for " + _roundScores[roundNumber] + "point(s)");
-            secondCard.transform.localPosition = secondCard.transform.localPosition + Vector3.up*0.125f;
             _scores[secondHand][roundNumber] = _roundScores[roundNumber];//claim the points
-            secondCard.transform.localPosition = secondCard.transform.localPosition +
-                                                Vector3.back * secondCard.transform.RenderBounds().size.z *
-                                                (float)_roundScores[roundNumber] / 5f;
+
+            secondSlot.transform.position =
+               secondSlot.transform.position + Vector3.up * 0.125f;
+
+            secondSlot.transform.position =
+                secondSlot.transform.position +
+                Vector3.back * firstCard.transform.RenderBounds().size.z *
+                (float)_roundScores[roundNumber] / 5f;
+
         }
 
 

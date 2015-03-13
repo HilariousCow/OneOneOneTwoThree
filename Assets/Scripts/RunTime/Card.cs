@@ -73,7 +73,7 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 
         if (Application.isEditor)
         {
-            if ((!CardSoRef.FlipBottom && !CardSoRef.FlipTop && !CardSoRef.ReverseStack) //if "nothing"
+            if ((!CardSoRef.FlipBottom && !CardSoRef.FlipTop && !CardSoRef.ReverseStack && !CardSoRef.FlipStack) //if "nothing"
                 || _playPreview)
             {
                 _previewStack.PlayOperationAnimation(CardSoRef);
@@ -86,8 +86,40 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
             
         }
 
+        //todo: is dragging
+        if(_col.enabled == false)
+        {
 
 
+            Vector3 delta = transform.TransformPoint(_clickOriginOffset) - Camera.main.transform.position;
+
+            
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+
+            transform.position = Camera.main.transform.position + ray.direction * (_startDifferenceToCamera.magnitude);
+
+            
+
+
+            Quaternion targetRot = Camera.main.transform.rotation * Quaternion.AngleAxis(90f, Vector3.right);
+            float angle = Quaternion.Angle(transform.rotation, targetRot) / 180.0f;
+
+
+
+
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, Time.deltaTime * 500f * angle);
+        }
+        else
+        {
+            //always try to move to your home position
+            transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero,
+                                                          transform.localPosition.magnitude*Time.deltaTime * 5f);
+
+            Quaternion targetRot = Quaternion.identity;
+            float angle = Quaternion.Angle(transform.rotation, targetRot) / 180.0f;
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRot, Time.deltaTime *  angle * 5f);
+        }
 
 
 
@@ -99,7 +131,10 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
     public void OnBeginDrag(PointerEventData eventData)
     {
        // Debug.Log("Beginning drag on" + gameObject.name);
-        _col.enabled = false;
+        _col.enabled = false;//this causes preview to stop playing
+
+        _playPreview = true;//...so
+
         _previousParentWhenDragging = transform.parent;
         transform.parent = null;
         _clickOriginOffset = transform.InverseTransformPoint(eventData.worldPosition);
@@ -124,7 +159,7 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
         transform.position = eventData.pressEventCamera.transform.position + ray.direction * (_startDifferenceToCamera.magnitude );
 
         //todo: rule breaking
-        transform.rotation = eventData.pressEventCamera.transform.rotation * Quaternion.AngleAxis(90f, Vector3.right);
+        
     }
 
     #endregion
@@ -150,7 +185,7 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
         else if (transform.parent == null)//still no parent, meaning it didn't find a home, meaning it should snap back to where it came from
         {
             transform.parent = _previousParentWhenDragging;
-            transform.ResetToParent();
+            //transform.ResetToParent();
         }
 
         _previousParentWhenDragging = null;

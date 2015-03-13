@@ -68,31 +68,47 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
             //so, big assumptions here.
 
             CardSlot firstCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide == currentTop);
-            Card firstCard = firstCardSlot.RemoveCardFromSlot();
+            Card firstCard = firstCardSlot.Card;
             Debug.Log("Showing first card" + firstCard.gameObject.name + " from slot: " + firstCardSlot.gameObject.name);
-            firstCard.transform.rotation *= Quaternion.AngleAxis(180f, firstCardSlot.transform.forward);
-            firstCard.transform.position = firstCardSlot.transform.position + Vector3.up * 0.5f;
-            yield return new WaitForSeconds(0.5f);//show top for 0.5
-            firstCard.transform.position = firstCardSlot.transform.position;
-            yield return new WaitForSeconds(0.5f);//show top for 0.5
             
+            firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, firstCardSlot.transform.forward);
+            firstCard.transform.localRotation *= Quaternion.AngleAxis(180f, Vector3.forward);
+            
+            yield return new WaitForSeconds(1.0f);//show top for 0.5
+
             stack.ApplyCardToStack(firstCard);
+
+            firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, firstCardSlot.transform.forward);
+            firstCard.transform.localRotation *= Quaternion.AngleAxis(180f, Vector3.forward);
             
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(1.5f);//show top for 0.5
+            
+            
+            
 
             CardSlot secondCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide != currentTop);
-            Card secondCard = secondCardSlot.RemoveCardFromSlot();
+            Card secondCard = secondCardSlot.Card;
             Debug.Log("Showing second card" + secondCard.gameObject.name + " from slot: " + secondCardSlot.gameObject.name);
-            secondCard.transform.rotation *= Quaternion.AngleAxis(180f, secondCardSlot.transform.forward);
-            secondCard.transform.position = secondCardSlot.transform.position + Vector3.up*0.5f;
-            yield return new WaitForSeconds(0.5f);//show top for 0.5
-            secondCard.transform.position = secondCardSlot.transform.position ;
-            yield return new WaitForSeconds(0.5f);//show top for 0.5
             
+
+            secondCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, secondCardSlot.transform.right);
+            secondCard.transform.localRotation *= Quaternion.AngleAxis(180f, Vector3.forward);
+            
+            
+            yield return new WaitForSeconds(1.0f);//show top for 0.5
             stack.ApplyCardToStack(secondCard);
 
-            yield return new WaitForSeconds(0.5f);
-           
+            secondCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, secondCardSlot.transform.right);
+            secondCard.transform.localRotation *= Quaternion.AngleAxis(180f, Vector3.forward);
+            
+
+            yield return new WaitForSeconds(1.5f);//show top for 0.5
+            
+            
+
+
+            firstCardSlot.RemoveCardFromSlot();
+            secondCardSlot.RemoveCardFromSlot();
             _scoreHand.AddRound(stack, firstCard, secondCard);
 
             yield return new WaitForSeconds(0.5f);

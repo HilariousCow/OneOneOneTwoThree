@@ -116,6 +116,11 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 
     public void DroppedCardOnCardSlot(Card displacingCard, CardSlot targetSlot, CardSlot previousSlot)
     {
+        if(displacingCard.PlayerSoRef != PlayerSoRef)
+        {
+            return;
+        }
+
         if(!_slots.Contains(previousSlot))
         {
             previousSlot.RemoveCardFromSlot();

@@ -23,7 +23,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
 	    _card = card;
 	    Card.transform.parent = transform;
-        Card.transform.ResetToParent();
+        //Card.transform.ResetToParent();
 	}
 
     public Card RemoveCardFromSlot()
