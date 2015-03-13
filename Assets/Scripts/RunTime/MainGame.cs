@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
 //override for different game rules.
-public class MainGame : MonoBehaviour, IDropCardOnCardSlot
+public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 {
     public MatchSettingsSO MatchToUseDefault;
     
@@ -72,16 +72,17 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
             Debug.Log("Showing first card" + firstCard.gameObject.name + " from slot: " + firstCardSlot.gameObject.name);
             
             firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, firstCardSlot.transform.forward);
-            firstCard.transform.localRotation *= Quaternion.AngleAxis(180f, Vector3.forward);
+            firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.forward);
             
             yield return new WaitForSeconds(1.0f);//show top for 0.5
 
             stack.ApplyCardToStack(firstCard);
+            yield return new WaitForSeconds(0.250f);//show top for 0.5
 
             firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, firstCardSlot.transform.forward);
-            firstCard.transform.localRotation *= Quaternion.AngleAxis(180f, Vector3.forward);
+            firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.forward);
             
-            yield return new WaitForSeconds(1.5f);//show top for 0.5
+            yield return new WaitForSeconds(1.0f);//show top for 0.5
             
             
             
@@ -89,17 +90,18 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
             CardSlot secondCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide != currentTop);
             Card secondCard = secondCardSlot.Card;
             Debug.Log("Showing second card" + secondCard.gameObject.name + " from slot: " + secondCardSlot.gameObject.name);
-            
 
-            secondCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, secondCardSlot.transform.right);
-            secondCard.transform.localRotation *= Quaternion.AngleAxis(180f, Vector3.forward);
+
+            secondCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, secondCardSlot.transform.forward);
+            secondCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.forward);
             
             
             yield return new WaitForSeconds(1.0f);//show top for 0.5
             stack.ApplyCardToStack(secondCard);
+            yield return new WaitForSeconds(0.250f);//show top for 0.5
 
-            secondCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, secondCardSlot.transform.right);
-            secondCard.transform.localRotation *= Quaternion.AngleAxis(180f, Vector3.forward);
+            secondCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, secondCardSlot.transform.forward);
+            secondCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.forward);
             
 
             yield return new WaitForSeconds(1.5f);//show top for 0.5
@@ -219,6 +221,11 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
             hand.Init(playerSo, _matchSettings);
 
             _hands.Add(hand);
+
+            foreach (CardSlot handSlot in hand.Slots)
+            {
+                _slotsToHands.Add(handSlot, hand);
+            }
 
             //spawn cards
             List<Card> cardsForThisHand = new List<Card>();
@@ -371,4 +378,50 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot
         }
         //else, let it snap back. clean itself up
     }
+
+    public void ClickedOnCard(Card card)
+    {
+        CardSlot clickedSlot = card.transform.parent.GetComponent<CardSlot>();
+        if(clickedSlot!=null)
+        {
+            Hand hand = _hands.FirstOrDefault(x => x.Slots.Contains(clickedSlot));
+            if (hand != null)
+            {
+                List<CardSlot> emptyCommitSlots = _handsToPlaySlots[hand].Where(x => x.IsEmpty).ToList();
+                if (emptyCommitSlots.Count > 0)
+                {
+                    foreach (CardSlot commitSlot in emptyCommitSlots)
+                    {
+                        commitSlot.AddCardToSlot(clickedSlot.RemoveCardFromSlot());
+                        break;
+                    }
+                }
+                else
+                {
+                    Debug.Log("swapping out cards");
+                    CardSlot targetSlot = _handsToPlaySlots[hand][0];
+
+                    Card clickedCard = clickedSlot.RemoveCardFromSlot();
+                    Card swapOut = targetSlot.RemoveCardFromSlot();
+
+                    targetSlot.AddCardToSlot(clickedCard);
+                    clickedSlot.AddCardToSlot(swapOut);
+
+                }
+            }
+
+            if (_allCommitCardSlots.Contains(clickedSlot))
+            {
+                //logically, hands will always have an empty slot if you are clicking on a card from a 
+                //commit slot
+                Card swap = clickedSlot.RemoveCardFromSlot();
+                _slotsToHands[clickedSlot].AddCardToHand(swap);
+            }
+        }
+
+        
+
+    }
+
+   
 }

@@ -18,6 +18,11 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
         get { return _playerSoRef; }
     }
 
+    public List<CardSlot> Slots
+    {
+        get { return _slots; }
+    }
+
     // Use this for initialization
 	void Start ()
 	{
@@ -35,11 +40,11 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
         {
             CardSlot slot = transform.InstantiateChild(CardSlotPrefab);
             slot.name = gameObject.name + "_Hand";
-            _slots.Add(slot);
+            Slots.Add(slot);
         }
 
         //do a reorganize here.
-        _slots.PositionAlongLineCentered(Vector3.right, Gap, Vector3.zero);
+        Slots.PositionAlongLineCentered(Vector3.right, Gap, Vector3.zero);
 
         //added a renderer just in case. hopefully it being unenabled doesn't mean it doesn't have render bounds
     }
@@ -48,13 +53,13 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
     internal void AddCardToHand(Card card)
     {
 
-        CardSlot oldItemSlot = _slots.FirstOrDefault(x => x.Card == card);
+        CardSlot oldItemSlot = Slots.FirstOrDefault(x => x.Card == card);
 
         if (oldItemSlot != null)
         { //was already in a slot
             oldItemSlot.RemoveCardFromSlot();//free it up
         }
-        List<CardSlot> closest = new List<CardSlot>(from CardSlot slot in _slots
+        List<CardSlot> closest = new List<CardSlot>(from CardSlot slot in Slots
                                                     orderby (slot.transform.position - card.transform.position).sqrMagnitude ascending
                                                     select slot);
 
@@ -85,7 +90,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 	void Update () {
 
 
-	    foreach (var cardSlot in _slots)
+	    foreach (var cardSlot in Slots)
 	    {
             Quaternion faceDownRotation = Quaternion.identity;
 	        Quaternion targetRotation = Quaternion.AngleAxis(-90f, Vector3.right);// *;
@@ -106,7 +111,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 
     internal void RemoveCardFromHand(Card displacingCard)
     {
-        CardSlot oldItemSlot = _slots.FirstOrDefault(x => x.Card == displacingCard);
+        CardSlot oldItemSlot = Slots.FirstOrDefault(x => x.Card == displacingCard);
 
         if(oldItemSlot!=null)
         {
@@ -121,7 +126,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
             return;
         }
 
-        if(!_slots.Contains(previousSlot))
+        if(!Slots.Contains(previousSlot))
         {
             previousSlot.RemoveCardFromSlot();
         }
@@ -136,6 +141,11 @@ namespace UnityEngine.EventSystems
     public interface IDropCardOnCardSlot : IEventSystemHandler
     {
         void DroppedCardOnCardSlot(Card displacingCard, CardSlot targetSlot, CardSlot previousSlot);
+    }
+
+    public interface IPointerClickOnCard : IEventSystemHandler
+    {
+        void ClickedOnCard(Card card);
     }
 
 }

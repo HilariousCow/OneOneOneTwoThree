@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 
-public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
+public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
 {
     public Stack StackPrefab;
     public Renderer RedrawCard;
@@ -99,16 +99,18 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
 
             transform.position = Camera.main.transform.position + ray.direction * (_startDifferenceToCamera.magnitude);
 
-            
-
-
-            Quaternion targetRot = Camera.main.transform.rotation * Quaternion.AngleAxis(90f, Vector3.right);
-            float angle = Quaternion.Angle(transform.rotation, targetRot) / 180.0f;
 
 
 
+            Quaternion targetRot = Quaternion.LookRotation(Camera.main.transform.forward, Vector3.up) * Quaternion.AngleAxis(90f, Vector3.right);
+            float angle = Quaternion.Angle(transform.rotation, targetRot) ;
 
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, Time.deltaTime * 500f * angle);
+
+
+            if (angle > 0.0f)
+            {
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, Time.deltaTime*5f*angle);
+            }
         }
         else
         {
@@ -117,8 +119,11 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
                                                           transform.localPosition.magnitude*Time.deltaTime * 5f);
 
             Quaternion targetRot = Quaternion.identity;
-            float angle = Quaternion.Angle(transform.rotation, targetRot) / 180.0f;
-            transform.localRotation = Quaternion.Slerp(transform.localRotation, targetRot, Time.deltaTime *  angle * 5f);
+            float angle = Quaternion.Angle(transform.rotation, targetRot) ;
+            if (angle > 0.0f)
+            {
+                transform.localRotation = Quaternion.RotateTowards(transform.localRotation, targetRot, Time.deltaTime * angle * 5f);
+            }
         }
 
 
@@ -151,13 +156,13 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
     {
       //  
 
-        Vector3 delta = transform.TransformPoint(_clickOriginOffset) - eventData.pressEventCamera.transform.position;
+       /* Vector3 delta = transform.TransformPoint(_clickOriginOffset) - eventData.pressEventCamera.transform.position;
 
         Ray ray = eventData.pressEventCamera.ScreenPointToRay(eventData.position);
 
 
         transform.position = eventData.pressEventCamera.transform.position + ray.direction * (_startDifferenceToCamera.magnitude );
-
+        */
         //todo: rule breaking
         
     }
@@ -214,4 +219,6 @@ public class Card : MonoBehaviour , IBeginDragHandler, IDragHandler, IEndDragHan
     {
         _playPreview = false;
     }
+
+   
 }
