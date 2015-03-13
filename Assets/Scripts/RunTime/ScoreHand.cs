@@ -112,7 +112,7 @@ public class ScoreHand : MonoBehaviour
 
             firstSlot.transform.position =
                 firstSlot.transform.position +
-                Vector3.back*firstCard.transform.RenderBounds().size.z*
+                -firstSlot.transform.forward * firstCard.transform.RenderBounds().size.z *
                 (float) _roundScores[roundNumber]/5f;
 
         }
@@ -126,7 +126,7 @@ public class ScoreHand : MonoBehaviour
 
             secondSlot.transform.position =
                 secondSlot.transform.position +
-                Vector3.back * firstCard.transform.RenderBounds().size.z *
+                -secondSlot.transform.forward * firstCard.transform.RenderBounds().size.z *
                 (float)_roundScores[roundNumber] / 5f;
 
         }
