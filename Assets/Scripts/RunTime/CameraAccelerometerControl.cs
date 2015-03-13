@@ -15,7 +15,7 @@ public class CameraAccelerometerControl : MonoBehaviour {
 	    Input.gyro.enabled = true;
 	    LockGyroYaw();
 	    startRotation = Quaternion.AngleAxis(90f, Vector3.right);
-        WebCamDevice[] devices = WebCamTexture.devices;
+    /*    WebCamDevice[] devices = WebCamTexture.devices;
 
 	    if (devices.Length > 0) {
 		    webCamTexture =new WebCamTexture(320, 240, 12);
@@ -25,9 +25,10 @@ public class CameraAccelerometerControl : MonoBehaviour {
 		    Debug.LogError("No webcam devices found");
 	    }
 
-	    _webCamRenderer.enabled = false;
+	    _webCamRenderer.enabled = false;*/
 
-#if UNITY_WEBPLAYER
+        /*
+#if UNITY_WEBPLAYER 
         yield return Application.RequestUserAuthorization(UserAuthorization.WebCam );
         if (Application.HasUserAuthorization(UserAuthorization.WebCam))
         {
@@ -35,9 +36,9 @@ public class CameraAccelerometerControl : MonoBehaviour {
         else
         {
         }
-#else
-	    yield return null;
-#endif
+#else*/
+	    yield return null;/*
+#endif*/
 	}
 
     private void LockGyroYaw()
@@ -51,7 +52,7 @@ public class CameraAccelerometerControl : MonoBehaviour {
 	void Update ()
 	{
         
-        if(Input.GetMouseButtonDown(0))
+    /*    if(Input.GetMouseButtonDown(0))
         {
             
 
@@ -71,7 +72,7 @@ public class CameraAccelerometerControl : MonoBehaviour {
                 _webCamRenderer.enabled = false;
              //   webCamTexture.Stop();
             }
-        }
+        }*/
         if(Input.GetMouseButton(0))
         {
             

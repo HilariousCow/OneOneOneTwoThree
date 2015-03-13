@@ -9,7 +9,7 @@
 			
 			Cull Back
 			
-			ZWrite Off
+			ZWrite On
 			ZTest LEqual
 			//Offset -100,-100
 			Blend SrcAlpha OneMinusSrcAlpha
