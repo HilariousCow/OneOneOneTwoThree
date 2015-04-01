@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,11 +24,13 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     private List<Stack> _stacks;//all cards
     private ScoreHand _scoreHand;
 
+    private Dictionary<Hand, List<CardSlot>> _handsToJailCards;//not always used
     private Dictionary<Hand,List<CardSlot>> _handsToPlaySlots;
     private Dictionary<CardSlot, Hand> _slotsToHands;
 
     private Dictionary<Stack, List<CardSlot>> _stacksToSlots;
     private List<CardSlot> _allCommitCardSlots;
+    private List<CardSlot> _allJailCardSlots;
 
     void Awake()
     {
@@ -36,8 +39,34 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     void Start()
     {
+        StartCoroutine("IntroPhase");
+    }
+
+    IEnumerator IntroPhase()
+    {
+        //randomize stack
+        yield return null;
+        //see if we need the tie breaker intro
+        switch (_matchSettings.TieBreaker)
+        {
+            case TieBreakerStyle.FlipStack:
+                break;
+            case TieBreakerStyle.UseJailCards:
+                bool all = (_allJailCardSlots.FindAll(x => !x.IsEmpty).Count == _allJailCardSlots.Count);
+                bool pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
+                while (!all || !pointDownMosty)
+                {
+
+                    yield return null;
+                    pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
+                    all = (_allJailCardSlots.FindAll(x => !x.IsEmpty).Count == _allJailCardSlots.Count);
+                }
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
         StartCoroutine("LoopPhase");
-        
+       
     }
 
     IEnumerator LoopPhase()
@@ -69,7 +98,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             //so, big assumptions here.
 
             CardSlot firstCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide == currentTop);
-            Card firstCard = firstCardSlot.Card;
+            Card firstCard = firstCardSlot.CardInSlot;
             Debug.Log("Showing first card" + firstCard.gameObject.name + " from slot: " + firstCardSlot.gameObject.name);
 
             firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.forward);
@@ -89,7 +118,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             
 
             CardSlot secondCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide != currentTop);
-            Card secondCard = secondCardSlot.Card;
+            Card secondCard = secondCardSlot.CardInSlot;
             Debug.Log("Showing second card" + secondCard.gameObject.name + " from slot: " + secondCardSlot.gameObject.name);
 
 
@@ -138,42 +167,49 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         yield return new WaitForSeconds(1f);
         if(_scoreHand.GameIsATie)
         {
-            Debug.Log("Game is a draw");
-            List<TokenSide> sides = new List<TokenSide>();
-            foreach (Stack stack in _stacks)
+            if (_matchSettings.TieBreaker == TieBreakerStyle.FlipStack)
             {
-                Card tieBreaker = transform.InstantiateChild(CardPrefab);
-                tieBreaker.Init(_matchSettings.TieBreakerCard, _matchSettings.StackStyle, _matchSettings.TieBreakerPlayer);
-                yield return new WaitForSeconds(0.5f);
-                tieBreaker.transform.position = Vector3.up*2f;
-                yield return new WaitForSeconds(0.5f);
-                tieBreaker.transform.rotation = tieBreaker.transform.rotation*
-                                                Quaternion.AngleAxis(180f, Vector3.forward);
-                yield return new WaitForSeconds(0.5f);
-                stack.ApplyCardToStack(tieBreaker);
-                yield return new WaitForSeconds(0.5f);
-               
+                Debug.Log("Game is a draw");
+                List<TokenSide> sides = new List<TokenSide>();
+                foreach (Stack stack in _stacks)
+                {
+                    Card tieBreaker = transform.InstantiateChild(CardPrefab);
+                    tieBreaker.Init(_matchSettings.TieBreakerCard, _matchSettings.StackStyle,
+                                    _matchSettings.TieBreakerPlayer);
+                    yield return new WaitForSeconds(0.5f);
+                    tieBreaker.transform.position = Vector3.up*2f;
+                    yield return new WaitForSeconds(0.5f);
+                    tieBreaker.transform.rotation = tieBreaker.transform.rotation*
+                                                    Quaternion.AngleAxis(180f, Vector3.forward);
+                    yield return new WaitForSeconds(0.5f);
+                    stack.ApplyCardToStack(tieBreaker);
+                    yield return new WaitForSeconds(0.5f);
 
-                
-                
-                Destroy(tieBreaker.gameObject);
-                //find whose is applied first for this stack
-                sides.Add(stack.GetTopTokenSide());
-                
+                    Destroy(tieBreaker.gameObject);
+                    //find whose is applied first for this stack
+                    sides.Add(stack.GetTopTokenSide());
+
+                }
+
+                yield return new WaitForSeconds(1f);
+
+                //are all sides the same?
+                TokenSide firstSide = sides.PeekFront();
+                if (sides.Count(x => x == firstSide) == sides.Count)
+                {
+                    DeclareWinner(firstSide);
+                }
+                else
+                {
+                    //now what?
+                    Debug.LogError("Don't know how to resolve tie for multi stack games");
+                }
             }
-
-            yield return new WaitForSeconds(1f);
-
-            //are all sides the same?
-            TokenSide firstSide = sides.PeekFront();
-            if(sides.Count(x=>x == firstSide) == sides.Count)
+            else if (_matchSettings.TieBreaker == TieBreakerStyle.UseJailCards)
             {
-                DeclareWinner(firstSide);
-            }
-            else
-            {
-                //now what?
-                Debug.LogError("Don't know how to resolve tie for multi stack games");
+                //get the last cards in the hand? or there's a slot for tie breaker cards
+
+
             }
 
         }
@@ -212,10 +248,16 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         //spawn hands
         _hands = new List<Hand>();
         _cards = new List<Card>();
+
+        _handsToJailCards = new Dictionary<Hand, List<CardSlot>>();
         _handsToPlaySlots = new Dictionary<Hand, List<CardSlot>>();
         _slotsToHands = new Dictionary<CardSlot, Hand>();
         _stacksToSlots = new Dictionary<Stack, List<CardSlot>>();
         _allCommitCardSlots = new List<CardSlot>();
+        _allJailCardSlots = new List<CardSlot>();
+
+
+
         foreach (PlayerSO playerSo in _matchSettings.Players)
         {
             Hand hand = transform.InstantiateChild(HandPrefab);
@@ -266,13 +308,25 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             }
 
             _cards.AddRange(cardsForThisHand);
+
+            if(_matchSettings.TieBreaker == TieBreakerStyle.UseJailCards)
+            {
+                CardSlot jailSlot = hand.transform.InstantiateChild(CardSlotPrefab);
+                jailSlot.name = "Jail slot for " + hand.gameObject.name;
+
+                if(!_handsToJailCards.ContainsKey(hand))
+                {
+
+                    _handsToJailCards.Add(hand, new List<CardSlot>());
+                }
+                _handsToJailCards[hand].Add(jailSlot);
+
+                jailSlot.transform.localPosition = Vector3.forward*2.5f;
+                _allJailCardSlots.Add(jailSlot);
+            }
         }
 
 
-
-       
-
-        
         //POSITIONING OF ROOT ELEMENTS
         //reposition hands around a circle
         for (int index = 0; index < _hands.Count; index++)
@@ -283,8 +337,16 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             Bounds bounds = hand.transform.RenderBounds();
 
             hand.transform.position = hand.transform.position.SinCosY(frac) * bounds.size.x;
+
+            
             hand.transform.LookAt(Vector3.zero, Vector3.up);
+
+
+            List<CardSlot> jailCards = _handsToJailCards[hand];
+            jailCards.PositionAlongLineCentered(Vector3.right, 0.5f, Vector3.up * 0.5f);
         }
+
+
 
         //spawn score hand
         _scoreHand = transform.InstantiateChild(ScoreHandPrefab);
@@ -297,7 +359,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         foreach (Stack stack in _stacks)
         {
             List<CardSlot> slots = _stacksToSlots[stack];
-            //slots.PositionAlongLineCentered(Vector3.right, 0.5f, Vector3.up * 0.5f);
+            slots.PositionAlongLineCentered(Vector3.right, 0.5f, Vector3.up * 0.5f);
             for (int index = 0; index < slots.Count; index++)
             {
                 float frac = index / (float)_hands.Count;
@@ -311,10 +373,6 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         }
        
-        
-        
-
-
 
         //begin match - call to initiate
 
@@ -388,10 +446,12 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             Hand hand = _hands.FirstOrDefault(x => x.Slots.Contains(clickedSlot));
             if (hand != null)
             {
-                List<CardSlot> emptyCommitSlots = _handsToPlaySlots[hand].Where(x => x.IsEmpty).ToList();
-                if (emptyCommitSlots.Count > 0)
+
+                List<CardSlot> emptyJailSlots = _handsToJailCards[hand].Where(x => x.IsEmpty).ToList();
+                if (emptyJailSlots.Count > 0)
                 {
-                    foreach (CardSlot commitSlot in emptyCommitSlots)
+                    //todo: continue from here. need to do the swap out stuff if in the right phase
+                    foreach (CardSlot commitSlot in emptyJailSlots)
                     {
                         commitSlot.AddCardToSlot(clickedSlot.RemoveCardFromSlot());
                         break;
@@ -399,15 +459,27 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 }
                 else
                 {
-                    Debug.Log("swapping out cards");
-                    CardSlot targetSlot = _handsToPlaySlots[hand][0];
+                    List<CardSlot> emptyCommitSlots = _handsToPlaySlots[hand].Where(x => x.IsEmpty).ToList();
+                    if (emptyCommitSlots.Count > 0)
+                    {
+                        foreach (CardSlot commitSlot in emptyCommitSlots)
+                        {
+                            commitSlot.AddCardToSlot(clickedSlot.RemoveCardFromSlot());
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("swapping out cards");
+                        CardSlot targetSlot = _handsToPlaySlots[hand][0];
 
-                    Card clickedCard = clickedSlot.RemoveCardFromSlot();
-                    Card swapOut = targetSlot.RemoveCardFromSlot();
+                        Card clickedCard = clickedSlot.RemoveCardFromSlot();
+                        Card swapOut = targetSlot.RemoveCardFromSlot();
 
-                    targetSlot.AddCardToSlot(clickedCard);
-                    clickedSlot.AddCardToSlot(swapOut);
+                        targetSlot.AddCardToSlot(clickedCard);
+                        clickedSlot.AddCardToSlot(swapOut);
 
+                    }
                 }
             }
 
@@ -419,10 +491,5 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 _slotsToHands[clickedSlot].AddCardToHand(swap);
             }
         }
-
-        
-
     }
-
-   
 }

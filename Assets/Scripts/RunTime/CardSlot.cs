@@ -5,32 +5,45 @@ using UnityEngine.EventSystems;
 //need to look at inventory code examples.
 public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
+
+    private bool _isInteractive = true;
     private Renderer _rend;
-    private Card _card;
+    private Card _cardInSlot;
     public bool IsEmpty
     {
-        get { return Card == null; }
+        get { return CardInSlot == null; }
     }
 
-    public Card Card
+    public Card CardInSlot
     {
-        get { return _card; }
+        get { return _cardInSlot; }
     }
+
+    public bool IsInteractive
+    {
+        get { return _isInteractive; }
+        set
+        {
+            _isInteractive = value;
+            if (CardInSlot != null)
+            {
+                CardInSlot.collider.enabled = value;
+            }
+        }
+    }
+
 
     public void AddCardToSlot(Card card)
 	{
-        
-
-	    _card = card;
-	    Card.transform.parent = transform;
-        //Card.transform.ResetToParent();
+	    _cardInSlot = card;
+	    CardInSlot.transform.parent = transform;
 	}
 
     public Card RemoveCardFromSlot()
     {
-        Card removeMe = Card;
+        Card removeMe = CardInSlot;
         removeMe.transform.parent = null;
-        _card = null;
+        _cardInSlot = null;
         return removeMe;
     }
 
@@ -48,6 +61,8 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                     null,
                     (x, y) => x.DroppedCardOnCardSlot(card, this, card.GetSlotOwner())
                     );
+
+                if (!IsInteractive) card.CachedCollider.enabled = false;
             }
         }
     }
@@ -68,12 +83,12 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (Card != null)
+        if (CardInSlot != null)
         {
             ExecuteEvents.ExecuteHierarchy<IPointerClickOnCard>(
                 transform.parent.gameObject,
                 null,
-                (x, y) => x.ClickedOnCard(Card)
+                (x, y) => x.ClickedOnCard(CardInSlot)
                 );
         }
     }

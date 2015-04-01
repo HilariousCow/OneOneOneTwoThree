@@ -13,12 +13,12 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     private Renderer _rend;
     private Collider _col;
     private Camera _cam;
-    
+    private bool _isDragging;
     //drag behaviours
     private Transform _previousParentWhenDragging;
     private Vector3 _clickOriginOffset = Vector3.zero;
     private Vector3 _startDifferenceToCamera = Vector3.zero;
-    private bool _playPreview = false;
+    private bool _hoverOver = false;
     public PlayerSO PlayerSoRef
     {
         get { return _playerSoRef; }
@@ -30,9 +30,14 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
        
     }
 
+    public Collider CachedCollider
+    {
+        get { return _col; }
+    }
+
     public void Init(CardSO cardSo, StackSO stackSo, PlayerSO playerSo)
 	{
-	    gameObject.name = "Card:"+cardSo.name;
+	    gameObject.name = "CardInSlot:"+cardSo.name;
         _cardSoRef = cardSo;
 	    _playerSoRef = playerSo;
 	    _rend = renderer;
@@ -41,7 +46,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         _rend.material = _playerSoRef.CardMaterialRedraw;
 
 	    _col = collider;
-
+        _isDragging = false;
 	    _cam = Camera.main;
 
         //this is to fake the void, but maybe void should just set its scale zero.
@@ -74,7 +79,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
       /*  if (Application.isEditor)
         {
             if ((!CardSoRef.FlipBottom && !CardSoRef.FlipTop && !CardSoRef.ReverseStack && !CardSoRef.FlipStack) //if "nothing"
-                || _playPreview)
+                || _hoverOver)
             {
                 _previewStack.PlayOperationAnimation(CardSoRef);
             }
@@ -87,7 +92,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         }
 
         //todo: is dragging
-        if(_col.enabled == false)
+        if (_isDragging == true)
         {
 
 
@@ -138,9 +143,9 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     public void OnBeginDrag(PointerEventData eventData)
     {
        // Debug.Log("Beginning drag on" + gameObject.name);
-        _col.enabled = false;//this causes preview to stop playing
-
-        _playPreview = true;//...so
+        CachedCollider.enabled = false;//this causes preview to stop playing
+        _isDragging = true;
+        _hoverOver = true;//...so
 
         _previousParentWhenDragging = transform.parent;
         transform.parent = null;
@@ -177,7 +182,9 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     public void OnEndDrag(PointerEventData eventData)
     {
         _clickOriginOffset = Vector3.zero;
-        _col.enabled = true;
+        
+        _isDragging = false;
+
      //   Debug.Log("Ended Drag" + gameObject.name);
         //ExecuteEvents.ExecuteHierarchy<IRefreshView>(_previousOwner.gameObject, null, (x, y) => x.RefreshView());//todo
 
@@ -186,12 +193,13 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         {
             transform.SetParent(_previousParentWhenDragging);//redundant?
             transform.localPosition = Vector3.zero;
-
+            CachedCollider.enabled = true;
 
         }
         else if (transform.parent == null)//still no parent, meaning it didn't find a home, meaning it should snap back to where it came from
         {
             transform.parent = _previousParentWhenDragging;
+            CachedCollider.enabled = true;
             //transform.ResetToParent();
         }
 
@@ -214,12 +222,12 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        _playPreview = true;
+        _hoverOver = true;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        _playPreview = false;
+        _hoverOver = false;
     }
 
    

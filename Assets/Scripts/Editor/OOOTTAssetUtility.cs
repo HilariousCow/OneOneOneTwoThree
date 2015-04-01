@@ -22,7 +22,7 @@ public class OOOTTAssetUtility : AssetPostprocessor {
  
 
   
-    [MenuItem("Assets/Create/11123/Card")]
+    [MenuItem("Assets/Create/11123/CardInSlot")]
     public static void CreateCardAsset()
     {
         ScriptableObjectUtility.CreateAsset<CardSO>();

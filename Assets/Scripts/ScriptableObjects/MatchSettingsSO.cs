@@ -3,6 +3,12 @@ using System.Collections;
 
 using System.Collections.Generic;
 
+public enum TieBreakerStyle
+{
+    FlipStack,
+    UseJailCards
+}
+
 public class MatchSettingsSO : ScriptableObject
 {
 
@@ -15,6 +21,12 @@ public class MatchSettingsSO : ScriptableObject
 
     public List<PlayerSO> Players;
 
+
+    public TieBreakerStyle TieBreaker;
+
     public CardSO TieBreakerCard;
     public PlayerSO TieBreakerPlayer;//just necessary to spawn a card
+
+
+    
 }

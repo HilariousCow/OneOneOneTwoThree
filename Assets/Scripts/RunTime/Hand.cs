@@ -53,7 +53,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
     internal void AddCardToHand(Card card)
     {
 
-        CardSlot oldItemSlot = Slots.FirstOrDefault(x => x.Card == card);
+        CardSlot oldItemSlot = Slots.FirstOrDefault(x => x.CardInSlot == card);
 
         if (oldItemSlot != null)
         { //was already in a slot
@@ -89,6 +89,8 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 	// Update is called once per frame
 	void Update () {
 
+        //todo: move the entire anchor a bit toward the camera. need to stare base
+
 
 	    foreach (var cardSlot in Slots)
 	    {
@@ -111,7 +113,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 
     internal void RemoveCardFromHand(Card displacingCard)
     {
-        CardSlot oldItemSlot = Slots.FirstOrDefault(x => x.Card == displacingCard);
+        CardSlot oldItemSlot = Slots.FirstOrDefault(x => x.CardInSlot == displacingCard);
 
         if(oldItemSlot!=null)
         {
