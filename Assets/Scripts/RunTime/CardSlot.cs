@@ -83,6 +83,11 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (!IsInteractive)
+        {
+            //fail beep
+            return;
+        }
         if (CardInSlot != null)
         {
             ExecuteEvents.ExecuteHierarchy<IPointerClickOnCard>(

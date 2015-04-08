@@ -111,33 +111,28 @@ public class ScoreHand : MonoBehaviour
         if (stack.GetTopTokenSide() == firstCard.PlayerSoRef.DesiredTokenSide)
         {
             Debug.Log(firstCard.PlayerSoRef.name + " wins round " + (roundNumber + 1) + " for " + _roundScores[roundNumber] + "point(s)");
-            _scores[firstHand][roundNumber] = _roundScores[roundNumber];//claim the points
-
-            firstSlot.transform.position =
-                firstSlot.transform.position + Vector3.up * 0.125f;
-
-            firstSlot.transform.position =
-                firstSlot.transform.position +
-                -firstSlot.transform.forward * firstCard.transform.RenderBounds().size.z *
-                (float) _roundScores[roundNumber]/5f;
-
+            PositionWinningCard(firstCard, firstSlot, firstHand);
         }
         else
         {
             Debug.Log(secondCard.PlayerSoRef.name + " wins round " + (roundNumber+1) + " for " + _roundScores[roundNumber] + "point(s)");
-            _scores[secondHand][roundNumber] = _roundScores[roundNumber];//claim the points
-
-            secondSlot.transform.position =
-               secondSlot.transform.position + Vector3.up * 0.125f;
-
-            secondSlot.transform.position =
-                secondSlot.transform.position +
-                -secondSlot.transform.forward * firstCard.transform.RenderBounds().size.z *
-                (float)_roundScores[roundNumber] / 5f;
-
+            PositionWinningCard(secondCard, secondSlot, secondHand);
         }
 
 
         roundNumber++;
+    }
+
+    private void PositionWinningCard(Card firstCard, CardSlot firstSlot, Hand firstHand)
+    {
+        _scores[firstHand][roundNumber] = _roundScores[roundNumber]; //claim the points
+
+        firstSlot.transform.position =
+            firstSlot.transform.position + Vector3.up*0.125f;
+
+        firstSlot.transform.position =
+            firstSlot.transform.position +
+            -firstSlot.transform.forward*firstCard.transform.RenderBounds().size.z*
+            (float) _roundScores[roundNumber]/5f;
     }
 }

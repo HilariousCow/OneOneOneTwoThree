@@ -61,6 +61,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                     pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
                     all = (_allJailCardSlots.FindAll(x => !x.IsEmpty).Count == _allJailCardSlots.Count);
                 }
+                TurnOffJailSlotInteractivity();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -71,6 +72,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     IEnumerator LoopPhase()
     {
+        TurnOnSlotInteractivity();
         Debug.LogWarning("Watching for all slots to be filled");
         bool all = (_allCommitCardSlots.FindAll(x => !x.IsEmpty).Count == _allCommitCardSlots.Count);
         bool pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
@@ -81,6 +83,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
             all = (_allCommitCardSlots.FindAll(x => !x.IsEmpty).Count == _allCommitCardSlots.Count);
         }
+
+        TurnOffSlotInteractivity();
 
         Debug.LogWarning("All slots filled, resolving gameplay");
         //todo: lockout changes. focus camera, or have it above in the first place.
@@ -162,6 +166,38 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     }
 
+    private void TurnOnSlotInteractivity()
+    {
+        foreach (CardSlot slot in _allCommitCardSlots)
+        {
+            slot.IsInteractive = true;
+        }
+    }
+
+    private void TurnOffSlotInteractivity()
+    {
+        foreach (CardSlot slot in _allCommitCardSlots)
+        {
+            slot.IsInteractive = false;
+        }
+    }
+
+    private void TurnOnJailSlotInteractivity()
+    {
+        foreach (CardSlot slot in _allJailCardSlots)
+        {
+            slot.IsInteractive = true;
+        }
+    }
+
+    private void TurnOffJailSlotInteractivity()
+    {
+        foreach (CardSlot slot in _allJailCardSlots)
+        {
+            slot.IsInteractive = false;
+        }
+    }
+    
     IEnumerator ResolutionPhase()
     {
         yield return new WaitForSeconds(1f);
@@ -321,7 +357,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 }
                 _handsToJailCards[hand].Add(jailSlot);
 
-                jailSlot.transform.localPosition = Vector3.forward*2.5f;
+                
                 _allJailCardSlots.Add(jailSlot);
             }
         }
@@ -340,10 +376,15 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
             
             hand.transform.LookAt(Vector3.zero, Vector3.up);
+            
 
+            List<CardSlot> jailSlots = _handsToJailCards[hand];
+            jailSlots.PositionAlongLineCentered(Vector3.right, 0.5f, Vector3.up * 0.5f);
 
-            List<CardSlot> jailCards = _handsToJailCards[hand];
-            jailCards.PositionAlongLineCentered(Vector3.right, 0.5f, Vector3.up * 0.5f);
+            foreach (CardSlot jailCard in jailSlots)
+            {
+                jailCard.transform.localPosition = Vector3.forward * 10f;
+            }
         }
 
 
@@ -470,14 +511,24 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                     }
                     else
                     {
-                        Debug.Log("swapping out cards");
+                        
+
+
                         CardSlot targetSlot = _handsToPlaySlots[hand][0];
 
-                        Card clickedCard = clickedSlot.RemoveCardFromSlot();
-                        Card swapOut = targetSlot.RemoveCardFromSlot();
+                        if (targetSlot.IsInteractive)
+                        {
+                            Debug.Log("swapping out cards");
+                            Card clickedCard = clickedSlot.RemoveCardFromSlot();
+                            Card swapOut = targetSlot.RemoveCardFromSlot();
 
-                        targetSlot.AddCardToSlot(clickedCard);
-                        clickedSlot.AddCardToSlot(swapOut);
+                            targetSlot.AddCardToSlot(clickedCard);
+                            clickedSlot.AddCardToSlot(swapOut);
+                        }
+                        else
+                        {
+                            Debug.Log("swapout slot is locked ");
+                        }
 
                     }
                 }
