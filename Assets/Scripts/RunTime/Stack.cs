@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class Stack : MonoBehaviour {
 
     public Token TokenPrefab;
-    public float Gap = 0.5f;
     private StackSO _stackSoRef;
 
     private List<Token> _stackOfTokens;
@@ -27,9 +26,20 @@ public class Stack : MonoBehaviour {
 
     }
 
+    public IEnumerator AnimateCardEffecOnStack(Card card)
+    {
+        //do animation stuff, but then reset and do the actual code change at the end.
+        transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, -card.transform.position);
 
+        yield return new WaitForSeconds(0.5f);
+
+        transform.rotation = Quaternion.identity;
+
+
+    }
     public void ApplyCardToStack(Card card)
     {
+       
         CardSO cardOp = card.CardSoRef;
         
         if (cardOp.FlipBottom)
@@ -54,6 +64,7 @@ public class Stack : MonoBehaviour {
                 token.Flip();
                 _stackOfTokens.Remove(token);//remove from stack
             }
+
             foreach (Token token in topSet)
             {
                 //put back in stack in reversed order
