@@ -7,11 +7,11 @@ PlayerSettings:
   AndroidProfiler: 0
   defaultScreenOrientation: 0
   targetDevice: 2
-  targetGlesGraphics: 1
+  targetGlesGraphics: -1
   targetResolution: 0
   accelerometerFrequency: 60
-  companyName: Ludopathic
-  productName: OneOneOneTwoThree
+  companyName: DefaultCompany
+  productName: OneOneOneTwoThreeReimport
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   defaultScreenWidth: 1024
@@ -19,7 +19,7 @@ PlayerSettings:
   defaultScreenWidthWeb: 960
   defaultScreenHeightWeb: 600
   m_RenderingPath: 1
-  m_MobileRenderingPath: 1
+  m_MobileRenderingPath: 0
   m_ActiveColorSpace: 0
   m_MTRendering: 1
   m_MobileMTRendering: 0
@@ -29,9 +29,9 @@ PlayerSettings:
   androidShowActivityIndicatorOnLoading: -1
   displayResolutionDialog: 1
   allowedAutorotateToPortrait: 1
-  allowedAutorotateToPortraitUpsideDown: 0
-  allowedAutorotateToLandscapeRight: 0
-  allowedAutorotateToLandscapeLeft: 0
+  allowedAutorotateToPortraitUpsideDown: 1
+  allowedAutorotateToLandscapeRight: 1
+  allowedAutorotateToLandscapeLeft: 1
   useOSAutorotation: 1
   use32BitDisplayBuffer: 1
   use24BitDepthBuffer: 1
@@ -67,14 +67,14 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  iPhoneBundleIdentifier: com.LudoPathic.OneOneOneTwoThree
+  iPhoneBundleIdentifier: com.Ludopathic.OneOneOneTwoThree
   metroEnableIndependentInputSource: 0
   metroEnableLowLatencyPresentationAPI: 0
-  productGUID: e1dcca9170312114d99d48a2c633dde1
-  iPhoneBundleVersion: 1.0
+  productGUID: 0b324478ac54f8f4fbd35b02bb0a1bc0
+  iPhoneBundleVersion: 0.0.2
   AndroidBundleVersionCode: 1
-  AndroidMinSdkVersion: 9
-  AndroidPreferredInstallLocation: 1
+  AndroidMinSdkVersion: 19
+  AndroidPreferredInstallLocation: 0
   aotOptions: 
   apiCompatibilityLevel: 2
   iPhoneStrippingLevel: 0
@@ -112,7 +112,7 @@ PlayerSettings:
     - m_Icon: {fileID: 2800000, guid: 4f94f42a085914b4d85716ee421361f2, type: 3}
       m_Size: 128
   m_BuildTargetBatching:
-  - m_BuildTarget: iPhone
+  - m_BuildTarget: Android
     m_StaticBatching: 1
     m_DynamicBatching: 1
   webPlayerTemplate: APPLICATION:Default
@@ -159,7 +159,7 @@ PlayerSettings:
   flashStrippingLevel: 2
   spritePackerPolicy: 
   scriptingDefineSymbols: {}
-  metroPackageName: 11123
+  metroPackageName: OneOneOneTwoThreeReimport
   metroPackageLogo: 
   metroPackageLogo140: 
   metroPackageLogo180: 
@@ -170,7 +170,7 @@ PlayerSettings:
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: 11123
+  metroApplicationDescription: OneOneOneTwoThreeReimport
   metroStoreTileLogo80: 
   metroStoreTileLogo: 
   metroStoreTileLogo140: 
