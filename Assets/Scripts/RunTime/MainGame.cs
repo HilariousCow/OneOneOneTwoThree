@@ -35,6 +35,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     void Awake()
     {
         Init(MatchToUseDefault);
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
     void Start()
