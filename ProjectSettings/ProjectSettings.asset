@@ -10,8 +10,8 @@ PlayerSettings:
   targetGlesGraphics: -1
   targetResolution: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
-  productName: OneOneOneTwoThreeReimport
+  companyName: Ludopathic
+  productName: OneOneOneTwoThree
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   defaultScreenWidth: 1024
@@ -109,7 +109,7 @@ PlayerSettings:
   m_BuildTargetIcons:
   - m_BuildTarget: 
     m_Icons:
-    - m_Icon: {fileID: 2800000, guid: 4f94f42a085914b4d85716ee421361f2, type: 3}
+    - m_Icon: {fileID: 2800000, guid: db0b2a6e6db9184448667b023125eac4, type: 3}
       m_Size: 128
   m_BuildTargetBatching:
   - m_BuildTarget: Android

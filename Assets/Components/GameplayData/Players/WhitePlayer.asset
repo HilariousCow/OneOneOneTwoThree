@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Name: WhitePlayer
   m_EditorClassIdentifier: 
   CardMaterial: {fileID: 2100000, guid: 2a4e84e75c776354cb23acfde00fa818, type: 2}
+  CardMaterialBack: {fileID: 2100000, guid: 91791acef9c045f4688ed3bc16d8c05f, type: 2}
   CardMaterialRedraw: {fileID: 2100000, guid: 7c0bb368d4d293b46bf90250604c6c25, type: 2}
   DesiredTokenSide: 1

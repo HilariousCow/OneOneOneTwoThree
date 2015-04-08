@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Name: GreyPlayer
   m_EditorClassIdentifier: 
   CardMaterial: {fileID: 2100000, guid: 7ebabcef01973914b801e3a90b574ccd, type: 2}
+  CardMaterialBack: {fileID: 2100000, guid: 779988663f6ab1a4c88fe018607fa3e6, type: 2}
   CardMaterialRedraw: {fileID: 2100000, guid: d995db85dba3b48449cff689b732df67, type: 2}
   DesiredTokenSide: 0

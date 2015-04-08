@@ -6,6 +6,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 {
     public Stack StackPrefab;
     public Renderer RedrawCard;
+    public Renderer DotBacks;
     private CardSO _cardSoRef;
     private PlayerSO _playerSoRef;
 
@@ -43,6 +44,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 	    _rend = renderer;
 
         RedrawCard.material = _playerSoRef.CardMaterial;
+        DotBacks.material = _playerSoRef.CardMaterialBack;
         _rend.material = _playerSoRef.CardMaterialRedraw;
 
 	    _col = collider;

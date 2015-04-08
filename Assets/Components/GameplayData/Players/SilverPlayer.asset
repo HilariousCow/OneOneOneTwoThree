@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Name: SilverPlayer
   m_EditorClassIdentifier: 
   CardMaterial: {fileID: 2100000, guid: 5651093b246166647972ed1aebda38e9, type: 2}
+  CardMaterialBack: {fileID: 2100000, guid: 4d783fbe57c5a8445915e2eb37067b3a, type: 2}
   CardMaterialRedraw: {fileID: 2100000, guid: 974688574fab866479917ad1fb48bd7a, type: 2}
   DesiredTokenSide: 1

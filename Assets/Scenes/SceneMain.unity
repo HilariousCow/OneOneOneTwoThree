@@ -338,7 +338,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 428228, guid: 663c1539ad4237b4da5687a8bc146929, type: 2}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 11428228, guid: 663c1539ad4237b4da5687a8bc146929, type: 2}
       propertyPath: SpinThing.Array.data[0]

@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Token
-  m_Shader: {fileID: 4800000, guid: 0c64f4b31764c0b4abffbfac1b0c865a, type: 3}
+  m_Name: WhiteCardBacks
+  m_Shader: {fileID: 4800000, guid: 25648054467372d41a358fc17c376724, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -25,4 +25,4 @@ Material:
       data:
         first:
           name: _Color
-        second: {r: 1, g: 1, b: 1, a: 1}
+        second: {r: 0, g: 0, b: 0, a: 1}
