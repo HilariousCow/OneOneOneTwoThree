@@ -12,7 +12,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
     private List<CardSlot> _slots;
     private Camera _cam;
     private PlayerSO _playerSoRef;
-
+    private Vector3 startingPosition;
     public PlayerSO PlayerSoRef
     {
         get { return _playerSoRef; }
@@ -27,8 +27,8 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 	void Start ()
 	{
 	    _cam = Camera.main;
-	    
 
+	    startingPosition = transform.position;
 	}
     public void Init(PlayerSO player, MatchSettingsSO matchSettings)
     {
@@ -91,6 +91,9 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 
         //todo: move the entire anchor a bit toward the camera. need to stare base
 
+        float handdot = Vector3.Dot(-startingPosition.normalized, _cam.transform.forward);
+	    Vector3 targetPosition = _cam.transform.position.FlatY().normalized*startingPosition.magnitude;
+	    transform.position = Vector3.Lerp(startingPosition, targetPosition, Mathf.Clamp01(handdot));
 
 	    foreach (var cardSlot in Slots)
 	    {
@@ -99,7 +102,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 	        targetRotation = Quaternion.Inverse(transform.rotation)*
                               Quaternion.LookRotation(_cam.transform.position, Vector3.down) * targetRotation;
 	        float dot = Vector3.Dot(-transform.position.normalized, _cam.transform.forward);
-	        dot = Mathf.Pow(Mathf.Clamp01(dot), 4f);
+	        dot = Mathf.Pow(Mathf.Clamp01(dot), 0.8f);
 	        float slerp = Mathf.SmoothStep(0f, 1f, dot);
 	        cardSlot.transform.localRotation = Quaternion.Slerp(faceDownRotation, targetRotation, slerp);
 

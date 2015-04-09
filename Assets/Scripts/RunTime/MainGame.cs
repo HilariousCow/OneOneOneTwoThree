@@ -354,17 +354,17 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             Bounds bounds = hand.transform.RenderBounds();
 
             hand.transform.position = hand.transform.position.SinCosY(frac) * bounds.size.x;
-
+            
             
             hand.transform.LookAt(Vector3.zero, Vector3.up);
-            
 
+            hand.transform.position = hand.transform.position + Vector3.down * 5f;
             List<CardSlot> jailSlots = _handsToJailCards[hand];
             jailSlots.PositionAlongLineCentered(Vector3.right, 0.5f, Vector3.up * 0.5f);
 
             foreach (CardSlot jailCard in jailSlots)
             {
-                jailCard.transform.localPosition = Vector3.forward * 10f;
+                jailCard.transform.localPosition = Vector3.forward * 5f;
             }
         }
 
@@ -389,7 +389,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 CardSlot slot = slots[index];
                 Bounds bounds = slot.transform.RenderBounds();
 
-                slot.transform.position = slot.transform.position.SinCosY(frac) * bounds.size.z;
+                slot.transform.position = slot.transform.position.SinCosY(frac) * bounds.size.z*0.5f;
                 slot.transform.LookAt(Vector3.zero, Vector3.up);
             }
 
