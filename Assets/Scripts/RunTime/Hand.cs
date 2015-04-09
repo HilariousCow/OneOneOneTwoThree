@@ -92,15 +92,18 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
         //todo: move the entire anchor a bit toward the camera. need to stare base
 
         float handdot = Vector3.Dot(-startingPosition.normalized, _cam.transform.forward);
+	    
 	    Vector3 targetPosition = _cam.transform.position.FlatY().normalized*startingPosition.magnitude;
-	    transform.position = Vector3.Lerp(startingPosition, targetPosition, Mathf.Clamp01(handdot));
-
+	    transform.position = Vector3.Lerp(startingPosition, targetPosition, Mathf.Pow( Mathf.Clamp01(handdot), 2.0f));
+        transform.LookAt(transform.position.y * Vector3.up, Vector3.up);
 	    foreach (var cardSlot in Slots)
 	    {
             Quaternion faceDownRotation = Quaternion.identity;
 	        Quaternion targetRotation = Quaternion.AngleAxis(-90f, Vector3.right);// *;
-	        targetRotation = Quaternion.Inverse(transform.rotation)*
-                              Quaternion.LookRotation(_cam.transform.position, Vector3.down) * targetRotation;
+	    /*    targetRotation = Quaternion.Inverse(transform.rotation)*
+                              Quaternion.LookRotation(_cam.transform.position, cardSlot.transform.position + Vector3.up * 60f) * targetRotation;*/
+            targetRotation = Quaternion.Inverse(transform.rotation)*
+                              Quaternion.LookRotation(_cam.transform.position, -_cam.transform.up) * targetRotation;
 	        float dot = Vector3.Dot(-transform.position.normalized, _cam.transform.forward);
 	        dot = Mathf.Pow(Mathf.Clamp01(dot), 0.8f);
 	        float slerp = Mathf.SmoothStep(0f, 1f, dot);
