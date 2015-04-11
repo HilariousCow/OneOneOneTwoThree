@@ -12,7 +12,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
     private List<CardSlot> _slots;
     private Camera _cam;
     private PlayerSO _playerSoRef;
-    private Vector3 startingPosition;
+    private Vector3 startingLocalPosition;
     public PlayerSO PlayerSoRef
     {
         get { return _playerSoRef; }
@@ -28,7 +28,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 	{
 	    _cam = Camera.main;
 
-	    startingPosition = transform.position;
+	    startingLocalPosition = transform.localPosition;
 	}
     public void Init(PlayerSO player, MatchSettingsSO matchSettings)
     {
@@ -44,7 +44,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
         }
 
         //do a reorganize here.
-        Slots.PositionAlongLineCentered(Vector3.right, Gap, Vector3.zero);
+        Slots.PositionAlongLineCentered(transform.right, Gap, Vector3.zero);
 
         //added a renderer just in case. hopefully it being unenabled doesn't mean it doesn't have render bounds
     }
@@ -86,25 +86,34 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
         }
     }
 
+    public float handdot;
 	// Update is called once per frame
 	void Update () {
 
         //todo: move the entire anchor a bit toward the camera. need to stare base
 
-        float handdot = Vector3.Dot(-startingPosition.normalized, _cam.transform.forward);
-	    
-	    Vector3 targetPosition = _cam.transform.position.FlatY().normalized*startingPosition.magnitude;
-	    transform.position = Vector3.Lerp(startingPosition, targetPosition, Mathf.Pow( Mathf.Clamp01(handdot), 2.0f));
+	    Vector3 startingWorldPosition = transform.parent.TransformPoint(startingLocalPosition);
+
+         handdot = Vector3.Dot(-startingWorldPosition.normalized, _cam.transform.forward);
+
+        Vector3 targetPosition = _cam.transform.position.FlatY().normalized * startingLocalPosition.magnitude;
+	    Vector3 targetLocalPosition = transform.parent.InverseTransformPoint(targetPosition);
+	    transform.localPosition
+            = Vector3.Lerp(startingLocalPosition, targetLocalPosition, Mathf.Pow(Mathf.Clamp01(handdot), 2.0f));
+
         transform.LookAt(transform.position.y * Vector3.up, Vector3.up);
 	    foreach (var cardSlot in Slots)
 	    {
             Quaternion faceDownRotation = Quaternion.identity;
-	        Quaternion targetRotation = Quaternion.AngleAxis(-90f, Vector3.right);// *;
-	    /*    targetRotation = Quaternion.Inverse(transform.rotation)*
-                              Quaternion.LookRotation(_cam.transform.position, cardSlot.transform.position + Vector3.up * 60f) * targetRotation;*/
-            targetRotation = Quaternion.Inverse(transform.rotation)*
-                              Quaternion.LookRotation(_cam.transform.position, -_cam.transform.up) * targetRotation;
-	        float dot = Vector3.Dot(-transform.position.normalized, _cam.transform.forward);
+	        Quaternion targetRotation = Quaternion.AngleAxis(-90f, Vector3.right);
+	        targetRotation = Quaternion.Inverse(transform.rotation)*
+                              Quaternion.LookRotation(_cam.transform.position, cardSlot.transform.localPosition + transform.up * 60f) 
+                              * targetRotation;
+            /*targetRotation = Quaternion.Inverse(transform.rotation)*
+                              Quaternion.LookRotation(_cam.transform.position, -_cam.transform.up) * targetRotation;*/
+	        
+            
+            float dot = Vector3.Dot(-transform.position.normalized, _cam.transform.forward);
 	        dot = Mathf.Pow(Mathf.Clamp01(dot), 0.8f);
 	        float slerp = Mathf.SmoothStep(0f, 1f, dot);
 	        cardSlot.transform.localRotation = Quaternion.Slerp(faceDownRotation, targetRotation, slerp);

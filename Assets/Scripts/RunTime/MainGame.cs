@@ -365,7 +365,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             foreach (CardSlot jailCard in jailSlots)
             {
                 jailCard.transform.localPosition = Vector3.forward * 5f;
-                jailCard.transform.parent = null;
+                jailCard.transform.parent = hand.transform;
             }
         }
 
