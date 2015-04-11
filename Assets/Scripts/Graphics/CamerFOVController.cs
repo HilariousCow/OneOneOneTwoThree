@@ -36,21 +36,21 @@ public class CamerFOVController : MonoBehaviour
         transform.localPosition = Vector3.back * (Mathf.Lerp(MinorDistance, MajorDistance, 1f - funDot) + AdditionalMindistance);
 
         float fovForEverything =  _everything.size.magnitude * Camera.main.aspect;
-
+	    float radiusOfEverything = _everything.size.magnitude ;
         fovForEverything = 1.45f*Mathf.Rad2Deg * Mathf.Atan2(fovForEverything, transform.position.magnitude);
         foreach (Camera cam in _cams)
         {
             cam.fieldOfView = fovForEverything;// RelationshipBetweenSideAndTopFOV.Evaluate(dot);
-            cam.nearClipPlane = Mathf.Clamp(transform.localPosition.magnitude-100f, 0.1f, 10000f);
-            cam.farClipPlane = Mathf.Clamp(transform.localPosition.magnitude + 100f, 0.1f, 10000f);
+            cam.nearClipPlane = Mathf.Clamp(transform.localPosition.magnitude - radiusOfEverything, 0.1f, 10000f);
+            cam.farClipPlane = Mathf.Clamp(transform.localPosition.magnitude + radiusOfEverything, 0.1f, 10000f);
         }
 
         float dotLR = Vector3.Dot(MainGameInstance.transform.forward, transform.forward);
 	    dotLR = (dotLR + 1.0f)/2f;
         RenderSettings.fogColor = Color.Lerp(BlackSideFog, WhiteSideFog, dotLR);
         RenderSettings.fogMode = FogMode.Linear;
-	    RenderSettings.fogStartDistance = Camera.main.nearClipPlane;
-        RenderSettings.fogEndDistance = Camera.main.farClipPlane;
+	    RenderSettings.fogStartDistance = Mathf.Lerp( Camera.main.nearClipPlane, Camera.main.farClipPlane, 0.6f);
+	    RenderSettings.fogEndDistance = Mathf.Lerp(Camera.main.nearClipPlane, Camera.main.farClipPlane, 1.0f);
 
 
 	}
