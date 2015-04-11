@@ -133,16 +133,16 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         Card firstCard = firstCardSlot.CardInSlot;
     //    Debug.Log("Showing first card" + firstCard.gameObject.name + " from slot: " + firstCardSlot.gameObject.name);
 
-        firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.forward);
-        firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.forward);
+        firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.right);
+        firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.right);
 
         yield return new WaitForSeconds(1.0f);//show top for 0.5
-        yield return StartCoroutine(stack.AnimateCardEffecOnStack(firstCard));
-        stack.ApplyCardToStack(firstCard);
+        yield return StartCoroutine(stack.AnimateCardEffectOnStack(firstCard));
+      //  stack.ApplyCardToStack(firstCard);..temp remove
         yield return new WaitForSeconds(0.250f);//show top for 0.5
 
-        firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.forward);
-        firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.forward);
+        firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.right);
+        firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.right);
 
         yield return new WaitForSeconds(1.0f);//show top for 0.5
     }
@@ -199,7 +199,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                     tieBreaker.transform.rotation = tieBreaker.transform.rotation*
                                                     Quaternion.AngleAxis(180f, Vector3.forward);
                     yield return new WaitForSeconds(0.5f);
-                    stack.ApplyCardToStack(tieBreaker);
+                    yield return StartCoroutine(stack.AnimateCardEffectOnStack(tieBreaker));
+                    //  stack.ApplyCardToStack(firstCard);..temp remove
                     yield return new WaitForSeconds(0.5f);
 
                     Destroy(tieBreaker.gameObject);
@@ -365,7 +366,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             foreach (CardSlot jailCard in jailSlots)
             {
                 jailCard.transform.localPosition = Vector3.forward * 5f;
-                jailCard.transform.parent = hand.transform;
+                jailCard.transform.parent = hand.transform.parent;
             }
         }
 
@@ -390,7 +391,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 CardSlot slot = slots[index];
                 Bounds bounds = slot.transform.RenderBounds();
 
-                slot.transform.position = slot.transform.position.SinCosY(frac) * bounds.size.z*0.5f;
+                slot.transform.position = slot.transform.position.SinCosY(frac) * bounds.size.z*1.5f;
                 slot.transform.LookAt(Vector3.zero, Vector3.up);
             }
 

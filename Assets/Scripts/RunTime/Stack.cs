@@ -26,14 +26,21 @@ public class Stack : MonoBehaviour {
 
     }
 
-    public IEnumerator AnimateCardEffecOnStack(Card card)
+    public IEnumerator AnimateCardEffectOnStack(Card card)
     {
         //do animation stuff, but then reset and do the actual code change at the end.
+        Quaternion prevRot = transform.rotation;
+        transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, -card.transform.position);
+
+        
+        yield return new WaitForSeconds(0.5f);
+        transform.rotation = prevRot;
+        ApplyCardToStack(card);
         transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, -card.transform.position);
 
         yield return new WaitForSeconds(0.5f);
-
-        transform.rotation = Quaternion.identity;
+        transform.rotation = prevRot;
+        
 
 
     }

@@ -10,7 +10,7 @@
 			Cull Back
 			
 			ZWrite Off
-			ZTest Off
+			ZTest On
 			
 			Blend SrcAlpha OneMinusSrcAlpha
 			
