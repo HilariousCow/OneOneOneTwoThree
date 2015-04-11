@@ -106,7 +106,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 	    {
             Quaternion faceDownRotation = Quaternion.identity;
 	        Quaternion targetRotation = 
-                              Quaternion.LookRotation(-_cam.transform.up, cardSlot.transform.position-_cam.transform.position );
+                              Quaternion.LookRotation(Vector3.down, cardSlot.transform.position-_cam.transform.position );
             /*targetRotation = Quaternion.Inverse(transform.rotation)*
                               Quaternion.LookRotation(_cam.transform.position, -_cam.transform.up) * targetRotation;*/
 	        
