@@ -105,10 +105,8 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 	    foreach (var cardSlot in Slots)
 	    {
             Quaternion faceDownRotation = Quaternion.identity;
-	        Quaternion targetRotation = Quaternion.AngleAxis(-90f, Vector3.right);
-	        targetRotation = Quaternion.Inverse(transform.rotation)*
-                              Quaternion.LookRotation(_cam.transform.position, cardSlot.transform.localPosition + transform.up * 60f) 
-                              * targetRotation;
+	        Quaternion targetRotation = 
+                              Quaternion.LookRotation(-_cam.transform.up, -_cam.transform.position );
             /*targetRotation = Quaternion.Inverse(transform.rotation)*
                               Quaternion.LookRotation(_cam.transform.position, -_cam.transform.up) * targetRotation;*/
 	        
@@ -116,7 +114,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
             float dot = Vector3.Dot(-transform.position.normalized, _cam.transform.forward);
 	        dot = Mathf.Pow(Mathf.Clamp01(dot), 0.8f);
 	        float slerp = Mathf.SmoothStep(0f, 1f, dot);
-	        cardSlot.transform.localRotation = Quaternion.Slerp(faceDownRotation, targetRotation, slerp);
+	        cardSlot.transform.rotation = Quaternion.Slerp(transform.rotation* faceDownRotation, targetRotation, slerp);
 
 
 	    }
