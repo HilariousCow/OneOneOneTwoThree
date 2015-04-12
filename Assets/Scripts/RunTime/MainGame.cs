@@ -77,6 +77,10 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     IEnumerator LoopPhase()
     {
         TurnOnCommitSlotInteractivity();
+        TokenSide topAtBeginningOfOperation = _stacks[0].GetTopTokenSide();
+
+        //show first slot to apply graphic.
+
         Debug.LogWarning("Watching for all slots to be filled");
         bool all = (_allCommitCardSlots.FindAll(x => !x.IsEmpty).Count == _allCommitCardSlots.Count);
         bool pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
@@ -99,7 +103,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         foreach (Stack stack in _stacks)
         {
             //find whose is applied first for this stack
-            TokenSide topAtBeginningOfOperation = stack.GetTopTokenSide();
+            
             List<CardSlot> slotsForStack = new List<CardSlot>(_stacksToCommitSlots[stack] );
 
             //todo: extract token side orders. yeah. much nicer. but how will black/white determin multiple players? arhgh.
