@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: CardSlotHighlight
-  m_Shader: {fileID: 4800000, guid: 4af28ce0f04504344949d00fcf8c04e5, type: 3}
+  m_Name: DotBlinking
+  m_Shader: {fileID: 4800000, guid: eec59014088231f4bb9ef17a5114c166, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:

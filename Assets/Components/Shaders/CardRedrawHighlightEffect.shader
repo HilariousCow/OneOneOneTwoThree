@@ -135,7 +135,7 @@
 			float4 frag (v2f i) : COLOR
 			{
 		
-				return i.color*5;
+				return i.color*10;
 			}
 			
 			ENDCG

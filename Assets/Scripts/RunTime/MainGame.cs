@@ -129,9 +129,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
             firstCardSlot.StartNextTurnArrowEffect();
             yield return StartCoroutine(ApplyCardToStack(firstCardSlot, stack));
-            secondCardSlot.StopNextTurnArrowEffect();
+            firstCardSlot.StopNextTurnArrowEffect();
 
-            firstCardSlot.StartNextTurnArrowEffect();
+            secondCardSlot.StartNextTurnArrowEffect();
             yield return StartCoroutine(ApplyCardToStack(secondCardSlot, stack));
             secondCardSlot.StopNextTurnArrowEffect();
             
@@ -429,7 +429,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 CardSlot slot = slots[index];
                 Bounds bounds = slot.transform.RenderBounds();
 
-                slot.transform.position = slot.transform.position.SinCosY(frac) * bounds.size.z*1.5f;
+                slot.transform.position = slot.transform.position.SinCosY(frac) * bounds.size.z;
                 slot.transform.LookAt(Vector3.zero, Vector3.up);
                 slot.transform.parent = transform;
             }

@@ -8,13 +8,13 @@
 		
 		Pass{
 			
-			Cull back
+			Cull off
 			
 			ZWrite On
 			ZTest LEqual
 			//Fog Disable
-			//Blend SrcAlpha OneMinusSrcAlpha
-			Blend OneMinusDstColor OneMinusSrcColor //negative color
+			Blend SrcAlpha OneMinusSrcAlpha
+			//Blend OneMinusDstColor OneMinusSrcColor //negative color
 			
 			CGPROGRAM
 
@@ -49,7 +49,7 @@
 				//float2 offset = TransformViewToProjection(o.normal.xy);
 			 
 				float offset = v.texcoord.y;
-				o.color = 1-saturate( frac(offset-(_Time.y*2))*2 );
+				o.color = 1- saturate( frac(offset-(_Time.y))*2 ) ;
 				
 				o.uv = MultiplyUV (UNITY_MATRIX_TEXTURE0, v.texcoord);
 				return o; 
@@ -58,7 +58,7 @@
 			float4 frag (v2f i) : COLOR
 			{
 		
-				return i.color;
+				return float4(1,1,1,i.color.a) ;
 			}
 			
 			ENDCG
