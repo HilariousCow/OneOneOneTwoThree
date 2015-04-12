@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     private SlotHighlightEffect _highlightEffect;
+    private NextTurnArrow _nextTurnArrow;
     private bool _isInteractive = true;
     private Renderer _rend;
     private Card _cardInSlot;
@@ -14,11 +15,24 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     void Awake()
     {
         _highlightEffect = GetComponentInChildren<SlotHighlightEffect>();
+        _nextTurnArrow = GetComponentInChildren<NextTurnArrow>();
     }
 
     void Start()
     {
         StopEffect();
+        StopNextTurnArrowEffect();
+    }
+
+
+    public void StartNextTurnArrowEffect()
+    {
+        _nextTurnArrow.StartEffect();
+    }
+
+    public void StopNextTurnArrowEffect()
+    {
+        _nextTurnArrow.StopEffect();
     }
 
     public void HighlightIfEmpty(bool highlight)

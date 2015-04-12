@@ -79,6 +79,22 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         TurnOnCommitSlotInteractivity();
         TokenSide topAtBeginningOfOperation = _stacks[0].GetTopTokenSide();
 
+        foreach (Stack stack in _stacks)
+        {
+            //find whose is applied first for this stack
+
+            List<CardSlot> slotsForStack = new List<CardSlot>(_stacksToCommitSlots[stack]);
+
+            //todo: extract token side orders. yeah. much nicer. but how will black/white determin multiple players? arhgh.
+            //so, big assumptions here.
+            CardSlot firstCardSlot =
+                slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide == topAtBeginningOfOperation);
+          
+            firstCardSlot.StartNextTurnArrowEffect();
+            CardSlot secondCardSlot =
+                slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide != topAtBeginningOfOperation);
+            secondCardSlot.StopNextTurnArrowEffect();
+        }
         //show first slot to apply graphic.
 
         Debug.LogWarning("Watching for all slots to be filled");
@@ -109,11 +125,15 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             //todo: extract token side orders. yeah. much nicer. but how will black/white determin multiple players? arhgh.
             //so, big assumptions here.
             CardSlot firstCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide == topAtBeginningOfOperation);
-            yield return StartCoroutine(ApplyCardToStack(firstCardSlot, stack));
-            
             CardSlot secondCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide != topAtBeginningOfOperation);
+
+            firstCardSlot.StartNextTurnArrowEffect();
+            yield return StartCoroutine(ApplyCardToStack(firstCardSlot, stack));
+            secondCardSlot.StopNextTurnArrowEffect();
+
+            firstCardSlot.StartNextTurnArrowEffect();
             yield return StartCoroutine(ApplyCardToStack(secondCardSlot, stack));
-            
+            secondCardSlot.StopNextTurnArrowEffect();
             
             yield return StartCoroutine(_scoreHand.AddRound(stack, firstCardSlot, secondCardSlot));
 
@@ -378,9 +398,12 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             List<CardSlot> jailSlots = _handsToJailCards[hand];
             jailSlots.PositionAlongLineCentered(Vector3.right, 0.5f, Vector3.up * 0.5f);
 
+            //todo: reposition after the cards have been chosen.
             foreach (CardSlot jailCard in jailSlots)
             {
-                jailCard.transform.localPosition = Vector3.forward * 5f;
+                jailCard.transform.localPosition = Vector3.forward * 15f;
+                jailCard.transform.position += Vector3.left * 5f;
+
                 jailCard.transform.parent = hand.transform.parent;
             }
         }
