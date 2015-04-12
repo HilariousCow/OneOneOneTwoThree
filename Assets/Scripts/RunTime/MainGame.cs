@@ -28,7 +28,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     private Dictionary<Hand,List<CardSlot>> _handsToPlaySlots;
     private Dictionary<CardSlot, Hand> _slotsToHands;
 
-    private Dictionary<Stack, List<CardSlot>> _stacksToSlots;
+    private Dictionary<Stack, List<CardSlot>> _stacksToCommitSlots;
     private List<CardSlot> _allCommitCardSlots;
     private List<CardSlot> _allJailCardSlots;
 
@@ -51,8 +51,11 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         switch (_matchSettings.TieBreaker)
         {
             case TieBreakerStyle.FlipStack:
+                TurnOffCommitSlotInteractivity();
                 break;
             case TieBreakerStyle.UseJailCards:
+                TurnOffCommitSlotInteractivity();
+                TurnOnJailSlotInteractivity();
                 bool all = (_allJailCardSlots.FindAll(x => !x.IsEmpty).Count == _allJailCardSlots.Count);
                 bool pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
                 while (!all || !pointDownMosty)
@@ -73,7 +76,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     IEnumerator LoopPhase()
     {
-        TurnOnSlotInteractivity();
+        TurnOnCommitSlotInteractivity();
         Debug.LogWarning("Watching for all slots to be filled");
         bool all = (_allCommitCardSlots.FindAll(x => !x.IsEmpty).Count == _allCommitCardSlots.Count);
         bool pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
@@ -85,7 +88,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             all = (_allCommitCardSlots.FindAll(x => !x.IsEmpty).Count == _allCommitCardSlots.Count);
         }
 
-        TurnOffSlotInteractivity();
+        TurnOffCommitSlotInteractivity();
 
         Debug.LogWarning("All slots filled, resolving gameplay");
         //todo: lockout changes. focus camera, or have it above in the first place.
@@ -97,7 +100,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         {
             //find whose is applied first for this stack
             TokenSide topAtBeginningOfOperation = stack.GetTopTokenSide();
-            List<CardSlot> slotsForStack = new List<CardSlot>(_stacksToSlots[stack] );
+            List<CardSlot> slotsForStack = new List<CardSlot>(_stacksToCommitSlots[stack] );
 
             //todo: extract token side orders. yeah. much nicer. but how will black/white determin multiple players? arhgh.
             //so, big assumptions here.
@@ -108,7 +111,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             yield return StartCoroutine(ApplyCardToStack(secondCardSlot, stack));
             
             
-            _scoreHand.AddRound(stack, firstCardSlot.RemoveCardFromSlot(), secondCardSlot.RemoveCardFromSlot());
+            yield return StartCoroutine(_scoreHand.AddRound(stack, firstCardSlot, secondCardSlot));
 
             yield return new WaitForSeconds(0.5f);
 
@@ -147,18 +150,22 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         yield return new WaitForSeconds(1.0f);//show top for 0.5
     }
 
-    private void TurnOnSlotInteractivity()
+    private void TurnOnCommitSlotInteractivity()
     {
         foreach (CardSlot slot in _allCommitCardSlots)
         {
+            slot.ShowSlot(true);
+            slot.HighlightIfEmpty(true);
             slot.IsInteractive = true;
         }
     }
 
-    private void TurnOffSlotInteractivity()
+    private void TurnOffCommitSlotInteractivity()
     {
         foreach (CardSlot slot in _allCommitCardSlots)
         {
+            slot.ShowSlot(false);
+            slot.HighlightIfEmpty(false);
             slot.IsInteractive = false;
         }
     }
@@ -167,6 +174,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     {
         foreach (CardSlot slot in _allJailCardSlots)
         {
+            slot.ShowSlot(true);
+            slot.HighlightIfEmpty(true);
             slot.IsInteractive = true;
         }
     }
@@ -175,6 +184,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     {
         foreach (CardSlot slot in _allJailCardSlots)
         {
+            slot.ShowSlot(false);
+            slot.HighlightIfEmpty(false);
             slot.IsInteractive = false;
         }
     }
@@ -270,7 +281,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         _handsToJailCards = new Dictionary<Hand, List<CardSlot>>();
         _handsToPlaySlots = new Dictionary<Hand, List<CardSlot>>();
         _slotsToHands = new Dictionary<CardSlot, Hand>();
-        _stacksToSlots = new Dictionary<Stack, List<CardSlot>>();
+        _stacksToCommitSlots = new Dictionary<Stack, List<CardSlot>>();
         _allCommitCardSlots = new List<CardSlot>();
         _allJailCardSlots = new List<CardSlot>();
 
@@ -308,11 +319,11 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 playSlotsForPlayer.Add(commitSlot);
                 _slotsToHands.Add(commitSlot, hand);
                 _allCommitCardSlots.Add(commitSlot);
-                if(!_stacksToSlots.ContainsKey(stack))
+                if(!_stacksToCommitSlots.ContainsKey(stack))
                 {
-                    _stacksToSlots.Add(stack, new List<CardSlot>());
+                    _stacksToCommitSlots.Add(stack, new List<CardSlot>());
                 }
-               _stacksToSlots[stack].Add(commitSlot);
+               _stacksToCommitSlots[stack].Add(commitSlot);
 
             }
 
@@ -382,7 +393,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         foreach (Stack stack in _stacks)
         {
-            List<CardSlot> slots = _stacksToSlots[stack];
+            List<CardSlot> slots = _stacksToCommitSlots[stack];
             slots.PositionAlongLineCentered(Vector3.right, 0.5f, Vector3.up * 0.5f);
             for (int index = 0; index < slots.Count; index++)
             {
@@ -393,6 +404,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
                 slot.transform.position = slot.transform.position.SinCosY(frac) * bounds.size.z*1.5f;
                 slot.transform.LookAt(Vector3.zero, Vector3.up);
+                slot.transform.parent = transform;
             }
 
         }

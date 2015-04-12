@@ -96,8 +96,10 @@ public class ScoreHand : MonoBehaviour
     
     //These come in the order they were played - will change to list in time
     //todo: score per stack or what?
-    internal void AddRound(Stack stack, Card firstCard, Card secondCard)
+    internal IEnumerator AddRound(Stack stack, CardSlot firstCommitCardslot, CardSlot secondCommitCardSlot)
     {
+        Card firstCard = firstCommitCardslot.CardInSlot;
+        Card secondCard = secondCommitCardSlot.CardInSlot;
 
         Hand firstHand = _roundScoresPerHand.Keys.FirstOrDefault(x => x.PlayerSoRef == firstCard.PlayerSoRef);
         Hand secondHand = _roundScoresPerHand.Keys.FirstOrDefault(x => x.PlayerSoRef == secondCard.PlayerSoRef);
@@ -105,8 +107,13 @@ public class ScoreHand : MonoBehaviour
         CardSlot firstSlot = _roundScoresPerHand[firstHand][roundNumber];
         CardSlot secondSlot = _roundScoresPerHand[secondHand][roundNumber];
 
-        firstSlot.AddCardToSlot(firstCard);
-        secondSlot.AddCardToSlot(secondCard);
+
+        firstSlot.AddCardToSlot(firstCommitCardslot.RemoveCardFromSlot());
+        yield return new WaitForSeconds(0.6f);
+        secondSlot.AddCardToSlot(secondCommitCardSlot.RemoveCardFromSlot());
+        
+        
+        
 
         if (stack.GetTopTokenSide() == firstCard.PlayerSoRef.DesiredTokenSide)
         {

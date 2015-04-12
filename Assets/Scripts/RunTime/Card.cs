@@ -105,7 +105,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 
 
             transform.position = Camera.main.transform.position + ray.direction * (_startDifferenceToCamera.magnitude);
-
+            transform.position += Camera.main.transform.up * 2.5f;
 
 
 
@@ -130,7 +130,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
             float angle = Quaternion.Angle(transform.rotation, targetRot) ;
             if (angle > 0.0f)
             {
-                angle += 0.5f;
+                angle += 1.0f;
                 transform.localRotation = Quaternion.RotateTowards(transform.localRotation, targetRot, Time.deltaTime * angle * 5f);
             }
         }

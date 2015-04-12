@@ -5,10 +5,45 @@ using UnityEngine.EventSystems;
 //need to look at inventory code examples.
 public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-
+    private SlotHighlightEffect _highlightEffect;
     private bool _isInteractive = true;
     private Renderer _rend;
     private Card _cardInSlot;
+    private bool _highlightIfEmpty = false;
+
+    void Awake()
+    {
+        _highlightEffect = GetComponentInChildren<SlotHighlightEffect>();
+    }
+
+    void Start()
+    {
+        StopEffect();
+    }
+
+    public void HighlightIfEmpty(bool highlight)
+    {
+        _highlightIfEmpty = highlight;
+
+        if (IsEmpty && _highlightIfEmpty)
+        {
+            StartEffect();
+        }
+        else
+        {
+            StopEffect();
+        }
+    }
+
+    private void StartEffect()
+    {
+        _highlightEffect.StartEffect();
+    }
+    private void StopEffect()
+    {
+        _highlightEffect.StopEffect();
+    }
+
     public bool IsEmpty
     {
         get { return CardInSlot == null; }
@@ -37,6 +72,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 	{
 	    _cardInSlot = card;
 	    CardInSlot.transform.parent = transform;
+        StopEffect();
 	}
 
     public Card RemoveCardFromSlot()
@@ -44,6 +80,11 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         Card removeMe = CardInSlot;
         removeMe.transform.parent = null;
         _cardInSlot = null;
+
+        if(_highlightIfEmpty)
+        {
+            StartEffect();
+        }
         return removeMe;
     }
 
@@ -99,5 +140,10 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     }
 
     #endregion
+
+    internal void ShowSlot(bool p)
+    {
+        renderer.enabled = p;
+    }
 }
 
