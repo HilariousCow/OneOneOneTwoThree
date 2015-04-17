@@ -24,7 +24,7 @@ Material:
       data:
         first:
           name: _LineWidth
-        second: .100000001
+        second: 50
       data:
         first:
           name: _LoopOffset
