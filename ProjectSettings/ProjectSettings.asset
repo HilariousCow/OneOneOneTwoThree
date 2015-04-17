@@ -7,7 +7,7 @@ PlayerSettings:
   AndroidProfiler: 0
   defaultScreenOrientation: 0
   targetDevice: 2
-  targetGlesGraphics: -1
+  targetGlesGraphics: 1
   targetIOSGraphics: -1
   targetResolution: 0
   accelerometerFrequency: 60
@@ -22,10 +22,10 @@ PlayerSettings:
   defaultScreenWidthWeb: 960
   defaultScreenHeightWeb: 600
   m_RenderingPath: 1
-  m_MobileRenderingPath: 1
+  m_MobileRenderingPath: 0
   m_ActiveColorSpace: 0
   m_MTRendering: 1
-  m_MobileMTRendering: 1
+  m_MobileMTRendering: 0
   m_UseDX11: 1
   m_Stereoscopic3D: 0
   iosShowActivityIndicatorOnLoading: -1
@@ -87,7 +87,7 @@ PlayerSettings:
   AndroidPreferredInstallLocation: 0
   aotOptions: 
   apiCompatibilityLevel: 2
-  iPhoneStrippingLevel: 3
+  iPhoneStrippingLevel: 0
   iPhoneScriptCallOptimization: 0
   ForceInternetPermission: 0
   ForceSDCardPermission: 0
@@ -125,7 +125,7 @@ PlayerSettings:
   AndroidSplashScreenScale: 0
   AndroidKeystoreName: 
   AndroidKeyaliasName: 
-  AndroidTVCompatibility: 1
+  AndroidTVCompatibility: 0
   AndroidIsGame: 1
   androidEnableBanner: 1
   m_AndroidBanners:

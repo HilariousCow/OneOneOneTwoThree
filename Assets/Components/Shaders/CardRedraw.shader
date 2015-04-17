@@ -108,7 +108,7 @@
 				
 				float2 pixelSize = (1/_ScreenParams.xy) * _LineWidth;
 				o.pos.xy += (o.normal.xy * pixelSize)* o.pos.z;// * o.pos.z;
-				
+				o.pos.z+= pixelSize;
 				
 				o.color = v.color;
 				o.uv = MultiplyUV (UNITY_MATRIX_TEXTURE0, v.texcoord);

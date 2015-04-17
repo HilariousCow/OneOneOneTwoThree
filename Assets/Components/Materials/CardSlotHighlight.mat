@@ -2,13 +2,14 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 3
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: CardSlotHighlight
   m_Shader: {fileID: 4800000, guid: 4af28ce0f04504344949d00fcf8c04e5, type: 3}
-  m_ShaderKeywords: []
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
   m_CustomRenderQueue: -1
   m_SavedProperties:
     serializedVersion: 2
@@ -27,16 +28,16 @@ Material:
         second: 50
       data:
         first:
-          name: _LoopOffset
-        second: 0
-      data:
-        first:
           name: _Rate
-        second: .785714269
+        second: 2.53999996
       data:
         first:
           name: _InnerPow
         second: 8
+      data:
+        first:
+          name: _LoopOffset
+        second: 0
     m_Colors:
       data:
         first:

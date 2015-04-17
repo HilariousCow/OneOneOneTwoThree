@@ -2,13 +2,14 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 3
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: BlackCardRedraw
   m_Shader: {fileID: 4800000, guid: 6752b1e733d7ae14ead81f85c3c9a0e7, type: 3}
-  m_ShaderKeywords: []
+  m_ShaderKeywords: 
+  m_LightmapFlags: 5
   m_CustomRenderQueue: -1
   m_SavedProperties:
     serializedVersion: 2
@@ -24,7 +25,7 @@ Material:
       data:
         first:
           name: _LineWidth
-        second: 4.64285707
+        second: 9.82999992
     m_Colors:
       data:
         first:
