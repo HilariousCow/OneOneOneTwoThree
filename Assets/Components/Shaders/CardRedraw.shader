@@ -1,6 +1,7 @@
 ﻿Shader "OneOneOneTwoThree/CardRedrawLate" {
 		Properties {
 		_Color ("Color", Color) = (1,1,1,1)
+		_LineWidth("LineWidth", Range (0,20)) = 10
 	}
 	SubShader {
 		Tags {"Queue" = "Geometry" "RenderType"="Opaque" }
@@ -79,7 +80,7 @@
 			#include "UnityCG.cginc"
 			
 			float4 _Color;
-		
+			float _LineWidth;
 			struct appdata {
 				float4 vertex	: POSITION;
 				float4 color : COLOR;
@@ -103,9 +104,12 @@
 				o.normal   = mul ((float3x3)UNITY_MATRIX_IT_MV, v.normal);
 				//float2 offset = TransformViewToProjection(o.normal.xy);
 			 
-				//o.pos.xy += offset * o.pos.z * 0.005f;
-				//o.pos.xy += offset / o.pos.z * 15.0f;
-				o.pos.xy += o.normal.xy * 0.0050f * o.pos.z;
+			
+				
+				float2 pixelSize = (1/_ScreenParams.xy) * _LineWidth;
+				o.pos.xy += (o.normal.xy * pixelSize)* o.pos.z;// * o.pos.z;
+				
+				
 				o.color = v.color;
 				o.uv = MultiplyUV (UNITY_MATRIX_TEXTURE0, v.texcoord);
 				return o; 
