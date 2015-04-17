@@ -76,7 +76,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
             _isInteractive = value;
             if (CardInSlot != null)
             {
-                CardInSlot.collider.enabled = value;
+                CardInSlot.GetComponent<Collider>().enabled = value;
             }
         }
     }
@@ -157,7 +157,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     internal void ShowSlot(bool p)
     {
-        renderer.enabled = p;
+        GetComponent<Renderer>().enabled = p;
     }
 }
 

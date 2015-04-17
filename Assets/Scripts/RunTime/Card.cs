@@ -41,13 +41,13 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 	    gameObject.name = "CardInSlot:"+cardSo.name;
         _cardSoRef = cardSo;
 	    _playerSoRef = playerSo;
-	    _rend = renderer;
+	    _rend = GetComponent<Renderer>();
 
         RedrawCard.material = _playerSoRef.CardMaterial;
         DotBacks.material = _playerSoRef.CardMaterialBack;
         _rend.material = _playerSoRef.CardMaterialRedraw;
 
-	    _col = collider;
+	    _col = GetComponent<Collider>();
         _isDragging = false;
 	    _cam = Camera.main;
 

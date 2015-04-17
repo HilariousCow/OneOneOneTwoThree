@@ -176,6 +176,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     private void TurnOnCommitSlotInteractivity()
     {
+        Debug.Log("Turn on commit slots");
         foreach (CardSlot slot in _allCommitCardSlots)
         {
             slot.ShowSlot(true);
@@ -186,6 +187,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     private void TurnOffCommitSlotInteractivity()
     {
+        Debug.Log("Turn off commit slots");
         foreach (CardSlot slot in _allCommitCardSlots)
         {
             slot.ShowSlot(false);
@@ -196,6 +198,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     private void TurnOnJailSlotInteractivity()
     {
+        Debug.Log("Turn on jail slots");
         foreach (CardSlot slot in _allJailCardSlots)
         {
             slot.ShowSlot(true);
@@ -206,6 +209,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     private void TurnOffJailSlotInteractivity()
     {
+        Debug.Log("Turn off jail slots");
         foreach (CardSlot slot in _allJailCardSlots)
         {
             slot.ShowSlot(false);
@@ -522,11 +526,12 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 }
                 else
                 {
-                    List<CardSlot> emptyCommitSlots = _handsToPlaySlots[hand].Where(x => x.IsEmpty).ToList();
+                    List<CardSlot> emptyCommitSlots = _handsToPlaySlots[hand].Where(x => x.IsEmpty && x.IsInteractive).ToList();
                     if (emptyCommitSlots.Count > 0)
                     {
                         foreach (CardSlot commitSlot in emptyCommitSlots)
                         {
+                            
                             commitSlot.AddCardToSlot(clickedSlot.RemoveCardFromSlot());
                             break;
                         }
@@ -549,12 +554,14 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                         }
                         else
                         {
+                            //wrong?
                             Debug.Log("swapout slot is locked ");
                         }
 
                     }
                 }
             }
+            
 
             if (_allCommitCardSlots.Contains(clickedSlot))
             {

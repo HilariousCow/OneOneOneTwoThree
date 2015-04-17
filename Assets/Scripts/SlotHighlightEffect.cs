@@ -1,22 +1,24 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class NextTurnArrow : MonoBehaviour
+public class SlotHighlightEffect : MonoBehaviour
 {
-
     private Renderer _rend;
 
     void Awake()
     {
-        _rend = renderer;
+        _rend = GetComponent<Renderer>();
     }
-    internal void StartEffect()
-    {
-        _rend.enabled = true;
-    }
+	
+	
 
     internal void StopEffect()
     {
         _rend.enabled = false;
+    }
+
+    internal void StartEffect()
+    {
+        _rend.enabled = true;
     }
 }
