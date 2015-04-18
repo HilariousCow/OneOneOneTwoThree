@@ -1,6 +1,6 @@
 ﻿Shader "OneOneOneTwoThree/PreviewTokens" {
 	Properties {
-		
+		_LineWidth("LineWidth", Range (0,20)) = 10
 	}
 	SubShader {
 		Tags {"Queue" = "Geometry" "RenderType"="Opaque" }
@@ -12,8 +12,8 @@
 			
 			ZWrite On
 			ZTest LEqual
-			
-			Blend SrcAlpha OneMinusSrcAlpha
+			ColorMask 0
+		//	Blend SrcAlpha OneMinusSrcAlpha
 			
 			CGPROGRAM
 
@@ -55,7 +55,7 @@
 			float4 frag (v2f i) : COLOR
 			{
 				float4 outColor = i.color;
-				outColor.a = 0;
+			//	outColor.a = 0;
 				return outColor;
 			}
 			
@@ -68,7 +68,6 @@
 			
 			ZWrite Off
 			ZTest LEqual
-			//Fog Disable
 			Blend OneMinusDstColor OneMinusSrcColor 
 			
 			CGPROGRAM
@@ -78,7 +77,7 @@
 			#pragma fragmentoption ARB_precision_hint_fastest
 			#include "UnityCG.cginc"
 			
-			
+			float _LineWidth;
 			struct appdata {
 				float4 vertex	: POSITION;
 				float4 color : COLOR;
@@ -103,8 +102,12 @@
 				o.normal   = mul ((float3x3)UNITY_MATRIX_IT_MV, v.normal);
 				//float2 offset = TransformViewToProjection(o.normal.xy);
 			 
-				o.pos.xy += o.normal.xy * 0.0050f * o.pos.z;// / o.pos.z * 10.0f;
+				//o.pos.xy += o.normal.xy * 0.0050f * o.pos.z;// / o.pos.z * 10.0f;
 	
+				float2 pixelSize = (1/_ScreenParams.xy) * _LineWidth;
+				o.pos.xy += (o.normal.xy * pixelSize)* o.pos.z;// * o.pos.z;
+				o.pos.z += o.normal.z*pixelSize;
+				
 				o.color = v.color;
 				o.uv = MultiplyUV (UNITY_MATRIX_TEXTURE0, v.texcoord);
 				return o; 

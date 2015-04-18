@@ -24,7 +24,7 @@ public class Stack : MonoBehaviour {
         
        _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.125f ,Vector3.zero);
 
-        transform.localScale = Vector3.one*2.0f;
+       // transform.localScale = Vector3.one*2.0f;
     }
 
     public IEnumerator AnimateCardEffectOnStack(Card card)
