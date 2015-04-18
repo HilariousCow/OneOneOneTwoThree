@@ -96,14 +96,17 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         //todo: is dragging
         if (_isDragging == true)
         {
-            Vector3 delta = transform.TransformPoint(_clickOriginOffset) - Camera.main.transform.position;
+         //   Vector3 delta = transform.TransformPoint(_clickOriginOffset) - Camera.main.transform.position;
 
             
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
+            Vector3 targetPosition = ray.origin + ray.direction.normalized *  (_startDifferenceToCamera.magnitude * 0.5f);
+            targetPosition += Vector3.up * 2.5f;
 
-            transform.position = Camera.main.transform.position + ray.direction * (_startDifferenceToCamera.magnitude);
-            transform.position += Vector3.up * 2.5f;
+            Vector3 deltaPos = targetPosition - transform.position;
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition,
+                                                           (deltaPos.magnitude + 0.1f) * Time.deltaTime * 15f);
 
 
 
