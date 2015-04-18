@@ -267,7 +267,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         Debug.Log("Turn off jail slots");
         foreach (CardSlot slot in _allJailCardSlots)
         {
-            slot.ShowSlot(false);
+          //  slot.ShowSlot(false);
             slot.HighlightIfEmpty(false);
             slot.IsInteractive = false;
         }
@@ -564,42 +564,47 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         CardSlot clickedSlot = card.transform.parent.GetComponent<CardSlot>();
         if (clickedSlot != null)
         {
-            Hand hand = _hands.FirstOrDefault(x => x.Slots.Contains(clickedSlot));
+
+            Hand hand = _slotsToHands[clickedSlot];
             if (hand != null)//this slot is part of a hand.
             {
-                if (hand.AutoPlacementTargetSlot.IsInteractive)
+                if (hand.Slots.Find(x=> x.CardInSlot == card))
                 {
-                    if(!hand.AutoPlacementTargetSlot.IsEmpty)
+                    if (hand.AutoPlacementTargetSlot.IsInteractive)
                     {
+                        if (!hand.AutoPlacementTargetSlot.IsEmpty)
+                        {
 
-                        Card swap = hand.AutoPlacementTargetSlot.RemoveCardFromSlot();
-                        hand.AutoPlacementTargetSlot.AddCardToSlot(card);
-                        clickedSlot.AddCardToSlot(swap);
+                            Card swap = hand.AutoPlacementTargetSlot.RemoveCardFromSlot();
+                            hand.AutoPlacementTargetSlot.AddCardToSlot(card);
+                            clickedSlot.AddCardToSlot(swap);
+                        }
+                        else
+                        {
+                            hand.AutoPlacementTargetSlot.AddCardToSlot(card);
+                        }
+
                     }
                     else
                     {
-                        hand.AutoPlacementTargetSlot.AddCardToSlot(card);
+                        Debug.Log("Target Not interactive: " + hand.AutoPlacementTargetSlot.gameObject.name);
                     }
-                    
                 }
-                else
+                if (_handsToCommitSlots[hand].Contains(clickedSlot))//could be a commit slot or a 
                 {
-                    Debug.Log("Target Not interactive: " + hand.AutoPlacementTargetSlot.gameObject.name);
+                    Card swap = clickedSlot.RemoveCardFromSlot();
+                    _slotsToHands[clickedSlot].AddCardToHand(swap);
+
+                }
+                else if (_handsToJailCards[hand].Contains(clickedSlot))
+                {
+                    Card swap = clickedSlot.RemoveCardFromSlot();
+                    _slotsToHands[clickedSlot].AddCardToHand(swap);
                 }
             }
-            else if(_handsToCommitSlots[hand].Contains(clickedSlot))//could be a commit slot or a 
-            {
-
-              
-                Card swap = clickedSlot.RemoveCardFromSlot();
-                _slotsToHands[clickedSlot].AddCardToHand(swap);
-
-            } 
-            else if(_handsToJailCards[hand].Contains(clickedSlot))
-            {
-                Card swap = clickedSlot.RemoveCardFromSlot();
-                _slotsToHands[clickedSlot].AddCardToHand(swap);
-            }
+           
+            
+                
             else
             {
                 Debug.Log("Clicked on a non hand owned slot. Probably score slots. " + clickedSlot.gameObject.name);
