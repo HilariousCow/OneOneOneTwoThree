@@ -432,7 +432,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                     _handsToJailCards.Add(hand, new List<CardSlot>());
                 }
                 _handsToJailCards[hand].Add(jailSlot);
-
+                _slotsToHands.Add(jailSlot, hand);
                 
                 _allJailCardSlots.Add(jailSlot);
             }
@@ -540,6 +540,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     public void DroppedCardOnCardSlot(Card displacingCard, CardSlot targetSlot, CardSlot previousSlot)
     {
        
+       
         Hand hand = _slotsToHands[targetSlot];
 
         if (displacingCard.PlayerSoRef == hand.PlayerSoRef)
@@ -576,12 +577,14 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                         {
 
                             Card swap = hand.AutoPlacementTargetSlot.RemoveCardFromSlot();
+                            clickedSlot.RemoveCardFromSlot();
+
                             hand.AutoPlacementTargetSlot.AddCardToSlot(card);
                             clickedSlot.AddCardToSlot(swap);
                         }
                         else
                         {
-                            hand.AutoPlacementTargetSlot.AddCardToSlot(card);
+                            hand.AutoPlacementTargetSlot.AddCardToSlot(clickedSlot.RemoveCardFromSlot());
                         }
 
                     }
@@ -590,7 +593,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                         Debug.Log("Target Not interactive: " + hand.AutoPlacementTargetSlot.gameObject.name);
                     }
                 }
-                if (_handsToCommitSlots[hand].Contains(clickedSlot))//could be a commit slot or a 
+                else if (_handsToCommitSlots[hand].Contains(clickedSlot))//could be a commit slot or a 
                 {
                     Card swap = clickedSlot.RemoveCardFromSlot();
                     _slotsToHands[clickedSlot].AddCardToHand(swap);
@@ -621,72 +624,4 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         }
     }
 
-    /*
-    public void ClickedOnCard(Card card)
-    {
-        CardSlot clickedSlot = card.transform.parent.GetComponent<CardSlot>();
-        if(clickedSlot!=null)
-        {
-            Hand hand = _hands.FirstOrDefault(x => x.Slots.Contains(clickedSlot));
-            if (hand != null)
-            {
-
-                List<CardSlot> emptyJailSlots = _handsToJailCards[hand].Where(x => x.IsEmpty).ToList();
-                if (emptyJailSlots.Count > 0)
-                {
-                    //todo: continue from here. need to do the swap out stuff if in the right phase
-                    foreach (CardSlot commitSlot in emptyJailSlots)
-                    {
-                        commitSlot.AddCardToSlot(clickedSlot.RemoveCardFromSlot());
-                        break;
-                    }
-                }
-                else
-                {
-                    List<CardSlot> emptyCommitSlots = _handsToCommitSlots[hand].Where(x => x.IsEmpty && x.IsInteractive).ToList();
-                    if (emptyCommitSlots.Count > 0)
-                    {
-                        foreach (CardSlot commitSlot in emptyCommitSlots)
-                        {
-                            
-                            commitSlot.AddCardToSlot(clickedSlot.RemoveCardFromSlot());
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        
-
-
-                        CardSlot targetSlot = _handsToCommitSlots[hand][0];
-
-                        if (targetSlot.IsInteractive)
-                        {
-                            Debug.Log("swapping out cards");
-                            Card clickedCard = clickedSlot.RemoveCardFromSlot();
-                            Card swapOut = targetSlot.RemoveCardFromSlot();
-
-                            targetSlot.AddCardToSlot(clickedCard);
-                            clickedSlot.AddCardToSlot(swapOut);
-                        }
-                        else
-                        {
-                            //wrong?
-                            Debug.Log("swapout slot is locked ");
-                        }
-
-                    }
-                }
-            }
-            
-
-            if (_allCommitCardSlots.Contains(clickedSlot))
-            {
-                //logically, hands will always have an empty slot if you are clicking on a card from a 
-                //commit slot
-                Card swap = clickedSlot.RemoveCardFromSlot();
-                _slotsToHands[clickedSlot].AddCardToHand(swap);
-            }
-        }
-    }*/
 }

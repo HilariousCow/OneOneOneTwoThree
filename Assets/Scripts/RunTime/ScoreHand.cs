@@ -72,6 +72,7 @@ public class ScoreHand : MonoBehaviour
 
                 
                 slot.gameObject.name = hand.gameObject.name + "_Round_" + (index + 1).ToString();
+                slot.IsInteractive = false;//never interactive
                 trackers.Add(slot);
 
                 scores.Add(0);

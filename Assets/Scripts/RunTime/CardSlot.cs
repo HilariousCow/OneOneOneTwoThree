@@ -104,6 +104,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     public void OnDrop(PointerEventData eventData)
     {
+
         if (eventData.pointerDrag != null)
         {
          //   Debug.Log(eventData.pointerDrag.name + " Dropped On Reciever: " + gameObject.name);
@@ -111,13 +112,19 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
             //card.transform.position = eventData.worldPosition;
             if(card != null)
             {
+                if (!IsInteractive)
+                {
+                    //fail beep
+                    return;
+                }
+
                 ExecuteEvents.ExecuteHierarchy<IDropCardOnCardSlot>(
                     transform.parent.gameObject,
                     null,
                     (x, y) => x.DroppedCardOnCardSlot(card, this, card.GetSlotOwner())
                     );
 
-                if (!IsInteractive) card.CachedCollider.enabled = false;
+                card.CachedCollider.enabled = IsInteractive;
             }
         }
     }
@@ -138,6 +145,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        Debug.Log("Clicked on slot: " + gameObject.name);
         if (!IsInteractive)
         {
             //fail beep
@@ -159,5 +167,14 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     {
         renderer.enabled = p;
     }
+
+    public void OnDrawGizmos()
+    {
+        if (!IsEmpty)
+        {
+            Gizmos.DrawLine(transform.position, CardInSlot.transform.position);
+        }
+    }
+   
 }
 

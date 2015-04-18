@@ -47,7 +47,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         DotBacks.material = _playerSoRef.CardMaterialBack;
         _rend.material = _playerSoRef.CardMaterialRedraw;
 
-	    _col = collider;
+	    _col = GetComponent<Collider>();
         _isDragging = false;
 	    _cam = Camera.main;
 
@@ -130,7 +130,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
             float angle = Quaternion.Angle(transform.rotation, targetRot) ;
             if (angle > 0.0f)
             {
-                angle += 1.0f;
+                angle += 10.0f;
                 transform.localRotation = Quaternion.RotateTowards(transform.localRotation, targetRot, Time.deltaTime * angle * 5f);
             }
         }
@@ -186,7 +186,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         _clickOriginOffset = Vector3.zero;
         
         _isDragging = false;
-
+        CachedCollider.enabled = true;
      //   Debug.Log("Ended Drag" + gameObject.name);
         //ExecuteEvents.ExecuteHierarchy<IRefreshView>(_previousOwner.gameObject, null, (x, y) => x.RefreshView());//todo
 
@@ -195,13 +195,13 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         {
             transform.SetParent(_previousParentWhenDragging);//redundant?
             transform.localPosition = Vector3.zero;
-            CachedCollider.enabled = true;
+            
 
         }
         else if (transform.parent == null)//still no parent, meaning it didn't find a home, meaning it should snap back to where it came from
         {
             transform.parent = _previousParentWhenDragging;
-            CachedCollider.enabled = true;
+           
             //transform.ResetToParent();
         }
 
