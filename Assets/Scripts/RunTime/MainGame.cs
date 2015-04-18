@@ -162,7 +162,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         }
 
         TurnOffCommitSlotInteractivity();
-
+        TurnOffHands();
         Debug.LogWarning("All slots filled, resolving gameplay");
         //todo: lockout changes. focus camera, or have it above in the first place.
         yield return new WaitForSeconds(1f);
@@ -193,6 +193,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             yield return new WaitForSeconds(0.5f);
 
         }
+        TurnOnHands();
 
         if (_scoreHand.FinishedRound)
         {
@@ -207,8 +208,24 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     }
 
-   
+    
 
+    private void TurnOffHands()
+    {
+        foreach (Hand hand in _hands)
+        {
+            hand.gameObject.SetActive(false);
+        }
+    }
+
+
+    private void TurnOnHands()
+    {
+        foreach (Hand hand in _hands)
+        {
+            hand.gameObject.SetActive(true);
+        }
+    }
     IEnumerator ApplyCardToStack( CardSlot firstCardSlot, Stack stack)
     {
         
@@ -281,62 +298,121 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             Debug.Log("Game is a draw");
             if (_matchSettings.TieBreaker == TieBreakerStyle.FlipStack)
             {
-                Debug.Log("Resolving with flip stack");
-               
-                List<TokenSide> sides = new List<TokenSide>();
-                foreach (Stack stack in _stacks)
-                {
-                    Card tieBreaker = transform.InstantiateChild(CardPrefab);
-                    tieBreaker.Init(_matchSettings.TieBreakerCard, _matchSettings.StackStyle,
-                                    _matchSettings.TieBreakerPlayer);
-                    yield return new WaitForSeconds(0.5f);
-                    tieBreaker.transform.position = Vector3.up*2f;
-                    yield return new WaitForSeconds(0.5f);
-                    tieBreaker.transform.rotation = tieBreaker.transform.rotation*
-                                                    Quaternion.AngleAxis(180f, Vector3.forward);
-                    yield return new WaitForSeconds(0.5f);
-                    yield return StartCoroutine(stack.AnimateCardEffectOnStack(tieBreaker));
-                    //  stack.ApplyCardToStack(firstCard);..temp remove
-                    yield return new WaitForSeconds(0.5f);
-
-                    Destroy(tieBreaker.gameObject);
-                    //find whose is applied first for this stack
-                    sides.Add(stack.GetTopTokenSide());
-
-                }
-
-                yield return new WaitForSeconds(1f);
-
-                //are all sides the same?
-                TokenSide firstSide = sides.PeekFront();
-                if (sides.Count(x => x == firstSide) == sides.Count)
-                {
-                    DeclareWinner(firstSide);
-                }
-                else
-                {
-                    //now what?
-                    Debug.LogError("Don't know how to resolve tie for multi stack games");
-                }
+                yield return StartCoroutine(TieBreakFilp());
             }
             else if (_matchSettings.TieBreaker == TieBreakerStyle.UseJailCards)
             {
-                //get the last cards in the hand? or there's a slot for tie breaker cards
-                Debug.Log("Resolving with tie breaker cards");
-
-                //play one more round using the cards.
-
-                //DeclareWinner(sortedDict.PeekFront().Key.PlayerSoRef.DesiredTokenSide);
+                yield return StartCoroutine(TieBreak());
             }
-
         }
         else
         {
-            
             List<KeyValuePair<Hand, int>> sortedDict = (from entry in _scoreHand.TotalledScores orderby entry.Value descending select entry).ToList();
             DeclareWinner(sortedDict.PeekFront().Key.PlayerSoRef.DesiredTokenSide);
 
         }
+    }
+
+    private IEnumerator TieBreakFilp()
+    {
+        yield return null;
+        Debug.Log("Resolving with flip stack");
+
+        List<TokenSide> sides = new List<TokenSide>();
+        foreach (Stack stack in _stacks)
+        {
+            Card tieBreaker = transform.InstantiateChild(CardPrefab);
+            tieBreaker.Init(_matchSettings.TieBreakerCard, _matchSettings.StackStyle,
+                            _matchSettings.TieBreakerPlayer);
+            yield return new WaitForSeconds(0.5f);
+            tieBreaker.transform.position = Vector3.up * 2f;
+            yield return new WaitForSeconds(0.5f);
+            tieBreaker.transform.rotation = tieBreaker.transform.rotation *
+                                            Quaternion.AngleAxis(180f, Vector3.forward);
+            yield return new WaitForSeconds(0.5f);
+            yield return StartCoroutine(stack.AnimateCardEffectOnStack(tieBreaker));
+            //  stack.ApplyCardToStack(firstCard);..temp remove
+            yield return new WaitForSeconds(0.5f);
+
+            Destroy(tieBreaker.gameObject);
+            //find whose is applied first for this stack
+            sides.Add(stack.GetTopTokenSide());
+
+        }
+
+        yield return new WaitForSeconds(1f);
+
+        //are all sides the same?
+        TokenSide firstSide = sides.PeekFront();
+        if (sides.Count(x => x == firstSide) == sides.Count)
+        {
+            DeclareWinner(firstSide);
+        }
+        else
+        {
+            //now what?
+            Debug.LogError("Don't know how to resolve tie for multi stack games");
+
+            yield return StartCoroutine(TieBreakFilp());
+        }
+    }
+
+    private IEnumerator TieBreak()
+    {
+        Debug.Log("Doing tie breaker cards.");
+        yield return null;
+
+        TokenSide topAtBeginningOfOperation = _stacks[0].GetTopTokenSide();
+        List<TokenSide> sides = new List<TokenSide>();
+        foreach (Stack stack in _stacks)
+        {
+            //find whose is applied first for this stack
+            List<CardSlot> firstJailSlots =
+                _handsToJailCards[_hands.Find(x => x.PlayerSoRef.DesiredTokenSide == topAtBeginningOfOperation)];
+
+            List<CardSlot> secondJailSlots =
+                _handsToJailCards[_hands.Find(x => x.PlayerSoRef.DesiredTokenSide == topAtBeginningOfOperation)];
+
+            for (int index = 0; index < secondJailSlots.Count; index++)
+            {
+                CardSlot firstJailSlot = firstJailSlots[index];
+                CardSlot secondJailSlot = secondJailSlots[index];
+
+                firstJailSlot.StartNextTurnArrowEffect();
+                yield return StartCoroutine(ApplyCardToStack(firstJailSlot, stack));
+                firstJailSlot.StopNextTurnArrowEffect();
+
+                secondJailSlot.StartNextTurnArrowEffect();
+                yield return StartCoroutine(ApplyCardToStack(secondJailSlot, stack));
+                secondJailSlot.StopNextTurnArrowEffect();
+            }
+
+            //todo: extract token side orders. yeah. much nicer. but how will black/white determin multiple players? arhgh.
+            //so, big assumptions here.
+          
+          
+
+        //    yield return StartCoroutine(_scoreHand.AddRound(stack, firstCardSlot, secondCardSlot));
+            sides.Add(stack.GetTopTokenSide());
+            yield return new WaitForSeconds(0.5f);
+
+        }
+
+        yield return new WaitForSeconds(1f);
+
+        //are all sides the same?
+        TokenSide firstSide = sides.PeekFront();
+        if (sides.Count(x => x == firstSide) == sides.Count)
+        {
+            DeclareWinner(firstSide);
+        }
+        else
+        {
+            //now what?
+            Debug.LogError("Don't know how to resolve tie for multi stack games");
+            yield return StartCoroutine(TieBreak());
+        }
+
     }
 
     private void DeclareWinner(TokenSide winner)
