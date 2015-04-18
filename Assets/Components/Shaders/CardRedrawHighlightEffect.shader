@@ -50,7 +50,7 @@
 				
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.normal   = mul ((float3x3)UNITY_MATRIX_IT_MV, v.normal);
-			
+			o.normal = normalize(o.normal);
 				//this is the mask
 			
 			

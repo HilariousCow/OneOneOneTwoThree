@@ -100,6 +100,7 @@
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 				
 				o.normal   = mul ((float3x3)UNITY_MATRIX_IT_MV, v.normal);
+				o.normal = normalize(o.normal);
 				//float2 offset = TransformViewToProjection(o.normal.xy);
 			 
 				//o.pos.xy += o.normal.xy * 0.0050f * o.pos.z;// / o.pos.z * 10.0f;
