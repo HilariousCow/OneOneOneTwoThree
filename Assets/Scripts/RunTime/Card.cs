@@ -103,7 +103,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 
 
             transform.position = Camera.main.transform.position + ray.direction * (_startDifferenceToCamera.magnitude);
-            transform.position += Camera.main.transform.up * 2.5f;
+            transform.position += Vector3.up * 2.5f;
 
 
 

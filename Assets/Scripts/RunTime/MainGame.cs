@@ -655,7 +655,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 previousSlot.AddCardToSlot(swap);
             }
             targetSlot.AddCardToSlot(displacingCard);
+            targetSlot.PlaySpecialPlacementEffect();
             SoundPlayer.Instance.PlaySound("PlaceCard");
+
         }
         //else, let it snap back. clean itself up
     }
@@ -680,10 +682,12 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
                             hand.AutoPlacementTargetSlot.AddCardToSlot(card);
                             clickedSlot.AddCardToSlot(swap);
+                            hand.AutoPlacementTargetSlot.PlaySpecialPlacementEffect();
                         }
                         else
                         {
                             hand.AutoPlacementTargetSlot.AddCardToSlot(clickedSlot.RemoveCardFromSlot());
+                            hand.AutoPlacementTargetSlot.PlaySpecialPlacementEffect();
                         }
                         SoundPlayer.Instance.PlaySound("SwapCards");
                     }

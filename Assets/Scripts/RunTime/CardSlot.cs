@@ -121,7 +121,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                     //fail beep
                     return;
                 }
-                _placementEffect.Play();
+                
                 ExecuteEvents.ExecuteHierarchy<IDropCardOnCardSlot>(
                     transform.parent.gameObject,
                     null,
@@ -187,6 +187,11 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
             Gizmos.DrawLine(transform.position, CardInSlot.transform.position);
         }
     }
-   
+
+
+    internal void PlaySpecialPlacementEffect()
+    {
+        _placementEffect.Play();
+    }
 }
 

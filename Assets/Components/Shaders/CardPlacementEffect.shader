@@ -1,7 +1,7 @@
 ﻿Shader "OneOneOneTwoThree/CardPlacementEffect" {
 		Properties {
 		_Color ("Color", Color) = (1,1,1,1)
-		_LineWidth("LineWidth", Range (0,500)) =5
+		_LineWidth("LineWidth", Range (0,100)) =5
 		
 		_InnerEdge("InnerEdge", float) =0
 		_OuterEdge("OuterEdge", float) =0
