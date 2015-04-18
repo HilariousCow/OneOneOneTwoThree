@@ -96,8 +96,6 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         //todo: is dragging
         if (_isDragging == true)
         {
-
-
             Vector3 delta = transform.TransformPoint(_clickOriginOffset) - Camera.main.transform.position;
 
             

@@ -278,9 +278,11 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         yield return new WaitForSeconds(1f);
         if(_scoreHand.GameIsATie)
         {
+            Debug.Log("Game is a draw");
             if (_matchSettings.TieBreaker == TieBreakerStyle.FlipStack)
             {
-                Debug.Log("Game is a draw");
+                Debug.Log("Resolving with flip stack");
+               
                 List<TokenSide> sides = new List<TokenSide>();
                 foreach (Stack stack in _stacks)
                 {
@@ -320,8 +322,11 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             else if (_matchSettings.TieBreaker == TieBreakerStyle.UseJailCards)
             {
                 //get the last cards in the hand? or there's a slot for tie breaker cards
+                Debug.Log("Resolving with tie breaker cards");
 
+                //play one more round using the cards.
 
+                //DeclareWinner(sortedDict.PeekFront().Key.PlayerSoRef.DesiredTokenSide);
             }
 
         }
@@ -539,24 +544,19 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     public void DroppedCardOnCardSlot(Card displacingCard, CardSlot targetSlot, CardSlot previousSlot)
     {
-       
-       
         Hand hand = _slotsToHands[targetSlot];
 
         if (displacingCard.PlayerSoRef == hand.PlayerSoRef)
         {
-            if (previousSlot != null)
-            {
-                previousSlot.RemoveCardFromSlot();
-            }
-
-            //AddCardToHand(displacingCard);//this will deal with its own internal card re-moving but not for other people's
+             previousSlot.RemoveCardFromSlot();
+            
             if (!targetSlot.IsEmpty)
             {
                 Card swap = targetSlot.RemoveCardFromSlot();
                 previousSlot.AddCardToSlot(swap);
             }
             targetSlot.AddCardToSlot(displacingCard);
+            SoundPlayer.Instance.PlaySound("PlaceCard");
         }
         //else, let it snap back. clean itself up
     }
@@ -586,7 +586,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                         {
                             hand.AutoPlacementTargetSlot.AddCardToSlot(clickedSlot.RemoveCardFromSlot());
                         }
-
+                        SoundPlayer.Instance.PlaySound("SwapCards");
                     }
                     else
                     {
@@ -597,13 +597,17 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 {
                     Card swap = clickedSlot.RemoveCardFromSlot();
                     _slotsToHands[clickedSlot].AddCardToHand(swap);
+                    SoundPlayer.Instance.PlaySound("SwapCards");
 
                 }
                 else if (_handsToJailCards[hand].Contains(clickedSlot))
                 {
                     Card swap = clickedSlot.RemoveCardFromSlot();
                     _slotsToHands[clickedSlot].AddCardToHand(swap);
+                    SoundPlayer.Instance.PlaySound("SwapCards");
                 }
+
+                
             }
            
             

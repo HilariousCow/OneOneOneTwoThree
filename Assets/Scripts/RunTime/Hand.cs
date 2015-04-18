@@ -151,10 +151,9 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
             return;
         }
 
-        if(!Slots.Contains(previousSlot))
-        {
-            previousSlot.RemoveCardFromSlot();
-        }
+       
+        previousSlot.RemoveCardFromSlot();
+        
 
         //AddCardToHand(displacingCard);//this will deal with its own internal card re-moving but not for other people's
         if (!targetSlot.IsEmpty)
