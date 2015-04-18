@@ -195,7 +195,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         }
         TurnOnHands();
 
-        if (_scoreHand.FinishedRound || true)//TEMP
+        if (_scoreHand.FinishedRound )
         {
             Debug.Log("Rounds are over");
             StartCoroutine(ResolutionPhase());
@@ -292,8 +292,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     
     IEnumerator ResolutionPhase()
     {
+        TurnOffHands();
         yield return new WaitForSeconds(1f);
-        if(_scoreHand.GameIsATie || true)//TEMP
+        if(_scoreHand.GameIsATie )
         {
             Debug.Log("Game is a draw");
             if (_matchSettings.TieBreaker == TieBreakerStyle.FlipStack)
@@ -371,7 +372,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 _handsToJailCards[_hands.Find(x => x.PlayerSoRef.DesiredTokenSide == topAtBeginningOfOperation)];
 
             List<CardSlot> secondJailSlots =
-                _handsToJailCards[_hands.Find(x => x.PlayerSoRef.DesiredTokenSide == topAtBeginningOfOperation)];
+                _handsToJailCards[_hands.Find(x => x.PlayerSoRef.DesiredTokenSide != topAtBeginningOfOperation)];
 
             //reposition
             for (int index = 0; index < secondJailSlots.Count; index++)
@@ -394,7 +395,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 }
 
             }
-
+            yield return new WaitForSeconds(0.5f);
             for (int index = 0; index < secondJailSlots.Count; index++)
             {
                 CardSlot firstJailSlot = firstJailSlots[index];
