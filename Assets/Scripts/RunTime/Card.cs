@@ -122,14 +122,14 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         {
             //always try to move to your home position
             transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero,
-                                                          (transform.localPosition.magnitude+0.1f)*Time.deltaTime * 5f);
+                                                          (transform.localPosition.magnitude+0.1f)*Time.deltaTime * 15f);
 
             Quaternion targetRot = Quaternion.identity;
-            float angle = Quaternion.Angle(transform.rotation, targetRot) ;
+            float angle = Quaternion.Angle(transform.localRotation, targetRot);
             if (angle > 0.0f)
             {
                 angle += 10.0f;
-                transform.localRotation = Quaternion.RotateTowards(transform.localRotation, targetRot, Time.deltaTime * angle * 5f);
+                transform.localRotation = Quaternion.RotateTowards(transform.localRotation, targetRot, Time.deltaTime * angle * 15f);
             }
         }
 

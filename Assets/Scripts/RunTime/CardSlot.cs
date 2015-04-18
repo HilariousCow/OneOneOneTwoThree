@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
     private SlotHighlightEffect _highlightEffect;
+    private CardPlacementEffect _placementEffect;
     private NextTurnArrow _nextTurnArrow;
     private bool _isInteractive = true;
     private Renderer _rend;
@@ -15,6 +16,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     void Awake()
     {
         _highlightEffect = GetComponentInChildren<SlotHighlightEffect>();
+        _placementEffect = GetComponentInChildren<CardPlacementEffect>();
         _nextTurnArrow = GetComponentInChildren<NextTurnArrow>();
     }
 
@@ -87,6 +89,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 	    _cardInSlot = card;
 	    CardInSlot.transform.parent = transform;
         StopEffect();
+
 	}
 
     public Card RemoveCardFromSlot()
@@ -118,7 +121,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
                     //fail beep
                     return;
                 }
-
+                _placementEffect.Play();
                 ExecuteEvents.ExecuteHierarchy<IDropCardOnCardSlot>(
                     transform.parent.gameObject,
                     null,
