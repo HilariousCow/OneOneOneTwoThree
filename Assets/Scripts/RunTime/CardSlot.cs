@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.EventSystems;
 
 //need to look at inventory code examples.
-public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
 {
     private SlotHighlightEffect _highlightEffect;
     private NextTurnArrow _nextTurnArrow;
@@ -107,11 +107,12 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
         if (eventData.pointerDrag != null)
         {
-         //   Debug.Log(eventData.pointerDrag.name + " Dropped On Reciever: " + gameObject.name);
+            Debug.Log(eventData.pointerDrag.name + " Dropped On Reciever: " + gameObject.name);
             Card card = eventData.pointerDrag.GetComponent<Card>();
             //card.transform.position = eventData.worldPosition;
             if(card != null)
             {
+                
                 if (!IsInteractive)
                 {
                     //fail beep
@@ -145,19 +146,27 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("Clicked on slot: " + gameObject.name);
+        
         if (!IsInteractive)
         {
             //fail beep
+            Debug.Log("Clicked on slot: " + gameObject.name + " but was uniteractive");
             return;
         }
         if (CardInSlot != null)
         {
+            Debug.Log("Clicked on slot: " + gameObject.name + " with card: " + CardInSlot.gameObject.name);
+
             ExecuteEvents.ExecuteHierarchy<IPointerClickOnCard>(
                 transform.parent.gameObject,
                 null,
                 (x, y) => x.ClickedOnCard(CardInSlot)
                 );
+        }
+        else
+        {
+            Debug.Log("Clicked on empty slot : " + gameObject.name );
+
         }
     }
 

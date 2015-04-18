@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.EventSystems;
 
-public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler
+public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     public Stack StackPrefab;
     public Renderer RedrawCard;
@@ -232,5 +232,21 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         _hoverOver = false;
     }
 
-   
+
+
+    #region IPointerClickHandler Members
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if(transform.parent!=null)
+        {
+            CardSlot ownerSlot = transform.parent.GetComponent<CardSlot>();
+            if(ownerSlot!=null)
+            {
+                ownerSlot.OnPointerClick(eventData);
+            }
+        }
+    }
+
+    #endregion
 }

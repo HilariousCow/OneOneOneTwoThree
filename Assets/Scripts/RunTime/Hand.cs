@@ -156,8 +156,13 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
             previousSlot.RemoveCardFromSlot();
         }
 
-        AddCardToHand(displacingCard);//this will deal with its own internal card re-moving but not for other people's
-        
+        //AddCardToHand(displacingCard);//this will deal with its own internal card re-moving but not for other people's
+        if (!targetSlot.IsEmpty)
+        {
+            Card swap = targetSlot.RemoveCardFromSlot();
+            previousSlot.AddCardToSlot(swap);
+        }
+        targetSlot.AddCardToSlot(displacingCard);
     }
 }
 namespace UnityEngine.EventSystems

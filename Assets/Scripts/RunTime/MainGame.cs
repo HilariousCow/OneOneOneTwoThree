@@ -550,12 +550,12 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 previousSlot.RemoveCardFromSlot();
             }
 
+            //AddCardToHand(displacingCard);//this will deal with its own internal card re-moving but not for other people's
             if (!targetSlot.IsEmpty)
             {
-                Card swapOut = targetSlot.RemoveCardFromSlot();
-                hand.AddCardToHand(swapOut);
+                Card swap = targetSlot.RemoveCardFromSlot();
+                previousSlot.AddCardToSlot(swap);
             }
-
             targetSlot.AddCardToSlot(displacingCard);
         }
         //else, let it snap back. clean itself up
