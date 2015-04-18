@@ -13,6 +13,9 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
     private Camera _cam;
     private PlayerSO _playerSoRef;
     private Vector3 startingLocalPosition;
+
+    private CardSlot _autoPlacementTargetSlot;
+
     public PlayerSO PlayerSoRef
     {
         get { return _playerSoRef; }
@@ -23,6 +26,12 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
         get { return _slots; }
     }
 
+    public CardSlot AutoPlacementTargetSlot
+    {
+        get { return _autoPlacementTargetSlot; }
+        set { _autoPlacementTargetSlot = value; }
+    }
+
     // Use this for initialization
 	void Start ()
 	{
@@ -30,6 +39,7 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 
 	    startingLocalPosition = transform.localPosition;
 	}
+
     public void Init(PlayerSO player, MatchSettingsSO matchSettings)
     {
         _playerSoRef = player;

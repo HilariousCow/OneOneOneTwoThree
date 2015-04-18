@@ -16,6 +16,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     public Stack StackPrefab;
     public CardSlot CardSlotPrefab;
     public ScoreHand ScoreHandPrefab;
+    //public TextMesh TestMeshPrefab;
 
     //need cards sos
     private MatchSettingsSO _matchSettings;
@@ -25,7 +26,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     private ScoreHand _scoreHand;
 
     private Dictionary<Hand, List<CardSlot>> _handsToJailCards;//not always used
-    private Dictionary<Hand,List<CardSlot>> _handsToPlaySlots;
+    private Dictionary<Hand,List<CardSlot>> _handsToCommitSlots;
     private Dictionary<CardSlot, Hand> _slotsToHands;
 
     private Dictionary<Stack, List<CardSlot>> _stacksToCommitSlots;
@@ -56,6 +57,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             case TieBreakerStyle.UseJailCards:
                 TurnOffCommitSlotInteractivity();
                 TurnOnJailSlotInteractivity();
+                SetAllHandsToJailCard();
                 bool all = (_allJailCardSlots.FindAll(x => !x.IsEmpty).Count == _allJailCardSlots.Count);
                 bool pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
                 while (!all || !pointDownMosty)
@@ -66,6 +68,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                     all = (_allJailCardSlots.FindAll(x => !x.IsEmpty).Count == _allJailCardSlots.Count);
                 }
                 TurnOffJailSlotInteractivity();
+
+                yield return StartCoroutine(MoveJailCardsUnderStack());
+
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -74,9 +79,57 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
        
     }
 
+    private IEnumerator MoveJailCardsUnderStack()
+    {
+        TokenSide topAtBeginningOfOperation = _stacks[0].GetTopTokenSide();
+
+        foreach (Hand hand in _hands)
+        {
+            CardSlot jailslot = _handsToJailCards[hand][0];
+            Card tieBreakerCard = jailslot.RemoveCardFromSlot();
+
+            jailslot.transform.position = _stacks[0].transform.position + Vector3.left * 5f;
+            if (topAtBeginningOfOperation == hand.PlayerSoRef.DesiredTokenSide)
+            {
+
+                jailslot.transform.position += Vector3.down*1.0f;
+            }
+            else
+            {
+                jailslot.transform.position += Vector3.down * 2.0f;
+            }
+
+            jailslot.AddCardToSlot(tieBreakerCard);
+        }
+        yield return null;
+
+    }
+
+    private void SetAllHandsToJailCard()
+    {
+        foreach (Hand hand in _hands)
+        {
+            CardSlot jailSlot = _handsToJailCards[hand][0];
+            hand.AutoPlacementTargetSlot = jailSlot;
+            
+
+        }
+    }
+
+    private void SetAllHandsToCommitSlot()
+    {
+        foreach (Hand hand in _hands)
+        {
+            CardSlot targetSlot = _handsToCommitSlots[hand][0];
+            hand.AutoPlacementTargetSlot = targetSlot;
+        }
+
+    }
+
     IEnumerator LoopPhase()
     {
         TurnOnCommitSlotInteractivity();
+        SetAllHandsToCommitSlot();
         TokenSide topAtBeginningOfOperation = _stacks[0].GetTopTokenSide();
 
         foreach (Stack stack in _stacks)
@@ -153,6 +206,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         }
 
     }
+
+   
 
     IEnumerator ApplyCardToStack( CardSlot firstCardSlot, Stack stack)
     {
@@ -307,7 +362,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         _cards = new List<Card>();
 
         _handsToJailCards = new Dictionary<Hand, List<CardSlot>>();
-        _handsToPlaySlots = new Dictionary<Hand, List<CardSlot>>();
+        _handsToCommitSlots = new Dictionary<Hand, List<CardSlot>>();
         _slotsToHands = new Dictionary<CardSlot, Hand>();
         _stacksToCommitSlots = new Dictionary<Stack, List<CardSlot>>();
         _allCommitCardSlots = new List<CardSlot>();
@@ -357,7 +412,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
            
 
-            _handsToPlaySlots.Add(hand, playSlotsForPlayer);
+            _handsToCommitSlots.Add(hand, playSlotsForPlayer);
 
             foreach (Card card in cardsForThisHand)
             {
@@ -504,7 +559,64 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         }
         //else, let it snap back. clean itself up
     }
+    public void ClickedOnCard(Card card)
+    {
+        CardSlot clickedSlot = card.transform.parent.GetComponent<CardSlot>();
+        if (clickedSlot != null)
+        {
+            Hand hand = _hands.FirstOrDefault(x => x.Slots.Contains(clickedSlot));
+            if (hand != null)//this slot is part of a hand.
+            {
+                if (hand.AutoPlacementTargetSlot.IsInteractive)
+                {
+                    if(!hand.AutoPlacementTargetSlot.IsEmpty)
+                    {
 
+                        Card swap = hand.AutoPlacementTargetSlot.RemoveCardFromSlot();
+                        hand.AutoPlacementTargetSlot.AddCardToSlot(card);
+                        clickedSlot.AddCardToSlot(swap);
+                    }
+                    else
+                    {
+                        hand.AutoPlacementTargetSlot.AddCardToSlot(card);
+                    }
+                    
+                }
+                else
+                {
+                    Debug.Log("Target Not interactive: " + hand.AutoPlacementTargetSlot.gameObject.name);
+                }
+            }
+            else if(_handsToCommitSlots[hand].Contains(clickedSlot))//could be a commit slot or a 
+            {
+
+              
+                Card swap = clickedSlot.RemoveCardFromSlot();
+                _slotsToHands[clickedSlot].AddCardToHand(swap);
+
+            } 
+            else if(_handsToJailCards[hand].Contains(clickedSlot))
+            {
+                Card swap = clickedSlot.RemoveCardFromSlot();
+                _slotsToHands[clickedSlot].AddCardToHand(swap);
+            }
+            else
+            {
+                Debug.Log("Clicked on a non hand owned slot. Probably score slots. " + clickedSlot.gameObject.name);
+            }
+
+
+       /*     if (_allCommitCardSlots.Contains(clickedSlot))
+            {
+                //logically, hands will always have an empty slot if you are clicking on a card from a 
+                //commit slot
+                Card swap = clickedSlot.RemoveCardFromSlot();
+                _slotsToHands[clickedSlot].AddCardToHand(swap);
+            }*/
+        }
+    }
+
+    /*
     public void ClickedOnCard(Card card)
     {
         CardSlot clickedSlot = card.transform.parent.GetComponent<CardSlot>();
@@ -526,7 +638,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 }
                 else
                 {
-                    List<CardSlot> emptyCommitSlots = _handsToPlaySlots[hand].Where(x => x.IsEmpty && x.IsInteractive).ToList();
+                    List<CardSlot> emptyCommitSlots = _handsToCommitSlots[hand].Where(x => x.IsEmpty && x.IsInteractive).ToList();
                     if (emptyCommitSlots.Count > 0)
                     {
                         foreach (CardSlot commitSlot in emptyCommitSlots)
@@ -541,7 +653,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                         
 
 
-                        CardSlot targetSlot = _handsToPlaySlots[hand][0];
+                        CardSlot targetSlot = _handsToCommitSlots[hand][0];
 
                         if (targetSlot.IsInteractive)
                         {
@@ -571,5 +683,5 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 _slotsToHands[clickedSlot].AddCardToHand(swap);
             }
         }
-    }
+    }*/
 }

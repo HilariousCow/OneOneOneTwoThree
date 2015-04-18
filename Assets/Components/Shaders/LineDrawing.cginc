@@ -56,3 +56,4 @@ float4 RibbonPosMitre(float4 vertPos, float3 fromPrevious, float4 toNextAndSide)
 		return mul(UNITY_MATRIX_VP, worldPos);
 
 } 
+
