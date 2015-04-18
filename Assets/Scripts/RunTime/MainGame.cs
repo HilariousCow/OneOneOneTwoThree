@@ -195,10 +195,10 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         }
         TurnOnHands();
 
-        if (_scoreHand.FinishedRound)
+        if (_scoreHand.FinishedRound || true)//TEMP
         {
             Debug.Log("Rounds are over");
-            StartCoroutine("ResolutionPhase");
+            StartCoroutine(ResolutionPhase());
         }
         else
         {
@@ -293,7 +293,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     IEnumerator ResolutionPhase()
     {
         yield return new WaitForSeconds(1f);
-        if(_scoreHand.GameIsATie)
+        if(_scoreHand.GameIsATie || true)//TEMP
         {
             Debug.Log("Game is a draw");
             if (_matchSettings.TieBreaker == TieBreakerStyle.FlipStack)
@@ -372,6 +372,28 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
             List<CardSlot> secondJailSlots =
                 _handsToJailCards[_hands.Find(x => x.PlayerSoRef.DesiredTokenSide == topAtBeginningOfOperation)];
+
+            //reposition
+            for (int index = 0; index < secondJailSlots.Count; index++)
+            {
+                {
+                    CardSlot firstJailSlot = firstJailSlots[index];
+                    Card firstCard = firstJailSlot.RemoveCardFromSlot();
+                    CardSlot firstCommitSlot = _handsToCommitSlots[_slotsToHands[firstJailSlot]][0];
+
+                    firstJailSlot.transform.position = firstCommitSlot.transform.position;
+                    firstJailSlot.AddCardToSlot(firstCard);
+                }
+                {
+                    CardSlot secondJailSlot = secondJailSlots[index];
+                    Card secondCard = secondJailSlot.RemoveCardFromSlot();
+                    CardSlot secondCommitSlot = _handsToCommitSlots[_slotsToHands[secondJailSlot]][0];
+
+                    secondJailSlot.transform.position = secondCommitSlot.transform.position;
+                    secondJailSlot.AddCardToSlot(secondCard);
+                }
+
+            }
 
             for (int index = 0; index < secondJailSlots.Count; index++)
             {
