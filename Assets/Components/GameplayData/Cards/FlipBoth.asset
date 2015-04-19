@@ -11,7 +11,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9076dab18b838554eae34c516cdd4a46, type: 3}
   m_Name: FlipBoth
   m_EditorClassIdentifier: 
-  StackAnimation: {fileID: 0}
+  StackAnimation: {fileID: 7400000, guid: b298857603724bd48bf72df2573335d3, type: 2}
   FlipTop: 1
   FlipBottom: 1
   ReverseStack: 0

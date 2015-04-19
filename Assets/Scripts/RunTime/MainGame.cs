@@ -618,8 +618,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             //todo: reposition after the cards have been chosen.
             foreach (CardSlot jailCard in jailSlots)
             {
-                jailCard.transform.localPosition = Vector3.forward * 15f;
-                jailCard.transform.position += Vector3.left * 5f;
+                jailCard.transform.localPosition = transform.forward * 15f;
+                jailCard.transform.position += transform.right * -5f;
 
                 jailCard.transform.parent = hand.transform.parent;
             }

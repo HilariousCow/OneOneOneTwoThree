@@ -2,13 +2,27 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Stack : MonoBehaviour {
+public class Stack : MonoBehaviour
+{
+
+    public Transform TopHandle;
+    public Transform BottomHandle;
 
     public Token TokenPrefab;
+
     private StackSO _stackSoRef;
 
-    private List<Token> _stackOfTokens;
+    private List<Token> _stackOfTokens;//0 = top, count-1 = bottom
     private List<CardSO> _listOfOperationsApplied;
+    private Animator _anim;
+
+ /*   private int _flipBothHash = Animator.StringToHash("FlipBoth");
+    private int _flipTopHash = Animator.StringToHash("FlipTop");
+    private int _flipBottomHash = Animator.StringToHash("FlipBottom");
+    private int _flipStackHash = Animator.StringToHash("FlipStack");
+    private int _flipSwapHash = Animator.StringToHash("Swap");
+    private int _flipNothingHash = Animator.StringToHash("Nothing");*/
+
     public void Init(StackSO stackSo)
     {
         _listOfOperationsApplied = new List<CardSO>();
@@ -16,15 +30,18 @@ public class Stack : MonoBehaviour {
         _stackSoRef = stackSo;
 
         _stackOfTokens = new List<Token>();
+        Transform[] poses = new Transform[] { TopHandle , BottomHandle};
         for (int i = 0; i < _stackSoRef.NumberOfTokens; i++)
         {
-            Token toke = transform.InstantiateChild<Token>(TokenPrefab);
+            Token toke = poses[i].InstantiateChild<Token>(TokenPrefab);
             _stackOfTokens.Add(toke);
         }
         
-       _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.125f ,Vector3.zero);
+       //_stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.125f ,Vector3.zero);
 
        // transform.localScale = Vector3.one*2.0f;
+
+        _anim = GetComponent<Animator>();
     }
 
     public IEnumerator AnimateCardEffectOnStack(Card card)
@@ -34,17 +51,27 @@ public class Stack : MonoBehaviour {
         transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, -card.transform.position);
 
         
+
         yield return new WaitForSeconds(0.5f);
+        
+        AnimationClip animClip = card.CardSoRef.StackAnimation;
+        if (animClip != null)
+        {
+            _anim.SetTrigger(animClip.name);
+            yield return new WaitForSeconds(animClip.length);
+        }
+        //get the animation and wait for the length of that animation
+
+
+
         transform.rotation = prevRot;
         ApplyCardToStack(card);
         transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, -card.transform.position);
 
         yield return new WaitForSeconds(0.5f);
         transform.rotation = prevRot;
-        
-
-
     }
+
     public void ApplyCardToStack(Card card)
     {
        
