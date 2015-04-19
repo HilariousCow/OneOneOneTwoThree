@@ -149,7 +149,12 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        
+
+        OnCardSlotClick();
+    }
+
+    public void OnCardSlotClick()
+    {
         if (!IsInteractive)
         {
             //fail beep
@@ -168,7 +173,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         }
         else
         {
-            Debug.Log("Clicked on empty slot : " + gameObject.name );
+            Debug.Log("Clicked on empty slot : " + gameObject.name);
 
         }
     }

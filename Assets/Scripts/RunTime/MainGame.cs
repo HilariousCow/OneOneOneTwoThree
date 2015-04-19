@@ -5,12 +5,19 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
 
+public struct GameState
+{
+    public Stack StackState;
+    public Hand BlackPlayer;
+    public Hand WhitePlayer;
+}
+
 //override for different game rules.
 public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 {
     public MatchSettingsSO MatchToUseDefault;
-    
 
+    public AIPlayer AIPrefab;
     public Hand HandPrefab;//hands are effectively "the player"
     public Card CardPrefab;
     public Stack StackPrefab;
@@ -33,9 +40,16 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     private List<CardSlot> _allCommitCardSlots;
     private List<CardSlot> _allJailCardSlots;
 
+
+    public AIPlayer _whitePlayer;
+    public AIPlayer _blackPlayer;
+
     void Awake()
     {
-        Init(MatchToUseDefault);
+        AIPlayer whitePlayer = transform.InstantiateChild<AIPlayer>(AIPrefab);
+        
+        AIPlayer blackPlayer = null;
+        Init(MatchToUseDefault, whitePlayer, blackPlayer);
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
     }
 
@@ -60,6 +74,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 SetAllHandsToJailCard();
                 bool all = (_allJailCardSlots.FindAll(x => !x.IsEmpty).Count == _allJailCardSlots.Count);
                 bool pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
+
+                ProdAIForMove();
                 while (!all || !pointDownMosty)
                 {
 
@@ -77,6 +93,41 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         }
         StartCoroutine("LoopPhase");
        
+    }
+
+    private void ProdAIForMove()
+    {
+        GameState state = GetCurrentGameState();
+        if (_whitePlayer != null)
+        {
+
+            _whitePlayer.ChooseCardForGameState(state);
+            _whitePlayer.CardChosen += CardChosen;
+        }
+        if (_blackPlayer != null)
+        {
+            _blackPlayer.ChooseCardForGameState(state);
+            _blackPlayer.CardChosen += CardChosen;
+        }
+
+    }
+
+    private void CardChosen(CardSlot cardSlot, AIPlayer ai)
+    {
+        ai.CardChosen -= CardChosen;
+
+        cardSlot.OnCardSlotClick();
+        //pretend our ai friends clicked on this
+    }
+
+    private GameState GetCurrentGameState()
+    {
+        GameState state = new GameState();
+        state.WhitePlayer = _hands[0];
+        state.BlackPlayer = _hands[1];
+        state.StackState = _stacks[0];
+
+        return state;//todo: previous plays in order by both.
     }
 
     private IEnumerator MoveJailCardsUnderStack()
@@ -153,6 +204,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         Debug.LogWarning("Watching for all slots to be filled");
         bool all = (_allCommitCardSlots.FindAll(x => !x.IsEmpty).Count == _allCommitCardSlots.Count);
         bool pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
+        ProdAIForMove();
         while (!all || !pointDownMosty)
         {
 
@@ -447,7 +499,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     
 
-    public void Init(MatchSettingsSO matchSettings)
+
+
+    public void Init(MatchSettingsSO matchSettings, AIPlayer whitePlayer, AIPlayer blackPlayer)
     {
         _matchSettings = matchSettings;
 
@@ -600,8 +654,17 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         }
        
 
-        //begin match - call to initiate
+        if(whitePlayer!=null)
+        {
+            _whitePlayer = whitePlayer;
+            _whitePlayer.Init(_hands[0]);
+        }
 
+        if (blackPlayer != null)
+        {
+            _blackPlayer = whitePlayer;
+            _blackPlayer.Init(_hands[1]);
+        }
 
     }
 
