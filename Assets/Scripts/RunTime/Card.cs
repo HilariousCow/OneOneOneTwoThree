@@ -52,21 +52,29 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 	    _cam = Camera.main;
 
         //this is to fake the void, but maybe void should just set its scale zero.
-        
-            _previewStack = transform.InstantiateChild(StackPrefab);
-            _previewStack.Init(stackSo);
+    
+        _previewStack = transform.InstantiateChild(StackPrefab);
+        _previewStack.Init(stackSo);
 
-            _previewStack.transform.localRotation = Quaternion.AngleAxis(-90f, Vector3.right);
-            Bounds stackBounds = _previewStack.transform.RenderBounds();
+        _previewStack.transform.localRotation = Quaternion.AngleAxis(-90f, Vector3.right);
+        Bounds stackBounds = _previewStack.transform.RenderBounds();
 
-            _previewStack.transform.localPosition = Vector3.up*(stackBounds.size.y*0.5f + 0.125f);
+        _previewStack.transform.localPosition = Vector3.up*(stackBounds.size.y*0.5f + 0.125f);
 
-            //_previewStack.PlayOperationLooping();
+        //_previewStack.PlayOperationLooping();
 
 
-            _previewStack.PlayOperationLooping(CardSoRef);
+        _previewStack.PlayOperationLooping(_cardSoRef);
 	}
 
+    //hack to keep looping
+    void OnEnable()
+    {
+        if (_previewStack != null)
+        {
+            _previewStack.PlayOperationLooping(_cardSoRef);
+        }
+    }
 
 
     void LateUpdate()

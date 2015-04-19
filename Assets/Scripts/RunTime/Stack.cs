@@ -124,7 +124,16 @@ public class Stack : MonoBehaviour
                 token.Flip();
             }
         }
-        _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.125f, Vector3.zero);
+
+        Transform[] poses = new Transform[] { TopHandle, BottomHandle };
+        for (int i = 0; i < _stackSoRef.NumberOfTokens; i++)
+        {
+            Token toke = _stackOfTokens[i];
+            toke.transform.parent = poses[i];
+            toke.transform.ResetToParent();
+        }
+
+      //  _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.125f, Vector3.zero);
 
     }
 
@@ -183,7 +192,7 @@ public class Stack : MonoBehaviour
             while (true)
             {
                 _anim.SetTrigger(animClip.name);
-                yield return new WaitForSeconds(animClip.length);
+                yield return new WaitForSeconds(animClip.length+Time.deltaTime);
             }
         }
     }
@@ -191,63 +200,17 @@ public class Stack : MonoBehaviour
     //i just want to be able to tell which is which from a glance
     internal void PlayOperationLooping(CardSO cardSoRef)
     {
+        //void
+        if (!cardSoRef.ReverseStack && !cardSoRef.FlipBottom && !cardSoRef.FlipTop && !cardSoRef.FlipStack)
+        {
+            Renderer[] rends = GetComponentsInChildren<Renderer>();
+            foreach (Renderer rend in rends)
+            {
+                rend.enabled = false;
+            }
 
+        }
         StartCoroutine(LoopAnim(cardSoRef));
-
-        //void
-        if (!cardSoRef.ReverseStack && !cardSoRef.FlipBottom && !cardSoRef.FlipTop && !cardSoRef.FlipStack)
-        {
-            transform.localScale = Vector3.zero;
-        }
-
-        return;
-        float centerOfScreen = Mathf.Clamp01(Vector3.Dot(Camera.main.transform.forward,
-                                           (transform.position - Camera.main.transform.position).normalized));
-        float rotateSpeed = 180.0f;
-        float cosSpeed = rotateSpeed * (Mathf.Cos(Time.time*Mathf.PI) + 1.0f) * 0.5f;
-        float sinSpeed =  rotateSpeed * (Mathf.Sin(Time.time*Mathf.PI) + 1.0f) * 0.5f;
-
-        //todo: this should be done in the stack. get IT to trigger animations.
-
-        //flip stack
-        if (cardSoRef.FlipStack)
-        {
-            transform.localRotation = transform.localRotation *
-                                                    Quaternion.AngleAxis(Time.deltaTime * sinSpeed, Vector3.forward);
-            //_stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.25f, Vector3.zero);    
-        }
-
-        //swap
-        if (cardSoRef.ReverseStack)
-        {
-
-            Vector3 dir = Quaternion.AngleAxis(Time.time * rotateSpeed , Vector3.forward) * Vector3.right;
-
-            List<Token> _flippedOrNot = new List<Token>(_stackOfTokens);
-           
-            _flippedOrNot.PositionAlongLineCentered(dir, 0.0f, Vector3.zero);
-        }
-
-
-        if (cardSoRef.FlipTop )
-        {
-            _stackOfTokens[_stackOfTokens.Count - 1].transform.localRotation = _stackOfTokens[_stackOfTokens.Count - 1].transform.localRotation *
-                                                    Quaternion.AngleAxis(Time.deltaTime * sinSpeed, Vector3.forward);
-            _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.125f, Vector3.zero);
-        }
-        if (cardSoRef.FlipBottom )
-        {
-            _stackOfTokens[0].transform.localRotation = _stackOfTokens[0].transform.localRotation *
-                                                    Quaternion.AngleAxis(Time.deltaTime * sinSpeed, Vector3.forward);
-            _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.125f, Vector3.zero);    
-        }
-
-        //void
-        if (!cardSoRef.ReverseStack && !cardSoRef.FlipBottom && !cardSoRef.FlipTop && !cardSoRef.FlipStack)
-        {
-            transform.localScale = Vector3.zero;
-        }
-
         
     }
 
