@@ -192,7 +192,7 @@ public class Stack : MonoBehaviour
             while (true)
             {
                 _anim.SetTrigger(animClip.name);
-                yield return new WaitForSeconds(animClip.length+Time.deltaTime);
+                yield return new WaitForSeconds(animClip.length);
             }
         }
     }

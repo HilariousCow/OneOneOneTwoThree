@@ -18,6 +18,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         _highlightEffect = GetComponentInChildren<SlotHighlightEffect>();
         _placementEffect = GetComponentInChildren<CardPlacementEffect>();
         _nextTurnArrow = GetComponentInChildren<NextTurnArrow>();
+        _rend = GetComponent<Renderer>();
     }
 
     void Start()
@@ -89,7 +90,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 	    _cardInSlot = card;
 	    CardInSlot.transform.parent = transform;
         StopEffect();
-
+     //   _rend.enabled = false;
 	}
 
     public Card RemoveCardFromSlot()
@@ -102,6 +103,8 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         {
             StartEffect();
         }
+
+      //  _rend.enabled = true;
         return removeMe;
     }
 
