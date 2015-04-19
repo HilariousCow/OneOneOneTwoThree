@@ -61,10 +61,10 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 
             _previewStack.transform.localPosition = Vector3.up*(stackBounds.size.y*0.5f + 0.125f);
 
-            //_previewStack.PlayOperationAnimation();
-        
+            //_previewStack.PlayOperationLooping();
 
 
+            _previewStack.PlayOperationLooping(CardSoRef);
 	}
 
 
@@ -83,13 +83,13 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
             if ((!CardSoRef.FlipBottom && !CardSoRef.FlipTop && !CardSoRef.ReverseStack && !CardSoRef.FlipStack) //if "nothing"
                 || _hoverOver)
             {
-                _previewStack.PlayOperationAnimation(CardSoRef);
+                _previewStack.PlayOperationLooping(CardSoRef);
             }
         }
         else*/
         {
            //no hover over on mobile?
-            _previewStack.PlayOperationAnimation(CardSoRef);
+           // _previewStack.PlayOperationLooping(CardSoRef);
             
         }
 

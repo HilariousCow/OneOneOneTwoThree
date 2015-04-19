@@ -175,11 +175,32 @@ public class Stack : MonoBehaviour
         }
     }
 
+    IEnumerator LoopAnim(CardSO cardSoRef)
+    {
+        AnimationClip animClip = cardSoRef.StackAnimation;
+        if (animClip != null)
+        {
+            while (true)
+            {
+                _anim.SetTrigger(animClip.name);
+                yield return new WaitForSeconds(animClip.length);
+            }
+        }
+    }
     //this is an update rather than a nice trigger, bleurgh
     //i just want to be able to tell which is which from a glance
-    internal void PlayOperationAnimation(CardSO _cardSoRef)
+    internal void PlayOperationLooping(CardSO cardSoRef)
     {
 
+        StartCoroutine(LoopAnim(cardSoRef));
+
+        //void
+        if (!cardSoRef.ReverseStack && !cardSoRef.FlipBottom && !cardSoRef.FlipTop && !cardSoRef.FlipStack)
+        {
+            transform.localScale = Vector3.zero;
+        }
+
+        return;
         float centerOfScreen = Mathf.Clamp01(Vector3.Dot(Camera.main.transform.forward,
                                            (transform.position - Camera.main.transform.position).normalized));
         float rotateSpeed = 180.0f;
@@ -189,7 +210,7 @@ public class Stack : MonoBehaviour
         //todo: this should be done in the stack. get IT to trigger animations.
 
         //flip stack
-        if (_cardSoRef.FlipStack)
+        if (cardSoRef.FlipStack)
         {
             transform.localRotation = transform.localRotation *
                                                     Quaternion.AngleAxis(Time.deltaTime * sinSpeed, Vector3.forward);
@@ -197,7 +218,7 @@ public class Stack : MonoBehaviour
         }
 
         //swap
-        if (_cardSoRef.ReverseStack)
+        if (cardSoRef.ReverseStack)
         {
 
             Vector3 dir = Quaternion.AngleAxis(Time.time * rotateSpeed , Vector3.forward) * Vector3.right;
@@ -208,13 +229,13 @@ public class Stack : MonoBehaviour
         }
 
 
-        if (_cardSoRef.FlipTop )
+        if (cardSoRef.FlipTop )
         {
             _stackOfTokens[_stackOfTokens.Count - 1].transform.localRotation = _stackOfTokens[_stackOfTokens.Count - 1].transform.localRotation *
                                                     Quaternion.AngleAxis(Time.deltaTime * sinSpeed, Vector3.forward);
             _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.125f, Vector3.zero);
         }
-        if (_cardSoRef.FlipBottom )
+        if (cardSoRef.FlipBottom )
         {
             _stackOfTokens[0].transform.localRotation = _stackOfTokens[0].transform.localRotation *
                                                     Quaternion.AngleAxis(Time.deltaTime * sinSpeed, Vector3.forward);
@@ -222,7 +243,7 @@ public class Stack : MonoBehaviour
         }
 
         //void
-        if (!_cardSoRef.ReverseStack && !_cardSoRef.FlipBottom && !_cardSoRef.FlipTop && !_cardSoRef.FlipStack)
+        if (!cardSoRef.ReverseStack && !cardSoRef.FlipBottom && !cardSoRef.FlipTop && !cardSoRef.FlipStack)
         {
             transform.localScale = Vector3.zero;
         }
