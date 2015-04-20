@@ -218,7 +218,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         TurnOffHands();
         Debug.LogWarning("All slots filled, resolving gameplay");
         //todo: lockout changes. focus camera, or have it above in the first place.
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(1.5f);
 
         //todo: if both stacks are not the same on top, send back the cards.
 
@@ -291,20 +291,21 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         yield return new WaitForSeconds(0.5f);//show top for 0.5
         yield return StartCoroutine(firstCard.PreviewStack.AnimateCardEffectOnStack(firstCard));
-        yield return new WaitForSeconds(0.1f);//show top for 0.5
+        yield return new WaitForSeconds(0.5f);//show top for 0.5
         //move stack to new target pos
       
         stack.transform.parent = null;
 
-        StackHandle.transform.position = firstCard.PreviewStack.transform.position + Vector3.up * 2f;
+        StackHandle.transform.position = firstCard.PreviewStack.transform.position + Vector3.up * 3f;
         StackHandle.transform.rotation = firstCard.PreviewStack.transform.rotation;
    
         stack.transform.parent = StackHandle;
-        yield return new WaitForSeconds(0.5f);//allow it to get there
+        yield return new WaitForSeconds(1.0f);//allow it to get there
+
         StartCoroutine(firstCard.PreviewStack.AnimateCardEffectOnStack(firstCard));
         yield return StartCoroutine(stack.AnimateCardEffectOnStack(firstCard));
       
-        yield return new WaitForSeconds(0.250f);//show top for 0.5
+        yield return new WaitForSeconds(1.0f);//show top for 0.5
 
         stack.transform.parent = null;
 
@@ -316,7 +317,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.right);
         firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.right);
 
-        yield return new WaitForSeconds(1.0f);//show top for 0.5
+        yield return new WaitForSeconds(0.25f);//show top for 0.5
     }
 
     private void TurnOnCommitSlotInteractivity()

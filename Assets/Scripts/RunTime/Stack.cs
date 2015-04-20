@@ -38,10 +38,11 @@ public class Stack : MonoBehaviour
         _stackSoRef = stackSo;
 
         _stackOfTokens = new List<Token>();
-        Transform[] poses = new Transform[] { TopHandle , BottomHandle};
+        Transform[] poses = new Transform[] { TopHandle, BottomHandle };
         for (int i = 0; i < _stackSoRef.NumberOfTokens; i++)
         {
             Token toke = poses[i].InstantiateChild<Token>(TokenPrefab);
+            toke.gameObject.name = i == 0 ? "StartingTopToken" : "StartingBottomToken";
             _stackOfTokens.Add(toke);
         }
         
@@ -52,73 +53,70 @@ public class Stack : MonoBehaviour
         _anim = GetComponent<Animator>();
     }
 
+ 
     public IEnumerator AnimateCardEffectOnStack(Card card)
     {
-        //do animation stuff, but then reset and do the actual code change at the end.
-     //   Quaternion prevRot = transform.rotation;
-      //  transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, -card.transform.position);
-
-        
-
-        yield return new WaitForSeconds(0.5f);
-        
+       
         AnimationClip animClip = card.CardSoRef.StackAnimation;
         if (animClip != null)
         {
+           
             _anim.SetTrigger(animClip.name);
-            float endTime = Time.time + animClip.length;
-            while (endTime >= Time.time)
+            yield return new WaitForSeconds(animClip.length  - (1f/animClip.frameRate)*5);//wait for a frame so it can get started
+           // yield return new WaitForSeconds(animClip.length);
+            //if (_anim.GetCurrentAnimatorStateInfo(0).IsName(animClip.name))
+            //{
+                // Avoid any reload.
+              //  yield return null;
+            //}
+            /*float endTime = Time.time + animClip.length -Time.deltaTime*2;
+            while (endTime > Time.time)
             {
-                yield return new WaitForEndOfFrame();
-                TopHandle.transform.localScale = Vector3.one;//bit of a hack for "swap"
-                BottomHandle.transform.localScale = Vector3.one;//bit of a hack for "swap"
-            }
-            //yield return new WaitForSeconds(animClip.length);
+                yield return null;
+              
+            }*/
+
+            yield return new WaitForEndOfFrame();
         }
-        //get the animation and wait for the length of that animation
 
-      //  transform.rotation = prevRot;
-        yield return new WaitForEndOfFrame();//wait one frame so that we're in the idle. then we can happily flip. I think.
+        if (_anim.GetCurrentAnimatorStateInfo(0).IsName(animClip.name))
+        {
+            Debug.Log("Anim state still playing");
+        }
         ApplyCardToStack(card);
-     //   transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, -card.transform.position);
-
-        yield return new WaitForSeconds(0.5f);
-       // transform.rotation = prevRot;
     }
-
+   
     public void ApplyCardToStack(Card card)
     {
-       
+        
+        if(_isPreview)return;
+     //   Debug.Break();
+        Debug.Log("Applying" + card.name);
         CardSO cardOp = card.CardSoRef;
         
         if (cardOp.FlipBottom)
         {
-            List<Token> bottomSet = GetBottomGroup();
+           /* List<Token> bottomSet = GetBottomGroup();
             bottomSet.Reverse();
 
             foreach (Token token in bottomSet)
             {
                 token.Flip();
-            }
+            }*/
+            _stackOfTokens[1].Flip();
             
         }
 
         if (cardOp.FlipTop)
         {
-            List<Token> topSet = GetTopGroup();
+           /* List<Token> topSet = GetTopGroup();
             topSet.Reverse();
 
             foreach (Token token in topSet)
             {
                 token.Flip();
-                _stackOfTokens.Remove(token);//remove from stack
-            }
-
-            foreach (Token token in topSet)
-            {
-                //put back in stack in reversed order
-                _stackOfTokens.Add(token);
-            }
+            }*/
+            _stackOfTokens[0].Flip();
 
         }
 
@@ -139,8 +137,8 @@ public class Stack : MonoBehaviour
             }
         }
 
-        Transform[] poses = new Transform[] { TopHandle, BottomHandle };
-        for (int i = 0; i < _stackSoRef.NumberOfTokens; i++)
+        Transform[] poses = new Transform[] {TopHandle, BottomHandle, };
+        for (int i = 0; i < _stackOfTokens.Count; i++)
         {
             Token toke = _stackOfTokens[i];
             toke.transform.parent = poses[i];
@@ -234,11 +232,12 @@ public class Stack : MonoBehaviour
 
     internal TokenSide GetTopTokenSide()
     {
-        return _stackOfTokens.Peek().CurrentSide;
+        return _stackOfTokens.PeekFront().CurrentSide;
     }
 
     internal void IdleAnim()
     {
+        if (_isPreview) StopCoroutine("LoopAnim");
         _anim.SetTrigger("Idle");
     }
 

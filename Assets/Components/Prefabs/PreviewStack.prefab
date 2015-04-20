@@ -253,8 +253,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7a794449a50cfc4a91c18ba88949d22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TopHandle: {fileID: 417018}
-  BottomHandle: {fileID: 417016}
+  TopHandle: {fileID: 417016}
+  BottomHandle: {fileID: 417018}
   TokenPrefab: {fileID: 11400074, guid: 7d838861a61052a439e09a639c17ad4f, type: 2}
 --- !u!1001 &100100000
 Prefab:

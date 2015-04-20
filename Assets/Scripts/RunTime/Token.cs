@@ -16,6 +16,7 @@ public class Token : MonoBehaviour
     //this is called when the animation ends, typically.
     internal void Flip()
     {
+        Debug.Log("Flipping: " + gameObject.name);
         CurrentSide = (TokenSide)((int) (CurrentSide + 1)%2);
         transform.localRotation *= Quaternion.AngleAxis(180f, Vector3.right);
     }
