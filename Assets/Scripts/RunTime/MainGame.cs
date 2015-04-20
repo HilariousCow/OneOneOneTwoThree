@@ -24,6 +24,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     public CardSlot CardSlotPrefab;
     public ScoreHand ScoreHandPrefab;
     public Transform StackHandle;
+
+    internal Stack MainStack;
     //public TextMesh TestMeshPrefab;
 
     //need cards sos
@@ -291,10 +293,12 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         yield return new WaitForSeconds(0.5f);//show top for 0.5
         yield return StartCoroutine(firstCard.PreviewStack.AnimateCardEffectOnStack(firstCard));
+        firstCard.IdleAnim();
         yield return new WaitForSeconds(0.5f);//show top for 0.5
         //move stack to new target pos
       
         stack.transform.parent = null;
+        stack.transform.rotation = Quaternion.LookRotation(-firstCard.transform.position, Vector3.up);
 
         StackHandle.transform.position = firstCard.PreviewStack.transform.position + Vector3.up * 3f;
         StackHandle.transform.rotation = firstCard.PreviewStack.transform.rotation;
@@ -310,7 +314,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         stack.transform.parent = null;
 
         StackHandle.transform.position = Vector3.zero;
-        StackHandle.transform.rotation = Quaternion.identity;
+        StackHandle.transform.rotation = Quaternion.LookRotation(-firstCard.transform.position, Vector3.up);
 
         stack.transform.parent = StackHandle;
 
@@ -672,7 +676,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 slot.transform.LookAt(Vector3.zero, Vector3.up);
                 slot.transform.parent = transform;
             }
-
+            MainStack = stack;
         }
        
 

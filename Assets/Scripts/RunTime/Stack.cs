@@ -60,23 +60,16 @@ public class Stack : MonoBehaviour
         AnimationClip animClip = card.CardSoRef.StackAnimation;
         if (animClip != null)
         {
-           
             _anim.SetTrigger(animClip.name);
-            yield return new WaitForSeconds(animClip.length  - (1f/animClip.frameRate)*5);//wait for a frame so it can get started
-           // yield return new WaitForSeconds(animClip.length);
-            //if (_anim.GetCurrentAnimatorStateInfo(0).IsName(animClip.name))
-            //{
-                // Avoid any reload.
-              //  yield return null;
-            //}
-            /*float endTime = Time.time + animClip.length -Time.deltaTime*2;
-            while (endTime > Time.time)
+            yield return new WaitForSeconds(animClip.length-Time.deltaTime*5);//wait for a frame so it can get started
+          /*  int frameCounter = Mathf.FloorToInt(animClip.frameRate*animClip.length);
+            while(frameCounter > 0)
             {
-                yield return null;
-              
+                yield return new WaitForFixedUpdate();
+                frameCounter--;
             }*/
 
-            yield return new WaitForEndOfFrame();
+            // yield return new WaitForEndOfFrame();
         }
 
         if (_anim.GetCurrentAnimatorStateInfo(0).IsName(animClip.name))
@@ -226,7 +219,7 @@ public class Stack : MonoBehaviour
             }
 
         }
-        StartCoroutine(LoopAnim(cardSoRef));
+        StartCoroutine("LoopAnim",cardSoRef);
         
     }
 

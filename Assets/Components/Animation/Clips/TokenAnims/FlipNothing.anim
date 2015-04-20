@@ -5210,11 +5210,4 @@ AnimationClip:
     path: Root/Top
     classID: 4
     script: {fileID: 0}
-  m_Events:
-  - time: 1
-    functionName: Stopped
-    data: 
-    objectReferenceParameter: {fileID: 0}
-    floatParameter: 0
-    intParameter: 0
-    messageOptions: 0
+  m_Events: []
