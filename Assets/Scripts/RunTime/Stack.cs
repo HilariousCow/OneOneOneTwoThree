@@ -16,6 +16,7 @@ public class Stack : MonoBehaviour
     private List<CardSO> _listOfOperationsApplied;
     private Animator _anim;
 
+    private bool _isPreview;
  /*   private int _flipBothHash = Animator.StringToHash("FlipBoth");
     private int _flipTopHash = Animator.StringToHash("FlipTop");
     private int _flipBottomHash = Animator.StringToHash("FlipBottom");
@@ -25,6 +26,13 @@ public class Stack : MonoBehaviour
 
     public void Init(StackSO stackSo)
     {
+        _isPreview = transform.parent.GetComponent<Card>() != null;
+        //before creating tokens, hide the temp tokens
+        Renderer[] tempTokens = GetComponentsInChildren<Renderer>();
+        foreach (Renderer tempToken in tempTokens)
+        {
+            tempToken.enabled = false;
+        }
         _listOfOperationsApplied = new List<CardSO>();
 
         _stackSoRef = stackSo;
@@ -47,8 +55,8 @@ public class Stack : MonoBehaviour
     public IEnumerator AnimateCardEffectOnStack(Card card)
     {
         //do animation stuff, but then reset and do the actual code change at the end.
-        Quaternion prevRot = transform.rotation;
-        transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, -card.transform.position);
+     //   Quaternion prevRot = transform.rotation;
+      //  transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, -card.transform.position);
 
         
 
@@ -58,18 +66,24 @@ public class Stack : MonoBehaviour
         if (animClip != null)
         {
             _anim.SetTrigger(animClip.name);
-            yield return new WaitForSeconds(animClip.length);
+            float endTime = Time.time + animClip.length;
+            while (endTime >= Time.time)
+            {
+                yield return new WaitForEndOfFrame();
+                TopHandle.transform.localScale = Vector3.one;//bit of a hack for "swap"
+                BottomHandle.transform.localScale = Vector3.one;//bit of a hack for "swap"
+            }
+            //yield return new WaitForSeconds(animClip.length);
         }
         //get the animation and wait for the length of that animation
 
-
-
-        transform.rotation = prevRot;
+      //  transform.rotation = prevRot;
+        yield return new WaitForEndOfFrame();//wait one frame so that we're in the idle. then we can happily flip. I think.
         ApplyCardToStack(card);
-        transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, -card.transform.position);
+     //   transform.rotation = Quaternion.LookRotation(Camera.main.transform.forward, -card.transform.position);
 
         yield return new WaitForSeconds(0.5f);
-        transform.rotation = prevRot;
+       // transform.rotation = prevRot;
     }
 
     public void ApplyCardToStack(Card card)
@@ -130,8 +144,12 @@ public class Stack : MonoBehaviour
         {
             Token toke = _stackOfTokens[i];
             toke.transform.parent = poses[i];
-            toke.transform.ResetToParent();
+            //toke.transform.ResetToParent();
+            toke.transform.localPosition = Vector3.zero;
+            toke.transform.localScale = Vector3.one;
         }
+
+        _listOfOperationsApplied.Add(card.CardSoRef);
 
       //  _stackOfTokens.PositionAlongLineCentered(Vector3.up, 0.125f, Vector3.zero);
 
@@ -141,9 +159,9 @@ public class Stack : MonoBehaviour
     {
         List<Token> bottomSet = new List<Token>();
 
-        int numTokens = _stackOfTokens.Count;
+        int numTokens = _stackOfTokens.Count-1;
 
-        for (int i = 0; i < _stackSoRef.NumberOfTokens - 1; i++)
+        for (int i = 0; i < numTokens - 1; i++)
         {
             bottomSet.Add(_stackOfTokens[i]);
         }
@@ -218,4 +236,31 @@ public class Stack : MonoBehaviour
     {
         return _stackOfTokens.Peek().CurrentSide;
     }
+
+    internal void IdleAnim()
+    {
+        _anim.SetTrigger("Idle");
+    }
+
+
+
+    void LateUpdate()
+    {
+        if (!_isPreview)
+        {
+            //always try to move to your home position
+            transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero,
+                                                          (transform.localPosition.magnitude + 0.1f)*Time.deltaTime*5f);
+
+            Quaternion targetRot = Quaternion.identity;
+            float angle = Quaternion.Angle(transform.localRotation, targetRot);
+            if (angle > 0.0f)
+            {
+                angle += 10.0f;
+                transform.localRotation = Quaternion.RotateTowards(transform.localRotation, targetRot,
+                                                                   Time.deltaTime*angle*5f);
+            }
+        }
+    }
+
 }

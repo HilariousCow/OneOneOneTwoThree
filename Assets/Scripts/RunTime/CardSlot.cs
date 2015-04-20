@@ -201,5 +201,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     {
         _placementEffect.Play();
     }
+
+  
 }
 

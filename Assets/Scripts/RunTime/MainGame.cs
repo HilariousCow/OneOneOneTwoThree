@@ -23,6 +23,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     public Stack StackPrefab;
     public CardSlot CardSlotPrefab;
     public ScoreHand ScoreHandPrefab;
+    public Transform StackHandle;
     //public TextMesh TestMeshPrefab;
 
     //need cards sos
@@ -46,7 +47,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     void Awake()
     {
-        AIPlayer whitePlayer = transform.InstantiateChild<AIPlayer>(AIPrefab);
+        AIPlayer whitePlayer = null;// transform.InstantiateChild<AIPlayer>(AIPrefab);
         
         AIPlayer blackPlayer = null;
         Init(MatchToUseDefault, whitePlayer, blackPlayer);
@@ -278,19 +279,39 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             hand.gameObject.SetActive(true);
         }
     }
+
     IEnumerator ApplyCardToStack( CardSlot firstCardSlot, Stack stack)
     {
         
         Card firstCard = firstCardSlot.CardInSlot;
     //    Debug.Log("Showing first card" + firstCard.gameObject.name + " from slot: " + firstCardSlot.gameObject.name);
-
+        firstCard.IdleAnim();
         firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.right);
         firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.right);
 
-        yield return new WaitForSeconds(1.0f);//show top for 0.5
+        yield return new WaitForSeconds(0.5f);//show top for 0.5
+        yield return StartCoroutine(firstCard.PreviewStack.AnimateCardEffectOnStack(firstCard));
+        yield return new WaitForSeconds(0.1f);//show top for 0.5
+        //move stack to new target pos
+      
+        stack.transform.parent = null;
+
+        StackHandle.transform.position = firstCard.PreviewStack.transform.position + Vector3.up * 2f;
+        StackHandle.transform.rotation = firstCard.PreviewStack.transform.rotation;
+   
+        stack.transform.parent = StackHandle;
+        yield return new WaitForSeconds(0.5f);//allow it to get there
+        StartCoroutine(firstCard.PreviewStack.AnimateCardEffectOnStack(firstCard));
         yield return StartCoroutine(stack.AnimateCardEffectOnStack(firstCard));
-      //  stack.ApplyCardToStack(firstCard);..temp remove
+      
         yield return new WaitForSeconds(0.250f);//show top for 0.5
+
+        stack.transform.parent = null;
+
+        StackHandle.transform.position = Vector3.zero;
+        StackHandle.transform.rotation = Quaternion.identity;
+
+        stack.transform.parent = StackHandle;
 
         firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.right);
         firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.right);
@@ -509,7 +530,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         _stacks = new List<Stack>();
         for (int i = 0; i < _matchSettings.NumberOfStacks; i++)
         {
-            Stack stack = transform.InstantiateChild(StackPrefab);
+            Stack stack = StackHandle.InstantiateChild(StackPrefab);
             stack.Init(_matchSettings.StackStyle);
             _stacks.Add(stack);
         }

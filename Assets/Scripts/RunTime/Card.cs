@@ -36,6 +36,11 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         get { return _col; }
     }
 
+    public Stack PreviewStack
+    {
+        get { return _previewStack; }
+    }
+
     public void Init(CardSO cardSo, StackSO stackSo, PlayerSO playerSo)
 	{
 	    gameObject.name = "CardInSlot:"+cardSo.name;
@@ -54,25 +59,25 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         //this is to fake the void, but maybe void should just set its scale zero.
     
         _previewStack = transform.InstantiateChild(StackPrefab);
-        _previewStack.Init(stackSo);
+        PreviewStack.Init(stackSo);
 
         _previewStack.transform.localRotation = Quaternion.AngleAxis(-90f, Vector3.right);
-        Bounds stackBounds = _previewStack.transform.RenderBounds();
+        Bounds stackBounds = PreviewStack.transform.RenderBounds();
 
-        _previewStack.transform.localPosition = Vector3.up*(stackBounds.size.y*0.5f + 0.125f);
+        _previewStack.transform.localPosition = Vector3.up * (stackBounds.size.y * 0.5f + 0.125f);//??
 
         //_previewStack.PlayOperationLooping();
 
 
-        _previewStack.PlayOperationLooping(_cardSoRef);
+        PreviewStack.PlayOperationLooping(_cardSoRef);
 	}
 
     //hack to keep looping
     void OnEnable()
     {
-        if (_previewStack != null)
+        if (PreviewStack != null)
         {
-            _previewStack.PlayOperationLooping(_cardSoRef);
+            PreviewStack.PlayOperationLooping(_cardSoRef);
         }
     }
 
@@ -84,7 +89,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         float dot = Mathf.Clamp01(Vector3.Dot(Vector3.down, -transform.up)*2f);
 
        
-        _previewStack.transform.localScale = Vector3.one*(1.0f-dot);
+        PreviewStack.transform.localScale = Vector3.one*(1.0f-dot);
 
       /*  if (Application.isEditor)
         {
@@ -133,14 +138,14 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         {
             //always try to move to your home position
             transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero,
-                                                          (transform.localPosition.magnitude+0.1f)*Time.deltaTime * 15f);
+                                                          (transform.localPosition.magnitude+0.1f)*Time.deltaTime * 5f);
 
             Quaternion targetRot = Quaternion.identity;
             float angle = Quaternion.Angle(transform.localRotation, targetRot);
             if (angle > 0.0f)
             {
                 angle += 10.0f;
-                transform.localRotation = Quaternion.RotateTowards(transform.localRotation, targetRot, Time.deltaTime * angle * 15f);
+                transform.localRotation = Quaternion.RotateTowards(transform.localRotation, targetRot, Time.deltaTime * angle * 5f);
             }
         }
 
@@ -258,4 +263,9 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     }
 
     #endregion
+
+    internal void IdleAnim()
+    {
+        PreviewStack.IdleAnim();
+    }
 }
