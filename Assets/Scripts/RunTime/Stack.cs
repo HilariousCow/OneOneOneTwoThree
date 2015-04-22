@@ -236,7 +236,7 @@ public class Stack : MonoBehaviour
 
 
 
-    void Update()
+    void LateUpdate()
     {
         if (!_isPreview)
         {

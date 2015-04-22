@@ -110,8 +110,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         Debug.Log("Stopped moving");
         Time.timeScale = 1.0f;
-        Time.fixedDeltaTime = 60f / 30f;
-        
+        Time.fixedDeltaTime = 1f / 60f;
+
+        yield return new WaitForSeconds(0.5f);
         _stacks[0].CopyTokenPositions(0, lastToStopMoving);
 
         Destroy(lastToStopMoving.gameObject);
