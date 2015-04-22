@@ -75,6 +75,7 @@ MonoBehaviour:
   CardSlotPrefab: {fileID: 11464006, guid: 410e4590c904759488db3e79ab8c40a8, type: 2}
   ScoreHandPrefab: {fileID: 11415192, guid: 75255936caa3532489c31559e01b37cb, type: 2}
   StackHandle: {fileID: 426460}
+  DropTokens: {fileID: 11416498, guid: bf8af6b8b2897ee489da8dffdd5d35fb, type: 2}
   _whitePlayer: {fileID: 0}
   _blackPlayer: {fileID: 0}
 --- !u!1001 &100100000

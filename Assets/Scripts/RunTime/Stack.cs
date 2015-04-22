@@ -236,7 +236,7 @@ public class Stack : MonoBehaviour
 
 
 
-    void LateUpdate()
+    void Update()
     {
         if (!_isPreview)
         {
@@ -252,7 +252,35 @@ public class Stack : MonoBehaviour
                 transform.localRotation = Quaternion.RotateTowards(transform.localRotation, targetRot,
                                                                    Time.deltaTime*angle*5f);
             }
+
+            foreach (Token stackOfToken in _stackOfTokens)
+            {
+                stackOfToken.transform.localPosition = Vector3.MoveTowards(stackOfToken.transform.localPosition, Vector3.zero,
+                                                         (stackOfToken.transform.localPosition.magnitude + 0.1f) * Time.deltaTime * 5f);
+            }
         }
     }
 
+    public void CopyTokenPositions(int index, Token top)
+    {
+        _stackOfTokens[index].transform.position = top.transform.position;
+
+
+        _stackOfTokens[index].transform.rotation = top.transform.rotation;
+      
+
+        TokenSide topSide = Vector3.Dot(Vector3.up, top.transform.up) > 0.0f
+                             ? TokenSide.White
+                             : TokenSide.Black;
+
+
+
+        _stackOfTokens[index].SetSide(topSide);
+
+
+        foreach (Renderer rend in _stackOfTokens[index].GetComponentsInChildren<Renderer>())
+        {
+            rend.enabled = true;
+        }
+    }
 }

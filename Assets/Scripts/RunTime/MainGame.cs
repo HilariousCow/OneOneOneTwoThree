@@ -25,6 +25,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     public ScoreHand ScoreHandPrefab;
     public Transform StackHandle;
 
+    public Token DropTokens;
+
     internal Stack MainStack;
     //public TextMesh TestMeshPrefab;
 
@@ -58,9 +60,75 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     void Start()
     {
+        StartCoroutine("Toss");
+        
+    }
+    IEnumerator Toss()
+    {
+        Time.timeScale = 2.0f;
+        Time.fixedDeltaTime =1f/30f;
+        Token tokenA = transform.InstantiateChild(DropTokens);
+        Token tokenB = transform.InstantiateChild(DropTokens);
+        tokenA.transform.parent = null;
+        tokenB.transform.parent = null;
+
+        tokenA.transform.position = Vector3.up*20f;
+        tokenB.transform.position = Vector3.up * 30f;
+        tokenA.transform.rotation = UnityEngine.Random.rotation;
+        tokenB.transform.rotation = UnityEngine.Random.rotation;
+
+        tokenA.rigidbody.AddForce(Vector3.down, ForceMode.VelocityChange);
+        tokenB.rigidbody.AddForce(Vector3.down, ForceMode.VelocityChange);
+
+
+        foreach (Renderer  rend in StackHandle.GetComponentsInChildren<Renderer>())
+        {
+            rend.enabled = false;
+        }
+
+        float sleepVel = 0.5f;
+        Token lastToStopMoving = null;
+        Token other = null;
+        yield return new WaitForFixedUpdate();
+        while (tokenA.rigidbody.velocity.magnitude > sleepVel || tokenB.rigidbody.velocity.magnitude > sleepVel)
+        {
+            if (tokenA.rigidbody.velocity.magnitude > sleepVel && tokenB.rigidbody.velocity.magnitude <= sleepVel)
+            {
+                lastToStopMoving = tokenA;
+                other = tokenB;
+            }
+
+            if (tokenA.rigidbody.velocity.magnitude <= sleepVel && tokenB.rigidbody.velocity.magnitude > sleepVel)
+            {
+                lastToStopMoving = tokenB;
+                other = tokenA;
+            }
+
+            yield return new WaitForFixedUpdate();
+        }
+        //last to stop moving?
+
+        Debug.Log("Stopped moving");
+        Time.timeScale = 1.0f;
+        Time.fixedDeltaTime = 60f / 30f;
+        
+        _stacks[0].CopyTokenPositions(0, lastToStopMoving);
+
+        Destroy(lastToStopMoving.gameObject);
+        yield return new WaitForSeconds(0.5f);
+
+        
+        _stacks[0].CopyTokenPositions(1, other);
+        Destroy(other.gameObject);
+
+        yield return new WaitForSeconds(0.5f);
+     
+
+        
+        
+
         StartCoroutine("IntroPhase");
     }
-
     IEnumerator IntroPhase()
     {
         //randomize stack

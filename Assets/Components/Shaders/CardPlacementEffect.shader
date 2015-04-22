@@ -1,14 +1,14 @@
 ﻿Shader "OneOneOneTwoThree/CardPlacementEffect" {
 		Properties {
 		_Color ("Color", Color) = (1,1,1,1)
-		_LineWidth("LineWidth", Range (0,100)) =5
+		_LineWidth("LineWidth", Range (0,200)) = 15
 		
 		_InnerEdge("InnerEdge", float) =0
 		_OuterEdge("OuterEdge", float) =0
 		
 	}
 	SubShader {
-		Tags {"Queue" = "Geometry" "RenderType"="Opaque" }
+		Tags {"Queue" = "Transparent" "RenderType"="Opaque" }
 		
 		Pass{
 			
@@ -82,7 +82,7 @@
 			ZTest LEqual
 			//Fog Disable
 			//Blend SrcAlpha OneMinusSrcAlpha
-			Blend OneMinusDstColor OneMinusSrcColor //negative color
+			Blend One OneMinusSrcColor //negative color
 			
 			CGPROGRAM
 
