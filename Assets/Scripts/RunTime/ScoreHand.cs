@@ -112,23 +112,47 @@ public class ScoreHand : MonoBehaviour
         firstSlot.AddCardToSlot(firstCommitCardslot.RemoveCardFromSlot());
         yield return new WaitForSeconds(0.6f);
         secondSlot.AddCardToSlot(secondCommitCardSlot.RemoveCardFromSlot());
-        
-        
-        
+
+
+        SoundPlayer.Instance.PlaySound(stack.GetTopTokenSide().ToString());
+        yield return new WaitForSeconds(0.6f);
+        SoundPlayer.Instance.PlaySound(_roundScores[roundNumber].ToString() + " point");
 
         if (stack.GetTopTokenSide() == firstCard.PlayerSoRef.DesiredTokenSide)
         {
+          
             Debug.Log(firstCard.PlayerSoRef.name + " wins round " + (roundNumber + 1) + " for " + _roundScores[roundNumber] + "point(s)");
             PositionWinningCard(firstCard, firstSlot, firstHand);
+
         }
         else
         {
+            
             Debug.Log(secondCard.PlayerSoRef.name + " wins round " + (roundNumber+1) + " for " + _roundScores[roundNumber] + "point(s)");
             PositionWinningCard(secondCard, secondSlot, secondHand);
         }
 
 
+        StartCoroutine("TellMeTheScores");
+        
+        
         roundNumber++;
+    }
+
+    IEnumerator TellMeTheScores()
+    {
+        
+
+        foreach (KeyValuePair<Hand, List<int>> keyValuePair in _scores)
+        {
+            TokenSide side = keyValuePair.Key.PlayerSoRef.DesiredTokenSide;
+            SoundPlayer.Instance.PlaySound(side.ToString());
+
+            yield return new WaitForSeconds(0.6f);
+            SoundPlayer.Instance.PlaySound(keyValuePair.Value.ToString());
+
+            yield return new WaitForSeconds(0.6f);
+        }
     }
 
     private void PositionWinningCard(Card firstCard, CardSlot firstSlot, Hand firstHand)

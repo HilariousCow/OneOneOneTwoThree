@@ -589,6 +589,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     {
         Debug.Log("Winner Is: " + winner.ToString());
 
+        SoundPlayer.Instance.PlaySound(winner.ToString()+"Wins");
+
         Application.LoadLevel(0);
     }
 
