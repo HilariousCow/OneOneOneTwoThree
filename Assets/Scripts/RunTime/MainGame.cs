@@ -26,6 +26,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     public Transform StackHandle;
 
     public Token DropTokens;
+    public Collider DropTable;
 
     internal Stack MainStack;
     //public TextMesh TestMeshPrefab;
@@ -65,20 +66,27 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     }
     IEnumerator Toss()
     {
+      //  yield return null;
+        TurnOffJailSlotInteractivity();
+        TurnOffCommitSlotInteractivity();
+        TurnOffHands();
+
+        yield return new WaitForSeconds(0.5f);
+        SoundPlayer.Instance.PlaySound("dropStack");
+
         Time.timeScale = 2.0f;
         Time.fixedDeltaTime =1f/30f;
         Token tokenA = transform.InstantiateChild(DropTokens);
-        Token tokenB = transform.InstantiateChild(DropTokens);
-        tokenA.transform.parent = null;
-        tokenB.transform.parent = null;
-
-        tokenA.transform.position = Vector3.up*20f;
-        tokenB.transform.position = Vector3.up * 30f;
+        tokenA.transform.position = Vector3.up * 20f;
         tokenA.transform.rotation = UnityEngine.Random.rotation;
-        tokenB.transform.rotation = UnityEngine.Random.rotation;
-
         tokenA.rigidbody.AddForce(Vector3.down, ForceMode.VelocityChange);
+        tokenA.rigidbody.AddTorque(UnityEngine.Random.rotation.eulerAngles, ForceMode.VelocityChange);
+        yield return new WaitForSeconds(0.15f);
+        Token tokenB = transform.InstantiateChild(DropTokens);
+        tokenB.transform.position = Vector3.up * 30f;
+        tokenB.transform.rotation = UnityEngine.Random.rotation;
         tokenB.rigidbody.AddForce(Vector3.down, ForceMode.VelocityChange);
+        tokenB.rigidbody.AddTorque(UnityEngine.Random.rotation.eulerAngles, ForceMode.VelocityChange);
 
 
         foreach (Renderer  rend in StackHandle.GetComponentsInChildren<Renderer>())
@@ -107,26 +115,24 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             yield return new WaitForFixedUpdate();
         }
         //last to stop moving?
-
+        
         Debug.Log("Stopped moving");
         Time.timeScale = 1.0f;
         Time.fixedDeltaTime = 1f / 60f;
 
         yield return new WaitForSeconds(0.5f);
-        _stacks[0].CopyTokenPositions(0, lastToStopMoving);
+        _stacks[0].CopyTokenPositions(1, other);
 
-        Destroy(lastToStopMoving.gameObject);
+        Destroy(other.gameObject);
         yield return new WaitForSeconds(0.5f);
 
-        
-        _stacks[0].CopyTokenPositions(1, other);
-        Destroy(other.gameObject);
 
+        _stacks[0].CopyTokenPositions(0, lastToStopMoving);
+        Destroy(lastToStopMoving.gameObject);
+        Destroy(DropTable.gameObject);
         yield return new WaitForSeconds(0.5f);
      
 
-        
-        
 
         StartCoroutine("IntroPhase");
     }
@@ -144,6 +150,10 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 TurnOffCommitSlotInteractivity();
                 TurnOnJailSlotInteractivity();
                 SetAllHandsToJailCard();
+
+                yield return new WaitForSeconds(1f);
+                TurnOnHands();
+                SoundPlayer.Instance.PlaySound("PickReserve");
                 bool all = (_allJailCardSlots.FindAll(x => !x.IsEmpty).Count == _allJailCardSlots.Count);
                 bool pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
 
@@ -156,9 +166,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                     all = (_allJailCardSlots.FindAll(x => !x.IsEmpty).Count == _allJailCardSlots.Count);
                 }
                 TurnOffJailSlotInteractivity();
-
+                yield return new WaitForSeconds(1f);
                 yield return StartCoroutine(MoveJailCardsUnderStack());
-
+                
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -211,15 +221,16 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             CardSlot jailslot = _handsToJailCards[hand][0];
             Card tieBreakerCard = jailslot.RemoveCardFromSlot();
 
-            jailslot.transform.position = _stacks[0].transform.position + Vector3.left * 5f;
+            jailslot.transform.position = _stacks[0].transform.position + transform.right * -9f;
+            jailslot.transform.rotation = Quaternion.LookRotation(transform.right, Vector3.up);
             if (topAtBeginningOfOperation == hand.PlayerSoRef.DesiredTokenSide)
             {
 
-                jailslot.transform.position += Vector3.down*1.0f;
+                jailslot.transform.position += Vector3.down * 2.0f;
             }
             else
             {
-                jailslot.transform.position += Vector3.down * 2.0f;
+                jailslot.transform.position += Vector3.down * 2.50f;
             }
 
             jailslot.AddCardToSlot(tieBreakerCard);
@@ -251,9 +262,16 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     IEnumerator LoopPhase()
     {
+
+        yield return StartCoroutine(_scoreHand.AnnouceRoundNumber());
+        TurnOnHands();
+
         TurnOnCommitSlotInteractivity();
         SetAllHandsToCommitSlot();
         TokenSide topAtBeginningOfOperation = _stacks[0].GetTopTokenSide();
+
+        yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine(topAtBeginningOfOperation.ToString()));
+        yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine("GoFirst"));
 
         foreach (Stack stack in _stacks)
         {
@@ -317,7 +335,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             yield return new WaitForSeconds(0.5f);
 
         }
-        TurnOnHands();
+        
 
         if (_scoreHand.FinishedRound )
         {
@@ -360,7 +378,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.right);
         firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.right);
 
-        yield return new WaitForSeconds(0.5f);//show top for 0.5
+        
         yield return StartCoroutine(firstCard.PreviewStack.AnimateCardEffectOnStack(firstCard));
         firstCard.IdleAnim();
         yield return new WaitForSeconds(0.5f);//show top for 0.5
@@ -392,6 +410,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         yield return new WaitForSeconds(0.25f);//show top for 0.5
     }
+
+
+
 
     private void TurnOnCommitSlotInteractivity()
     {
@@ -431,7 +452,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         Debug.Log("Turn off jail slots");
         foreach (CardSlot slot in _allJailCardSlots)
         {
-          //  slot.ShowSlot(false);
+            slot.ShowSlot(false);
             slot.HighlightIfEmpty(false);
             slot.IsInteractive = false;
         }
@@ -663,6 +684,11 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 }
                _stacksToCommitSlots[stack].Add(commitSlot);
 
+                Bounds boundsExpander = commitSlot.collider.bounds;
+                boundsExpander.Expand(new Vector3(20f,0f,5));
+                commitSlot.GetComponent<BoxCollider>().size = boundsExpander.size;
+                
+
             }
 
            
@@ -716,7 +742,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             foreach (CardSlot jailCard in jailSlots)
             {
                 jailCard.transform.localPosition = transform.forward * 15f;
-                jailCard.transform.position += transform.right * -5f;
+                //jailCard.transform.position += transform.right * -5f;
 
                 jailCard.transform.parent = hand.transform.parent;
             }

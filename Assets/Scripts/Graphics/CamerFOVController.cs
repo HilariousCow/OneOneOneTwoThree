@@ -18,7 +18,7 @@ public class CamerFOVController : MonoBehaviour
 
     
     // Use this for initialization
-	void Start ()
+	void Awake ()
 	{
 	    _cams = GetComponentsInChildren<Camera>();
 	    _game = FindObjectOfType<MainGame>();

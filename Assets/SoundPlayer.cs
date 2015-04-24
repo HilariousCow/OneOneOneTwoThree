@@ -16,8 +16,22 @@ public class SoundPlayer : Singleton<SoundPlayer>
     public void PlaySound(string name)
     {
         AudioClip clip = AllSounds.Find(x => x.name == name);
-        
+        Debug.Log("Playing: " + name);
         _source.PlayOneShot(clip);
+        //Debug.Log("Playing: " + clip.name);
+    }
+
+    public IEnumerator PlaySoundCoroutine(string name)
+    {
+        AudioClip clip = AllSounds.Find(x => x.name == name);
+        Debug.Log("Playing: " + name);
+        _source.PlayOneShot(clip);
+        while (_source.isPlaying)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+        yield return null;
+        //Debug.Log("Playing: " + clip.name);
     }
 
 }

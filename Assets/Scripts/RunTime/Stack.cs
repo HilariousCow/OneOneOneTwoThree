@@ -56,7 +56,10 @@ public class Stack : MonoBehaviour
  
     public IEnumerator AnimateCardEffectOnStack(Card card)
     {
-       
+        if (!_isPreview)
+        {
+            SoundPlayer.Instance.PlaySound(card.CardSoRef.name);
+        }
         AnimationClip animClip = card.CardSoRef.StackAnimation;
         if (animClip != null)
         {

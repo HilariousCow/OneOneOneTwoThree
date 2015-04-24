@@ -20,6 +20,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     private Vector3 _clickOriginOffset = Vector3.zero;
     private Vector3 _startDifferenceToCamera = Vector3.zero;
     private bool _hoverOver = false;
+    private float _dragStartTime = 0f;
     public PlayerSO PlayerSoRef
     {
         get { return _playerSoRef; }
@@ -167,6 +168,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         transform.parent = null;
         _clickOriginOffset = transform.InverseTransformPoint(eventData.worldPosition);
         _startDifferenceToCamera = eventData.worldPosition - eventData.pressEventCamera.transform.position;
+        _dragStartTime = Time.realtimeSinceStartup;
     }
 
     #endregion
@@ -204,6 +206,8 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
      //   Debug.Log("Ended Drag" + gameObject.name);
         //ExecuteEvents.ExecuteHierarchy<IRefreshView>(_previousOwner.gameObject, null, (x, y) => x.RefreshView());//todo
 
+    
+        
         //need to snap back if we weren't claimed by any other thing.
         if (_previousParentWhenDragging.parent == transform.parent)//if our grandparent is the same, snap back? is that right? it might be a bit late in the evening for all this.
         {
@@ -220,6 +224,14 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         }
 
         _previousParentWhenDragging = null;
+
+
+        //count as a click for fubles.
+        float timeDragged = Time.realtimeSinceStartup - _dragStartTime;
+        if (timeDragged < 0.25f)
+        {
+            OnPointerClick(eventData);
+        }
     }
 
     #endregion
