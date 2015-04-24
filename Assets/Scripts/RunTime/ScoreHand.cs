@@ -13,7 +13,7 @@ public class ScoreHand : MonoBehaviour
         {
             
             //reorder the scores from highest to lowest
-            List<KeyValuePair<Hand, int>> sortedDict = (from entry in TotalledScores orderby entry.Value descending select entry).ToList();
+       /*     List<KeyValuePair<Hand, int>> sortedDict = (from entry in TotalledScores orderby entry.Value descending select entry).ToList();
             int startScore = sortedDict[0].Value;
             int numTiedForWin = 0;
             foreach (KeyValuePair<Hand, int> keyValuePair in sortedDict)
@@ -25,7 +25,23 @@ public class ScoreHand : MonoBehaviour
                 }
             }
 
-            return numTiedForWin > 1;
+            return numTiedForWin > 1;*/
+
+            int score = -1;
+            foreach (KeyValuePair<Hand, int> totalledScore in TotalledScores)
+            {
+                if(score == -1)
+                {
+                    score = totalledScore.Value;
+                }
+
+                if(score!= totalledScore.Value)
+                {
+                    return false;
+                }
+            }
+            return true;
+
         } 
     }
 

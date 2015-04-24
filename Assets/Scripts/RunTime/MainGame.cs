@@ -66,13 +66,16 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     }
     IEnumerator Toss()
     {
-      //  yield return null;
+        
+      
         TurnOffJailSlotInteractivity();
         TurnOffCommitSlotInteractivity();
         TurnOffHands();
 
+
+        yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine("OneOneOneTwoThree"));
         yield return new WaitForSeconds(0.5f);
-        SoundPlayer.Instance.PlaySound("dropStack");
+        SoundPlayer.Instance.PlaySound("Drop the Stack");
 
         Time.timeScale = 2.0f;
         Time.fixedDeltaTime =1f/30f;
@@ -477,7 +480,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         else
         {
             List<KeyValuePair<Hand, int>> sortedDict = (from entry in _scoreHand.TotalledScores orderby entry.Value descending select entry).ToList();
-            DeclareWinner(sortedDict.PeekFront().Key.PlayerSoRef.DesiredTokenSide);
+            yield return StartCoroutine(DeclareWinner(sortedDict.PeekFront().Key.PlayerSoRef.DesiredTokenSide));
+            
 
         }
     }
@@ -515,7 +519,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         TokenSide firstSide = sides.PeekFront();
         if (sides.Count(x => x == firstSide) == sides.Count)
         {
-            DeclareWinner(firstSide);
+
+            StartCoroutine(DeclareWinner(firstSide));
         }
         else
         {
@@ -595,7 +600,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         TokenSide firstSide = sides.PeekFront();
         if (sides.Count(x => x == firstSide) == sides.Count)
         {
-            DeclareWinner(firstSide);
+            yield return StartCoroutine(DeclareWinner(firstSide));
         }
         else
         {
@@ -606,11 +611,12 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     }
 
-    private void DeclareWinner(TokenSide winner)
+    private IEnumerator DeclareWinner(TokenSide winner)
     {
         Debug.Log("Winner Is: " + winner.ToString());
 
-        SoundPlayer.Instance.PlaySound(winner.ToString()+"Wins");
+        yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine(winner.ToString()));
+        yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine("Wins"));
 
         Application.LoadLevel(0);
     }
