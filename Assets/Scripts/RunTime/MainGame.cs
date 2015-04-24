@@ -146,6 +146,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         //see if we need the tie breaker intro
         switch (_matchSettings.TieBreaker)
         {
+
             case TieBreakerStyle.FlipStack:
                 TurnOffCommitSlotInteractivity();
                 break;
@@ -468,6 +469,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         if(_scoreHand.GameIsATie )
         {
             Debug.Log("Game is a draw");
+            yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine("TieGame"));
+            yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine("OneOneOneTwoThree"));
             if (_matchSettings.TieBreaker == TieBreakerStyle.FlipStack)
             {
                 yield return StartCoroutine(TieBreakFilp());
