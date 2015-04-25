@@ -95,12 +95,12 @@ public class ScoreHand : MonoBehaviour
             }
             _scores.Add(hand, scores);
             trackers.PositionAlongLineCentered(Vector3.right, 0.5f, Vector3.zero);
-            Vector3 moveRight = Vector3.right*trackers.WorldBounds().size.x;
+            /*Vector3 moveRight = Vector3.right*trackers.WorldBounds().size.x;
 
             foreach (CardSlot cardSlot in trackers)
             {
                 cardSlot.transform.position += moveRight;
-            }
+            }*/
             //trackers.PositionAlongLineCentered(Vector3.left, 0.5f, Vector3.right * trackers.WorldBounds().size.x);
 
             _roundScoresPerHand.Add(hand, trackers);
@@ -124,6 +124,7 @@ public class ScoreHand : MonoBehaviour
         CardSlot firstSlot = _roundScoresPerHand[firstHand][roundNumber];
         CardSlot secondSlot = _roundScoresPerHand[secondHand][roundNumber];
 
+        
 
         firstSlot.AddCardToSlot(firstCommitCardslot.RemoveCardFromSlot());
         yield return new WaitForSeconds(0.6f);

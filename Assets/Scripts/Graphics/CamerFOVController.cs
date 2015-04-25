@@ -54,6 +54,6 @@ public class CamerFOVController : MonoBehaviour
 	    RenderSettings.fogStartDistance = Mathf.Lerp( Camera.main.nearClipPlane, Camera.main.farClipPlane, 0.6f);
 	    RenderSettings.fogEndDistance = Mathf.Lerp(Camera.main.nearClipPlane, Camera.main.farClipPlane, 1.0f);
 
-	    transform.rotation = Quaternion.LookRotation(_game.MainStack.transform.position - transform.position, transform.up);
+	   // transform.rotation = Quaternion.LookRotation(_game.MainStack.transform.position - transform.position, transform.up);
 	}
 }

@@ -77,6 +77,8 @@ MonoBehaviour:
   StackHandle: {fileID: 426460}
   DropTokens: {fileID: 11416498, guid: bf8af6b8b2897ee489da8dffdd5d35fb, type: 2}
   DropTable: {fileID: 0}
+  CameraRigRoot: {fileID: 0}
+  CameraMain: {fileID: 0}
   _whitePlayer: {fileID: 0}
   _blackPlayer: {fileID: 0}
 --- !u!1001 &100100000

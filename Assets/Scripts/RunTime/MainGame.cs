@@ -28,6 +28,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     public Token DropTokens;
     public Collider DropTable;
 
+    public FollowTransform CameraRigRoot;
+    public LookAtTransform CameraMain;
     internal Stack MainStack;
     //public TextMesh TestMeshPrefab;
 
@@ -91,15 +93,15 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         tokenB.rigidbody.AddForce(Vector3.down, ForceMode.VelocityChange);
         tokenB.rigidbody.AddTorque(UnityEngine.Random.rotation.eulerAngles, ForceMode.VelocityChange);
 
-
+        CameraRigRoot.SetTarget(tokenB.transform);
         foreach (Renderer  rend in StackHandle.GetComponentsInChildren<Renderer>())
         {
             rend.enabled = false;
         }
 
-        float sleepVel = 0.5f;
-        Token lastToStopMoving = null;
-        Token other = null;
+        float sleepVel = 0.1f;
+        Token lastToStopMoving = tokenA;
+        Token other = tokenB;
         yield return new WaitForFixedUpdate();
         while (tokenA.rigidbody.velocity.magnitude > sleepVel || tokenB.rigidbody.velocity.magnitude > sleepVel)
         {
@@ -123,6 +125,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         Time.timeScale = 1.0f;
         Time.fixedDeltaTime = 1f / 60f;
 
+        CameraRigRoot.SetTarget(null);
         yield return new WaitForSeconds(0.5f);
         _stacks[0].CopyTokenPositions(1, other);
 
@@ -177,7 +180,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        StartCoroutine("LoopPhase");
+        StartCoroutine(LoopPhase());
        
     }
 
@@ -222,8 +225,10 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         foreach (Hand hand in _hands)
         {
+            
             CardSlot jailslot = _handsToJailCards[hand][0];
             Card tieBreakerCard = jailslot.RemoveCardFromSlot();
+            CameraMain.SetTarget(jailslot.transform);
 
             jailslot.transform.position = _stacks[0].transform.position + transform.right * -9f;
             jailslot.transform.rotation = Quaternion.LookRotation(transform.right, Vector3.up);
@@ -238,8 +243,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             }
 
             jailslot.AddCardToSlot(tieBreakerCard);
+            
         }
-        yield return null;
+        yield return new WaitForSeconds(1f);
 
     }
 
@@ -266,8 +272,11 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     IEnumerator LoopPhase()
     {
-
+        CameraMain.SetTarget(_stacks[0].transform);
+        CameraRigRoot.SetTarget(null);
         yield return StartCoroutine(_scoreHand.AnnouceRoundNumber());
+
+        
         TurnOnHands();
 
         TurnOnCommitSlotInteractivity();
@@ -326,18 +335,35 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             CardSlot firstCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide == topAtBeginningOfOperation);
             CardSlot secondCardSlot = slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide != topAtBeginningOfOperation);
 
+
+            //first to go
+            CameraMain.SetTarget(_stacks[0].transform);
+            CameraRigRoot.SetTarget(_slotsToHands[firstCardSlot].transform);
+
             firstCardSlot.StartNextTurnArrowEffect();
             yield return StartCoroutine(ApplyCardToStack(firstCardSlot, stack));
             firstCardSlot.StopNextTurnArrowEffect();
 
+
+
+
+            CameraMain.SetTarget(_stacks[0].transform);
+            CameraRigRoot.SetTarget(_slotsToHands[secondCardSlot].transform);
+
             secondCardSlot.StartNextTurnArrowEffect();
             yield return StartCoroutine(ApplyCardToStack(secondCardSlot, stack));
             secondCardSlot.StopNextTurnArrowEffect();
-            
-            yield return StartCoroutine(_scoreHand.AddRound(stack, firstCardSlot, secondCardSlot));
 
+
+            //moving to score slots
+            CameraRigRoot.SetTarget(_scoreHand.transform);
+            CameraMain.SetTarget(_scoreHand.transform);
+            yield return StartCoroutine(_scoreHand.AddRound(stack, firstCardSlot, secondCardSlot));
+            CameraRigRoot.SetTarget(_stacks[0].transform);
             yield return new WaitForSeconds(0.5f);
 
+
+            CameraMain.SetTarget(_stacks[0].transform);
         }
         
 
@@ -693,9 +719,10 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 }
                _stacksToCommitSlots[stack].Add(commitSlot);
 
-                Bounds boundsExpander = commitSlot.collider.bounds;
+                //need this to only happen when a card starts to be dragged
+               /* Bounds boundsExpander = commitSlot.collider.bounds;
                 boundsExpander.Expand(new Vector3(20f,0f,5));
-                commitSlot.GetComponent<BoxCollider>().size = boundsExpander.size;
+                commitSlot.GetComponent<BoxCollider>().size = boundsExpander.size;*/
                 
 
             }
@@ -763,6 +790,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         _scoreHand = transform.InstantiateChild(ScoreHandPrefab);
         _scoreHand.Init(_hands, _matchSettings);
 
+        _scoreHand.transform.localPosition = Vector3.right * ((_scoreHand.transform.RenderBounds().size.x *0.5f) + 10f);
         //spawn cards but don't put them anywhere or maybe put them on the score hand
 
         //reposition slots infront of stacks
@@ -800,41 +828,6 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     }
 
-    //phases/signals
-
-    //Phase: Initiate Game
-    //give cards to hands
-
-
-    //randomize stack
-
-    //Phase deal hands
-    //give cards to players
-
-
-    //maybe don't do this yet, but, yeah.
-    //Wait for both to discard a card to jail
-    //Confirm timer...
-
-
-    //Phase: Loop
-    //Wait for both players to play card.
-    
-    //Confirm timer when both have place and phone is facing down...
-
-    //reveal played cards in order (using stack top to decide)
-
-    //apply cards to stack
-
-
-    //show winner
-    //move cards to played area
-
-
-
-
-    //Phase: Final resolutions
-    //quick rematch/back to main menu
 
     public void DroppedCardOnCardSlot(Card displacingCard, CardSlot targetSlot, CardSlot previousSlot)
     {

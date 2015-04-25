@@ -25,6 +25,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 431806}
   - 114: {fileID: 11431804}
+  - 114: {fileID: 11474936}
   m_Layer: 0
   m_Name: GyroThing
   m_TagString: Untagged
@@ -45,6 +46,7 @@ GameObject:
   - 124: {fileID: 12431804}
   - 114: {fileID: 11431806}
   - 114: {fileID: 11431808}
+  - 114: {fileID: 11474934}
   m_Layer: 0
   m_Name: MainCamera
   m_TagString: MainCamera
@@ -408,7 +410,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SmoothAmount: 300
-  _webCamRenderer: {fileID: 0}
 --- !u!114 &11431806
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -451,8 +452,30 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
   AdditionalMindistance: 12
-  BlackSideFog: {r: .920739651, g: .961476862, b: .963235319, a: 1}
-  WhiteSideFog: {r: .102941155, g: .0908304304, b: .0908304304, a: 1}
+  BlackSideFog: {r: .955420017, g: .963235319, b: .927822232, a: 1}
+  WhiteSideFog: {r: .0652573556, g: .107695229, b: .125, a: 1}
+--- !u!114 &11474934
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 131808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf170066b78b32b419e2ed4eea1db36e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &11474936
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 131806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95b3f5f6c84eb0543bb2013f8b2d01b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!124 &12431804
 Behaviour:
   m_ObjectHideFlags: 1

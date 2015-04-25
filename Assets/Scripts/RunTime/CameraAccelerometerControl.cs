@@ -5,7 +5,7 @@ public class CameraAccelerometerControl : MonoBehaviour {
 
 	// Use this for initialization
     public float SmoothAmount = 300f;
-    public Renderer _webCamRenderer;
+    
 
     private Quaternion keyboardRotation = Quaternion.identity;
     private Quaternion startRotation;
@@ -15,30 +15,8 @@ public class CameraAccelerometerControl : MonoBehaviour {
 	    Input.gyro.enabled = true;
 	    LockGyroYaw();
 	    startRotation = Quaternion.AngleAxis(90f, Vector3.right);
-    /*    WebCamDevice[] devices = WebCamTexture.devices;
-
-	    if (devices.Length > 0) {
-		    webCamTexture =new WebCamTexture(320, 240, 12);
-            _webCamRenderer.material.mainTexture = webCamTexture;
-            webCamTexture.Play();
-	    } else {
-		    Debug.LogError("No webcam devices found");
-	    }
-
-	    _webCamRenderer.enabled = false;*/
-
-        /*
-#if UNITY_WEBPLAYER 
-        yield return Application.RequestUserAuthorization(UserAuthorization.WebCam );
-        if (Application.HasUserAuthorization(UserAuthorization.WebCam))
-        {
-        }
-        else
-        {
-        }
-#else*/
-	    yield return null;/*
-#endif*/
+  
+	    yield return null;
 	}
 
     private void LockGyroYaw()
@@ -52,32 +30,8 @@ public class CameraAccelerometerControl : MonoBehaviour {
 	void Update ()
 	{
         
-    /*    if(Input.GetMouseButtonDown(0))
-        {
-            
-
-            if (webCamTexture != null)
-            {
-            //    _webCamRenderer.enabled = true;
-                //webCamTexture.Play();
-            }
-        }
-
-        if (Input.GetMouseButtonUp(0))
-        {
-
-
-            if (webCamTexture != null)
-            {
-                _webCamRenderer.enabled = false;
-             //   webCamTexture.Stop();
-            }
-        }*/
-        if(Input.GetMouseButton(0))
-        {
-            
-       //     LockGyroYaw();
-        }
+  
+ 
 	    keyboardRotation *= Quaternion.AngleAxis(Input.GetAxis("Horizontal") * Time.deltaTime*90f, Vector3.forward)*
                             Quaternion.AngleAxis(Input.GetAxis("Vertical") * Time.deltaTime * 90f, Vector3.right);
 
