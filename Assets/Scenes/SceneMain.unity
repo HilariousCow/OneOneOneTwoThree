@@ -189,6 +189,10 @@ Prefab:
       propertyPath: m_Layer
       value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 12329421e1ee7df46ab26e938127e597, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 12329421e1ee7df46ab26e938127e597, type: 3}
   m_RootGameObject: {fileID: 678914636}
@@ -259,7 +263,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: .0196078438}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: .0196078438}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -306,7 +310,7 @@ Renderer:
     type: 3}
   m_PrefabInternal: {fileID: 460742024}
   m_GameObject: {fileID: 678914636}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_LightmapIndex: 255
@@ -345,7 +349,7 @@ Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 836088325}
     m_Modifications:
     - target: {fileID: 487350, guid: 2aee2921a64788e46945f8b4ddace64d, type: 2}
       propertyPath: m_LocalPosition.x
@@ -377,7 +381,15 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 487350, guid: 2aee2921a64788e46945f8b4ddace64d, type: 2}
       propertyPath: m_RootOrder
-      value: 3
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2375580, guid: 2aee2921a64788e46945f8b4ddace64d, type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2375582, guid: 2aee2921a64788e46945f8b4ddace64d, type: 2}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2aee2921a64788e46945f8b4ddace64d, type: 2}
@@ -456,7 +468,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
 --- !u!114 &810690841
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -495,7 +507,7 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 1692156678}
   m_GameObject: {fileID: 835990972}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 95b3f5f6c84eb0543bb2013f8b2d01b2, type: 3}
   m_Name: 
@@ -582,6 +594,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 477340308}
+  - {fileID: 2133312427}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!1 &958233211
@@ -641,7 +654,7 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 1692156678}
   m_GameObject: {fileID: 958233211}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf170066b78b32b419e2ed4eea1db36e, type: 3}
   m_Name: 
@@ -672,7 +685,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 3
-  m_BackGroundColor: {r: 0, g: 0, b: 0, a: .0196078438}
+  m_BackGroundColor: {r: 1, g: 1, b: 1, a: .0196078438}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -850,7 +863,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
 --- !u!1 &1166858959
 GameObject:
   m_ObjectHideFlags: 0
@@ -1101,6 +1114,38 @@ Prefab:
       propertyPath: MainGameInstance
       value: 
       objectReference: {fileID: 836088324}
+    - target: {fileID: 2031806, guid: 4753cec8ea10d394a98d2867ee986c9d, type: 2}
+      propertyPath: m_BackGroundColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2031806, guid: 4753cec8ea10d394a98d2867ee986c9d, type: 2}
+      propertyPath: m_BackGroundColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2031806, guid: 4753cec8ea10d394a98d2867ee986c9d, type: 2}
+      propertyPath: m_BackGroundColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2031804, guid: 4753cec8ea10d394a98d2867ee986c9d, type: 2}
+      propertyPath: m_BackGroundColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2031804, guid: 4753cec8ea10d394a98d2867ee986c9d, type: 2}
+      propertyPath: m_BackGroundColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2031804, guid: 4753cec8ea10d394a98d2867ee986c9d, type: 2}
+      propertyPath: m_BackGroundColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11474934, guid: 4753cec8ea10d394a98d2867ee986c9d, type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11474936, guid: 4753cec8ea10d394a98d2867ee986c9d, type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4753cec8ea10d394a98d2867ee986c9d, type: 2}
   m_RootGameObject: {fileID: 835990972}
@@ -1281,7 +1326,7 @@ Renderer:
     type: 2}
   m_PrefabInternal: {fileID: 728521687}
   m_GameObject: {fileID: 1921858210}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_LightmapIndex: 255
@@ -1341,7 +1386,7 @@ Renderer:
     type: 2}
   m_PrefabInternal: {fileID: 728521687}
   m_GameObject: {fileID: 2007674395}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_LightmapIndex: 255
@@ -1454,7 +1499,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
 --- !u!1 &2133312423
 GameObject:
   m_ObjectHideFlags: 0
@@ -1596,5 +1641,5 @@ Transform:
   m_Children:
   - {fileID: 2007674398}
   - {fileID: 1921858211}
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_Father: {fileID: 836088325}
+  m_RootOrder: 1

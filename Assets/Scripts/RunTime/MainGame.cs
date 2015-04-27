@@ -79,19 +79,19 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         yield return new WaitForSeconds(0.5f);
         SoundPlayer.Instance.PlaySound("Drop the Stack");
 
-        Time.timeScale = 2.0f;
-        Time.fixedDeltaTime =1f/30f;
+        Time.timeScale = 1.0f;
+        Time.fixedDeltaTime =1f/60f;
         Token tokenA = transform.InstantiateChild(DropTokens);
-        tokenA.transform.position = Vector3.up * 20f;
+        tokenA.transform.position = Vector3.up * 20f + UnityEngine.Random.onUnitSphere.FlatY().normalized;
         tokenA.transform.rotation = UnityEngine.Random.rotation;
         tokenA.rigidbody.AddForce(Vector3.down, ForceMode.VelocityChange);
-        tokenA.rigidbody.AddTorque(UnityEngine.Random.rotation.eulerAngles, ForceMode.VelocityChange);
+        tokenA.rigidbody.AddTorque(UnityEngine.Random.rotation.eulerAngles * 2f, ForceMode.VelocityChange);
         yield return new WaitForSeconds(0.15f);
         Token tokenB = transform.InstantiateChild(DropTokens);
-        tokenB.transform.position = Vector3.up * 30f;
+        tokenB.transform.position = Vector3.up * 30f + UnityEngine.Random.onUnitSphere.FlatY().normalized;
         tokenB.transform.rotation = UnityEngine.Random.rotation;
         tokenB.rigidbody.AddForce(Vector3.down, ForceMode.VelocityChange);
-        tokenB.rigidbody.AddTorque(UnityEngine.Random.rotation.eulerAngles, ForceMode.VelocityChange);
+        tokenB.rigidbody.AddTorque(UnityEngine.Random.rotation.eulerAngles*2f, ForceMode.VelocityChange);
 
         CameraRigRoot.SetTarget(tokenB.transform);
         foreach (Renderer  rend in StackHandle.GetComponentsInChildren<Renderer>())
@@ -136,7 +136,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         _stacks[0].CopyTokenPositions(0, lastToStopMoving);
         Destroy(lastToStopMoving.gameObject);
         Destroy(DropTable.gameObject);
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(2.5f);
      
 
 
