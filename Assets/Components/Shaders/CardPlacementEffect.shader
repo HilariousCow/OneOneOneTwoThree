@@ -81,8 +81,8 @@
 			ZWrite On
 			ZTest LEqual
 			//Fog Disable
-			//Blend SrcAlpha OneMinusSrcAlpha
-			Blend One OneMinusSrcColor //negative color
+			Blend SrcAlpha OneMinusSrcAlpha
+			//Blend One OneMinusSrcColor //negative color
 			
 			CGPROGRAM
 
@@ -133,7 +133,7 @@
 			float4 frag (v2f i) : COLOR
 			{
 		
-				return i.color;//*10;
+				return _Color;//i.color;//*10;
 			}
 			
 			ENDCG
