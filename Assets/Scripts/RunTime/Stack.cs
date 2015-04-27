@@ -244,8 +244,14 @@ public class Stack : MonoBehaviour
         if (!_isPreview)
         {
             //always try to move to your home position
+
+          
+
+
             transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero,
                                                           (transform.localPosition.magnitude + 0.1f)*Time.deltaTime*5f);
+
+           
 
             Quaternion targetRot = Quaternion.identity;
             float angle = Quaternion.Angle(transform.localRotation, targetRot);
@@ -258,8 +264,11 @@ public class Stack : MonoBehaviour
 
             foreach (Token stackOfToken in _stackOfTokens)
             {
+                float horizontalJump = stackOfToken.transform.localPosition.FlatY().magnitude;
                 stackOfToken.transform.localPosition = Vector3.MoveTowards(stackOfToken.transform.localPosition, Vector3.zero,
                                                          (stackOfToken.transform.localPosition.magnitude + 0.1f) * Time.deltaTime * 5f);
+
+                stackOfToken.transform.localPosition = stackOfToken.transform.localPosition + Vector3.up * horizontalJump * Time.deltaTime * 6.0f;
             }
         }
     }
