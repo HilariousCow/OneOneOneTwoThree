@@ -45,6 +45,7 @@ GameObject:
   - 81: {fileID: 8187350}
   - 114: {fileID: 11487350}
   - 82: {fileID: 8287350}
+  - 167: {fileID: 16765446}
   m_Layer: 0
   m_Name: Sound
   m_TagString: Untagged
@@ -59,7 +60,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 175580}
   m_LocalRotation: {x: .707106829, y: 0, z: 0, w: .707106829}
-  m_LocalPosition: {x: -0, y: 0, z: -6}
+  m_LocalPosition: {x: -0, y: 0, z: -11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 487350}
@@ -71,7 +72,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 175582}
   m_LocalRotation: {x: -1.15202326e-07, y: .707106829, z: -.707106829, w: -1.15202326e-07}
-  m_LocalPosition: {x: 0, y: 0, z: 6}
+  m_LocalPosition: {x: 0, y: 0, z: 11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 487350}
@@ -158,7 +159,7 @@ AudioSource:
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
-  BypassListenerEffects: 0
+  BypassListenerEffects: 1
   BypassReverbZones: 0
   rolloffCustomCurve:
     serializedVersion: 2
@@ -236,7 +237,7 @@ TextMesh:
   m_Font: {fileID: 12800000, guid: 6ff8135f78e2180428535390d98efd45, type: 3}
   m_Color:
     serializedVersion: 2
-    rgba: 4278190080
+    rgba: 4294967295
 --- !u!114 &11487350
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -280,6 +281,30 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2f00a0ae527529f49b50accd494ab7f7, type: 3}
   - {fileID: 8300000, guid: 4a375d4edff5cca489279a8081637026, type: 3}
   - {fileID: 8300000, guid: 4f0798d153c2533458b69de24b521ac2, type: 3}
+--- !u!167 &16765446
+AudioReverbZone:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 187350}
+  m_Enabled: 1
+  m_MinDistance: 6.44000006
+  m_MaxDistance: 18.0100002
+  m_ReverbPreset: 27
+  m_Room: -2181
+  m_RoomHF: -726
+  m_DecayTime: 7.44000006
+  m_DecayHFRatio: .660000026
+  m_Reflections: -249
+  m_ReflectionsDelay: .0430000015
+  m_Reverb: 985
+  m_ReverbDelay: .0604000017
+  m_HFReference: 6639
+  m_RoomRolloffFactor: 0
+  m_Diffusion: 67.3000031
+  m_Density: 100
+  m_LFReference: 437
+  m_RoomLF: -1453
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
