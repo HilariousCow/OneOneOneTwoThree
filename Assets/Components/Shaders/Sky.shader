@@ -11,7 +11,7 @@
 			
 			ZWrite On
 			ZTest LEqual
-			
+			Fog { Mode Off }
 			Blend SrcAlpha OneMinusSrcAlpha
 			
 			CGPROGRAM

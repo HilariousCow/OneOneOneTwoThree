@@ -13,12 +13,14 @@ public class CardPlacementEffect : MonoBehaviour
         _anim = GetComponent<Animator>();
         _rend = renderer;
         _mat = _rend.material;
+        _rend.enabled = false;
     }
 
 
 
     public void Play()
     {
+        _rend.enabled = true;
         _anim.SetTrigger("PlayEffect");
     }
 

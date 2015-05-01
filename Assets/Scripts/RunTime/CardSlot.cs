@@ -12,13 +12,14 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     private Renderer _rend;
     private Card _cardInSlot;
     private bool _highlightIfEmpty = false;
-
+    private BoxCollider _collider;
     void Awake()
     {
         _highlightEffect = GetComponentInChildren<SlotHighlightEffect>();
         _placementEffect = GetComponentInChildren<CardPlacementEffect>();
         _nextTurnArrow = GetComponentInChildren<NextTurnArrow>();
         _rend = GetComponent<Renderer>();
+        _collider = GetComponent<BoxCollider>();
     }
 
     void Start()
@@ -77,6 +78,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         set
         {
             _isInteractive = value;
+            _collider.enabled = value;
             if (CardInSlot != null)
             {
                 CardInSlot.collider.enabled = value;
@@ -186,6 +188,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     internal void ShowSlot(bool p)
     {
         renderer.enabled = p;
+        _placementEffect.renderer.enabled = false;
     }
 
     public void OnDrawGizmos()
@@ -199,6 +202,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     internal void PlaySpecialPlacementEffect()
     {
+        
         _placementEffect.Play();
     }
 

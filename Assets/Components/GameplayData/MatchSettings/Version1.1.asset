@@ -16,11 +16,11 @@ MonoBehaviour:
   RoundScores: 0100000001000000010000000200000003000000
   StackStyle: {fileID: 11400000, guid: d2dada4cd54072545896e52b22cc7f1f, type: 2}
   CardsPerHand:
-  - {fileID: 11400000, guid: d389cf25c34b37444ad7ab097340b880, type: 2}
-  - {fileID: 11400000, guid: adf6ec486c3f42443a5a02a111cb9972, type: 2}
-  - {fileID: 11400000, guid: acaac45a511d7fb4588ab88f96803097, type: 2}
-  - {fileID: 11400000, guid: 93c403cdc435e144fb0a112476f5ca94, type: 2}
   - {fileID: 11400000, guid: cb6ecd2f598e1ed4db37a8278cccab4d, type: 2}
+  - {fileID: 11400000, guid: 93c403cdc435e144fb0a112476f5ca94, type: 2}
+  - {fileID: 11400000, guid: adf6ec486c3f42443a5a02a111cb9972, type: 2}
+  - {fileID: 11400000, guid: d389cf25c34b37444ad7ab097340b880, type: 2}
+  - {fileID: 11400000, guid: acaac45a511d7fb4588ab88f96803097, type: 2}
   - {fileID: 11400000, guid: dbd900dfa5050b845948e82aee2f11cd, type: 2}
   Players:
   - {fileID: 11400000, guid: f06d872ec8a47fc4da2492de223697f5, type: 2}
