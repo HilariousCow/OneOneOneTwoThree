@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: CardSlot
+  m_Name: TokenOutline
   m_Shader: {fileID: 4800000, guid: 6752b1e733d7ae14ead81f85c3c9a0e7, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
@@ -24,7 +24,7 @@ Material:
       data:
         first:
           name: _LineWidth
-        second: 1.78571427
+        second: 2.5
     m_Colors:
       data:
         first:

@@ -75,7 +75,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         TurnOffHands();
 
 
-        yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine("OneOneOneTwoThree"));
+        yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("OneOneOneTwoThree"));
         yield return new WaitForSeconds(0.5f);
         SoundPlayer.Instance.PlaySound("Drop the Stack");
 
@@ -287,8 +287,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         SetAllHandsToCommitSlot();
         TokenSide topAtBeginningOfOperation = _stacks[0].GetTopTokenSide();
 
-        yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine(topAtBeginningOfOperation.ToString()));
-        yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine("GoFirst"));
+        yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine(topAtBeginningOfOperation.ToString()));
+        yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("GoFirst"));
 
         foreach (Stack stack in _stacks)
         {
@@ -413,27 +413,30 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         }
     }
 
-    IEnumerator ApplyCardToStack( CardSlot firstCardSlot, Stack stack)
+    IEnumerator ApplyCardToStack( CardSlot slot, Stack stack)
     {
-        
-        Card firstCard = firstCardSlot.CardInSlot;
-    //    Debug.Log("Showing first card" + firstCard.gameObject.name + " from slot: " + firstCardSlot.gameObject.name);
+        Vector3 slotStartPos = slot.transform.position;
+        Vector3 slotShowOffPosition = slot.transform.position/2f + Vector3.up*15f;
+        Card firstCard = slot.CardInSlot;
+    //    Debug.Log("Showing first card" + firstCard.gameObject.name + " from slot: " + slot.gameObject.name);
         firstCard.IdleAnim();
         firstCard.transform.parent = null;
-        firstCardSlot.transform.position += Vector3.up*10f;
-        firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.right);
+
+        slot.transform.position = slotShowOffPosition;
+
+        slot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.right);
         //firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.right);
-        firstCard.transform.parent = firstCardSlot.transform;
+        firstCard.transform.parent = slot.transform;
         
         yield return StartCoroutine(firstCard.PreviewStack.AnimateCardEffectOnStack(firstCard));
         firstCard.IdleAnim();
-        yield return new WaitForSeconds(0.5f);//show top for 0.5
+        yield return new WaitForSeconds(0.3f);//show top for 0.5
         //move stack to new target pos
       
         stack.transform.parent = null;
         stack.transform.rotation = Quaternion.LookRotation(-firstCard.transform.position.FlatY(), Vector3.up);
 
-        StackHandle.transform.position = firstCard.PreviewStack.transform.position + Vector3.up * 3f;
+        StackHandle.transform.position = firstCard.PreviewStack.transform.position + Vector3.up * 5f;
         StackHandle.transform.rotation = firstCard.PreviewStack.transform.rotation;
    
         stack.transform.parent = StackHandle;
@@ -451,10 +454,10 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         stack.transform.parent = StackHandle;
         firstCard.transform.parent = null;
-        firstCardSlot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.right);
-        firstCardSlot.transform.position -= Vector3.up * 10f;
+        slot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.right);
+        slot.transform.position = slotStartPos;
         //firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.right);
-        firstCard.transform.parent = firstCardSlot.transform; 
+        firstCard.transform.parent = slot.transform; 
         yield return new WaitForSeconds(0.25f);//show top for 0.5
     }
 
@@ -520,8 +523,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         if(_scoreHand.GameIsATie )
         {
             Debug.Log("Game is a draw");
-            yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine("TieGame"));
-            yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine("OneOneOneTwoThree"));
+            yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("TieGame"));
+            yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("TieBreaker"));
+            
             if (_matchSettings.TieBreaker == TieBreakerStyle.FlipStack)
             {
                 yield return StartCoroutine(TieBreakFilp());
@@ -642,7 +646,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
           
           
 
-        //    yield return StartCoroutine(_scoreHand.AddRound(stack, firstCardSlot, secondCardSlot));
+        //    yield return StartCoroutine(_scoreHand.AddRound(stack, slot, secondCardSlot));
             sides.Add(stack.GetTopTokenSide());
             yield return new WaitForSeconds(0.5f);
 
@@ -744,11 +748,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 }
                _stacksToCommitSlots[stack].Add(commitSlot);
 
-                //need this to only happen when a card starts to be dragged
-               /* Bounds boundsExpander = commitSlot.collider.bounds;
-                boundsExpander.Expand(new Vector3(20f,0f,5));
-                commitSlot.GetComponent<BoxCollider>().size = boundsExpander.size;*/
-                
+                      
 
             }
 
@@ -794,7 +794,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             Hand hand = _hands[index];
             Bounds bounds = hand.transform.RenderBounds();
 
-            hand.transform.position = hand.transform.position.SinCosY(frac) * bounds.size.x;
+            hand.transform.position = hand.transform.position.SinCosY(frac) * bounds.size.x*0.5f;
             
             
             hand.transform.LookAt(Vector3.zero, Vector3.up);
@@ -806,7 +806,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             //todo: reposition after the cards have been chosen.
             foreach (CardSlot jailCardSlot in jailSlots)
             {
-                jailCardSlot.transform.localPosition = transform.forward * 15f;
+                jailCardSlot.transform.position = hand.transform.position/ 2f;
 
                 jailCardSlot.transform.parent = hand.transform.parent;
             }
@@ -818,7 +818,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             {
 
 
-                commitSlot.transform.localPosition = transform.forward * 15f;
+                commitSlot.transform.position = hand.transform.position / 2f;
                 
                 commitSlot.transform.parent = hand.transform.parent;
             }
@@ -830,7 +830,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         _scoreHand = transform.InstantiateChild(ScoreHandPrefab);
         _scoreHand.Init(_hands, _matchSettings);
 
-        _scoreHand.transform.localPosition = Vector3.right * ((_scoreHand.transform.RenderBounds().size.x *0.5f) + 10f);
+        _scoreHand.transform.localPosition = Vector3.right * ((_scoreHand.transform.RenderBounds().size.x *0.75f) + 10f);
         //spawn cards but don't put them anywhere or maybe put them on the score hand
 
         //reposition slots infront of stacks

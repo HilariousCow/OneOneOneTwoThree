@@ -6,7 +6,8 @@ using System.Collections.Generic;
 public enum TieBreakerStyle
 {
     FlipStack,
-    UseJailCards
+    UseJailCards,
+    GoldenGoal //just play the extra card
 }
 
 public class MatchSettingsSO : ScriptableObject
