@@ -24,16 +24,24 @@ public class CamerFOVController : MonoBehaviour
 	    _cams = GetComponentsInChildren<Camera>();
 	    _game = FindObjectOfType<MainGame>();
 
-	    _everything = _game.transform.RenderBounds();
+
+	}
+
+    private void UpdateDistances()
+    {
+
+        _everything = _game.transform.RenderBounds();
 	    MajorDistance = _everything.size.magnitude*2f;
 	    MinorDistance = _everything.size.MinAxis();
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+	{
+
+	    UpdateDistances();
 
         float dot = Vector3.Dot(Vector3.down, transform.forward);
-        float sideDot = Mathf.Abs( Vector3.Dot(Vector3.down, transform.forward) );
 
         float funDot = Mathf.Pow(Mathf.Clamp01(dot ), 0.6f);
         transform.localPosition = Vector3.back * (Mathf.Lerp(MinorDistance, MajorDistance, 1f - funDot) + AdditionalMindistance);
@@ -41,6 +49,11 @@ public class CamerFOVController : MonoBehaviour
         float fovForEverything =  _everything.size.magnitude * Camera.main.aspect;
 	    float radiusOfEverything = _everything.size.magnitude ;
         fovForEverything = 1.45f*Mathf.Rad2Deg * Mathf.Atan2(fovForEverything, transform.position.magnitude);
+
+
+        //tween to target fov
+	    float fovDelta = Mathf.Abs(_cams[0].fieldOfView - fovForEverything);
+	    fovForEverything = Mathf.MoveTowards(_cams[0].fieldOfView, fovForEverything, fovDelta*Time.deltaTime*0.5f);
         foreach (Camera cam in _cams)
         {
             cam.fieldOfView = fovForEverything;// RelationshipBetweenSideAndTopFOV.Evaluate(dot);

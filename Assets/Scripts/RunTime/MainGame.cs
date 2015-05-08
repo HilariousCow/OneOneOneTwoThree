@@ -59,6 +59,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         AIPlayer blackPlayer = null;
         Init(MatchToUseDefault, whitePlayer, blackPlayer);
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
+        HelpText.Instance.Init();
     }
 
     void Start()
@@ -77,7 +79,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("OneOneOneTwoThree"));
         yield return new WaitForSeconds(0.5f);
-        SoundPlayer.Instance.PlaySound("Drop the Stack");
+        HelpText.Instance.PlayMessage("Drop the Stack");
 
         Time.timeScale = 2.0f;
         Time.fixedDeltaTime =1f/30f;
@@ -162,7 +164,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
                 yield return new WaitForSeconds(1f);
                 TurnOnHands();
-                SoundPlayer.Instance.PlaySound("PickReserve");
+                HelpText.Instance.PlayMessage("PickReserve");
                 bool all = (_allJailCardSlots.FindAll(x => !x.IsEmpty).Count == _allJailCardSlots.Count);
                 bool pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
 
@@ -673,8 +675,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     {
         Debug.Log("Winner Is: " + winner.ToString());
 
-        yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine(winner.ToString()));
-        yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine("Wins"));
+        yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine(winner.ToString()));
+        yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("Wins"));
 
         Application.LoadLevel(0);
     }

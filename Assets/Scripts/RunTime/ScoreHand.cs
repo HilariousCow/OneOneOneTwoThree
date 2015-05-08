@@ -145,9 +145,9 @@ public class ScoreHand : MonoBehaviour
         }
 
         //"Black wins 1 point"
-        yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine(stack.GetTopTokenSide().ToString()));
-        yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine("Wins"));
-        yield return StartCoroutine(SoundPlayer.Instance.PlaySoundCoroutine(_roundScores[roundNumber].ToString() + " point"));
+        yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine(stack.GetTopTokenSide().ToString()));
+        yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("Wins"));
+        yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine(_roundScores[roundNumber].ToString() + " point"));
         //flash a score point here or something?
 
         if (roundNumber > 0)

@@ -7,6 +7,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     public Stack StackPrefab;
     public Renderer RedrawCard;
     public Renderer DotBacks;
+    public TextMesh DescriptionText;
     private CardSO _cardSoRef;
     private PlayerSO _playerSoRef;
 
@@ -43,7 +44,9 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     }
 
     public void Init(CardSO cardSo, StackSO stackSo, PlayerSO playerSo)
-	{
+    {
+        DescriptionText.text = cardSo.name;
+        DescriptionText.renderer.enabled = false;
 	    gameObject.name = "CardInSlot:"+cardSo.name;
         _cardSoRef = cardSo;
 	    _playerSoRef = playerSo;
@@ -112,19 +115,25 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         {
          //   Vector3 delta = transform.TransformPoint(_clickOriginOffset) - Camera.main.transform.position;
 
-            
+            Vector3 forward = Camera.main.transform.forward.FlatY().normalized;
+            if (forward.magnitude < 0.0f)
+            {
+                forward = transform.parent.forward.FlatY().normalized;
+            }
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
             Vector3 targetPosition = ray.origin + ray.direction.normalized *  (_startDifferenceToCamera.magnitude * 0.5f);
-            targetPosition += Vector3.up * 2.5f;
+            targetPosition += Vector3.up * 2.5f * Mathf.Clamp01(Vector3.Dot(forward, ray.direction.normalized));
+            targetPosition += forward * 2.5f * Mathf.Clamp01(Vector3.Dot(Vector3.down, ray.direction.normalized)); ;
 
             Vector3 deltaPos = targetPosition - transform.position;
             transform.position = Vector3.MoveTowards(transform.position, targetPosition,
                                                            (deltaPos.magnitude + 0.1f) * Time.deltaTime * 15f);
 
 
-
-            Quaternion targetRot = Quaternion.LookRotation(Camera.main.transform.forward, Vector3.up) * Quaternion.AngleAxis(90f, Vector3.right);
+            
+            Quaternion targetRot = Quaternion.LookRotation(forward, Vector3.up) * Quaternion.AngleAxis(90f, Vector3.right);
             float angle = Quaternion.Angle(transform.rotation, targetRot) ;
 
 
@@ -159,6 +168,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        DescriptionText.renderer.enabled = true;
        // Debug.Log("Beginning drag on" + gameObject.name);
         CachedCollider.enabled = false;//this causes preview to stop playing
         _isDragging = true;
@@ -199,6 +209,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     //should really only reposition if you weren't reassigned by others.
     public void OnEndDrag(PointerEventData eventData)
     {
+        DescriptionText.renderer.enabled = false;
         _clickOriginOffset = Vector3.zero;
         
         _isDragging = false;

@@ -11,7 +11,7 @@ public class HelpText : Singleton<HelpText>
     private TextMesh[] _texts;
       
 	// Use this for initialization
-	void Start ()
+	public void Init ()
 	{
 
 
