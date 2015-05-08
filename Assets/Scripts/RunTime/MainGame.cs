@@ -278,8 +278,10 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         CameraRigRoot.SetTarget(null);
         yield return StartCoroutine(_scoreHand.AnnouceRoundNumber());
 
+
         
         TurnOnHands();
+        ClearEmptySlotsInHands();
 
         TurnOnCommitSlotInteractivity();
         SetAllHandsToCommitSlot();
@@ -382,6 +384,14 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             StartCoroutine("LoopPhase");//go again.    
         }
 
+    }
+
+    private void ClearEmptySlotsInHands()
+    {
+        foreach (Hand hand in _hands)
+        {
+            hand.ClearOutEmptySlotsAndReorganize();
+        }
     }
 
     

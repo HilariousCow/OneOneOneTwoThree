@@ -57,10 +57,10 @@ public static class TransformExtensions
             totalLenghOfTheThingsInDirection += Vector3.Dot(boundsOfThing.size, direction);
         }
 
-        float totalLengthPlusGaps = totalLenghOfTheThingsInDirection + gap*(things.Count - 1);
+        float totalLengthPlusGaps = totalLenghOfTheThingsInDirection + gap*(things.Count + 1);
 
         Vector3 localStartPoint = direction*-totalLengthPlusGaps*0.5f;
-        float posAlongLine = 0.0f;
+        float posAlongLine = gap;
         foreach (T thing in things)
         {
             float boundsInDirection = Vector3.Dot(eachThingsChildBounds[thing].size, direction);//something of an assumption about centered objects.

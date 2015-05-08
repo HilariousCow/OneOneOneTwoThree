@@ -163,6 +163,24 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
         }
         targetSlot.AddCardToSlot(displacingCard);
     }
+
+    internal void ClearOutEmptySlotsAndReorganize()
+    {
+        List<CardSlot> emptySlots = _slots.FindAll(x => x.IsEmpty);
+
+
+        _slots.RemoveAll(x => x.IsEmpty);
+        foreach (CardSlot emptySlot in emptySlots)
+        {
+            Destroy(emptySlot.gameObject);
+        }
+
+        Quaternion currentRot = transform.rotation;
+        transform.rotation = Quaternion.identity;
+        Slots.PositionAlongLineCentered(transform.right, Gap, Vector3.zero);
+        transform.rotation = currentRot;
+        
+    }
 }
 namespace UnityEngine.EventSystems
 {
