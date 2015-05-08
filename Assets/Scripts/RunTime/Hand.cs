@@ -104,9 +104,10 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 
 	    Vector3 startingWorldPosition = transform.parent.TransformPoint(startingLocalPosition);
 
-         handdot = Vector3.Dot(-startingWorldPosition.normalized, _cam.transform.forward);
-         handdot = (handdot - 0.2f) / (1f - 0.2f);
-	    handdot = Mathf.Pow(Mathf.Clamp01(handdot), 2.0f);
+         handdot = Mathf.Clamp01(Vector3.Dot(-startingWorldPosition.normalized, _cam.transform.forward));
+         handdot = Mathf.Clamp01((handdot - 0.3f) / (1f - 0.3f));
+	    handdot = Mathf.Pow(handdot, 2.0f);
+
         Vector3 targetPosition = _cam.transform.position.FlatY().normalized * startingLocalPosition.magnitude;
 	    Vector3 targetLocalPosition = transform.parent.InverseTransformPoint(targetPosition);
 	    transform.localPosition
@@ -116,11 +117,14 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 	    foreach (var cardSlot in Slots)
 	    {
             Quaternion faceDownRotation = Quaternion.identity;
+
+
+            //needs fixing once again
 	        Quaternion targetRotation = 
                               Quaternion.LookRotation(Vector3.down, cardSlot.transform.position-_cam.transform.position );
-            /*targetRotation = Quaternion.Inverse(transform.rotation)*
-                              Quaternion.LookRotation(_cam.transform.position, -_cam.transform.up) * targetRotation;*/
-	        
+
+
+            
             
             float dot = Vector3.Dot(-transform.position.normalized, _cam.transform.forward);
 	        dot = (dot - 0.2f)/(1f - 0.2f);

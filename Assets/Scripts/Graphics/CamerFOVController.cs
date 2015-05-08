@@ -53,7 +53,7 @@ public class CamerFOVController : MonoBehaviour
 
         //tween to target fov
 	    float fovDelta = Mathf.Abs(_cams[0].fieldOfView - fovForEverything);
-	    fovForEverything = Mathf.MoveTowards(_cams[0].fieldOfView, fovForEverything, fovDelta*Time.deltaTime*0.5f);
+	    fovForEverything = Mathf.MoveTowards(_cams[0].fieldOfView, fovForEverything, fovDelta*Time.deltaTime*5.0f);
         foreach (Camera cam in _cams)
         {
             cam.fieldOfView = fovForEverything;// RelationshipBetweenSideAndTopFOV.Evaluate(dot);
