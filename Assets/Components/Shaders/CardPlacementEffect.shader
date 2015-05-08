@@ -81,8 +81,8 @@
 			ZWrite On
 			ZTest LEqual
 			//Fog Disable
-			Blend SrcAlpha OneMinusSrcAlpha
-			//Blend One OneMinusSrcColor //negative color
+			//Blend SrcAlpha OneMinusSrcAlpha
+			Blend OneMinusDstColor OneMinusSrcColor //negative color
 			
 			CGPROGRAM
 

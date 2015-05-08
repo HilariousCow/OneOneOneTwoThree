@@ -6,12 +6,19 @@ public class SpinTable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
 {
     private Vector3 _lastDragPos;
     public GameObject[] SpinThing;
+    public Camera Cam;
     private bool _allowDrag = false;
+
+    void Start()
+    {
+        Cam = Cam ?? Camera.main;
+    }
+
     #region IBeginDragHandler Members
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        _allowDrag = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
+        _allowDrag = Vector3.Dot(Vector3.down, Cam.transform.forward) > 0.707f;
         _lastDragPos = eventData.worldPosition;
     }
 
@@ -59,4 +66,22 @@ public class SpinTable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
     #endregion
 
    
+    //always rotate table to be pointing to camera up
+    public void LateUpdate()
+    {
+       float autoCalibrateAmount =  (Vector3.Dot(Vector3.down, Cam.transform.forward) - 0.707f) / ( 1f - 0.707f);
+        autoCalibrateAmount = Mathf.Clamp01(autoCalibrateAmount);
+
+        autoCalibrateAmount = Mathf.Pow(autoCalibrateAmount, 2f);
+
+        Quaternion targetRotation = Quaternion.LookRotation(Cam.transform.up.FlatY().normalized, Vector3.up);
+
+
+        foreach (var o in SpinThing)
+        {
+            float angle = Quaternion.Angle(o.transform.rotation, targetRotation);
+            o.transform.rotation = Quaternion.RotateTowards(o.transform.rotation, targetRotation,
+                                                            (angle + 1f) * Time.deltaTime * autoCalibrateAmount * 5f);
+        }
+    }
 }

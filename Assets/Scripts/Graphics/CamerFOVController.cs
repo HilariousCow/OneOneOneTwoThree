@@ -9,6 +9,7 @@ public class CamerFOVController : MonoBehaviour
     public float AdditionalMindistance = 10;
     public Color BlackSideFog;
     public Color WhiteSideFog;
+    public Camera FirstCamera;
     private Camera[] _cams;
     private MainGame _game;
 
@@ -54,6 +55,16 @@ public class CamerFOVController : MonoBehaviour
 	    RenderSettings.fogStartDistance = Mathf.Lerp( Camera.main.nearClipPlane, Camera.main.farClipPlane, 0.6f);
 	    RenderSettings.fogEndDistance = Mathf.Lerp(Camera.main.nearClipPlane, Camera.main.farClipPlane, 1.0f);
 
+        //this needs to be an event which the game triggers.
+        if(MainGameInstance != null)
+        {
+            Vector4 targetColor = MainGameInstance.MainStack.GetTopTokenSide() == TokenSide.White
+                                      ? WhiteSideFog
+                                      : BlackSideFog;
+            Vector4 color = FirstCamera.backgroundColor;
+            color = Vector3.MoveTowards(color, targetColor, ((targetColor - color).magnitude + 0.1f)*Time.deltaTime*5f);
+            FirstCamera.backgroundColor = color;
+        }
 	   // transform.rotation = Quaternion.LookRotation(_game.MainStack.transform.position - transform.position, transform.up);
 	}
 }
