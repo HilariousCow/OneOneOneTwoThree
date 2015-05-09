@@ -1,6 +1,5 @@
 ﻿Shader "OneOneOneTwoThree/CardPlacementEffect" {
 		Properties {
-		_Color ("Color", Color) = (1,1,1,1)
 		_LineWidth("LineWidth", Range (0,200)) = 15
 		
 		_InnerEdge("InnerEdge", float) =0
@@ -27,7 +26,6 @@
 			#pragma fragmentoption ARB_precision_hint_fastest
 			#include "UnityCG.cginc"
 			
-			float4 _Color;
 			float _LineWidth;
 			float _InnerEdge;
 			struct appdata {
@@ -67,9 +65,9 @@
 
 			float4 frag (v2f i) : COLOR
 			{
-				float4 outColor  = _Color;
+				float4 outColor  = i.color;
 				outColor.a = 0;
-				return _Color;
+				return outColor;
 			}
 			
 			ENDCG
@@ -81,8 +79,8 @@
 			ZWrite On
 			ZTest LEqual
 			//Fog Disable
-			//Blend SrcAlpha OneMinusSrcAlpha
-			Blend OneMinusDstColor OneMinusSrcColor //negative color
+			Blend SrcAlpha OneMinusSrcAlpha
+			//Blend OneMinusDstColor OneMinusSrcColor //negative color
 			
 			CGPROGRAM
 
@@ -91,9 +89,10 @@
 			#pragma fragmentoption ARB_precision_hint_fastest
 			#include "UnityCG.cginc"
 			
-			float4 _Color;
+			float4 _OppositeOfBGColor;
 			float _LineWidth;
 			float _OuterEdge;
+			float _InnerEdge;
 			
 			struct appdata {
 				float4 vertex	: POSITION;
@@ -124,8 +123,9 @@
 				o.pos.xy += (o.normal.xy * pixelSize)* o.pos.z;// * o.pos.z;
 				//o.pos.z+= pixelSize;
 				
-				o.color = lerp(_Color, float4(0,0,0,0), _OuterEdge);
-			//	o.color = _Color;
+				//o.color = lerp(_OppositeOfBGColor, float4(0,0,0,1), _OuterEdge);
+				o.color = _OppositeOfBGColor;
+				o.color.a = (1-abs(_OuterEdge-_InnerEdge)) * 10;
 				o.uv = MultiplyUV (UNITY_MATRIX_TEXTURE0, v.texcoord);
 				return o; 
 			}
@@ -133,7 +133,7 @@
 			float4 frag (v2f i) : COLOR
 			{
 		
-				return _Color;//i.color;//*10;
+				return i.color;//i.color;//*10;
 			}
 			
 			ENDCG

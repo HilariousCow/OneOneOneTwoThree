@@ -3,7 +3,7 @@
 		
 	}
 	SubShader {
-		Tags {"Queue" = "Transparent" "RenderType"="Transparent" }
+		Tags {"Queue" = "Geometry" "RenderType"="Transparent" }
 		
 		Pass{
 			
@@ -12,8 +12,8 @@
 			ZWrite Off
 			ZTest LEqual
 			
-			Blend OneMinusDstColor OneMinusSrcColor
-			
+			//Blend OneMinusDstColor OneMinusSrcColor
+			Blend SrcAlpha OneMinusSrcAlpha
 			CGPROGRAM
 
 			#pragma vertex vert
@@ -23,7 +23,7 @@
 			
 			
 		
-			
+			float4 _OppositeOfBGColor;
 			
 			struct appdata {
 				float4 vertex	: POSITION;
@@ -54,6 +54,8 @@
 			float4 frag (v2f i) : COLOR
 			{
 				float4 outColor = i.color;
+				outColor.a = i.color.r;
+				outColor.rgb = _OppositeOfBGColor.rgb;
 				return outColor;
 			}
 			

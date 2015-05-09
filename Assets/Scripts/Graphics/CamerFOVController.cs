@@ -77,6 +77,11 @@ public class CamerFOVController : MonoBehaviour
             Vector4 color = FirstCamera.backgroundColor;
             color = Vector3.MoveTowards(color, targetColor, ((targetColor - color).magnitude + 0.1f)*Time.deltaTime*5f);
             FirstCamera.backgroundColor = color;
+
+            Vector4 oppositeColor = Vector4.one - color;
+            oppositeColor.w = 1f;
+            Shader.SetGlobalColor("_OppositeOfBGColor", oppositeColor);
+            Shader.SetGlobalColor("_BGColor", color);
         }
 	   // transform.rotation = Quaternion.LookRotation(_game.MainStack.transform.position - transform.position, transform.up);
 	}

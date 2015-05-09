@@ -185,6 +185,11 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 
         Quaternion currentRot = transform.rotation;
         transform.rotation = Quaternion.identity;
+        foreach (CardSlot cardSlot in _slots)
+        {
+            cardSlot.CardInSlot.transform.ResetToParent();//will be invisible to player.
+        }
+
         Slots.PositionAlongLineCentered(transform.right, Gap, Vector3.zero);
         transform.rotation = currentRot;
         
