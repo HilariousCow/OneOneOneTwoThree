@@ -69,7 +69,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     void Start()
     {
-        StartCoroutine("Toss");
+        //temp
+        StartCoroutine("LoopPhase");
+        //StartCoroutine("Toss");
         
     }
     IEnumerator Toss()

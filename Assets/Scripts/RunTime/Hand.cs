@@ -115,26 +115,25 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 
         transform.LookAt(transform.position.y * Vector3.up, Vector3.up);
 
-        Quaternion faceDownRotation = Quaternion.identity;
+        
 	    foreach (var cardSlot in Slots)
 	    {
-            
+      
+            //this is working fine, but i'd love to do more bullshit.
+	        Quaternion pureForward = Quaternion.LookRotation(_cam.transform.forward);
+            Quaternion diffOfCamera = Quaternion.Inverse(transform.rotation) * pureForward;
+            Quaternion targetRotation = Quaternion.AngleAxis(90, Vector3.right) * diffOfCamera;
+
+	        Quaternion faceDownRotation = Quaternion.identity;
 
 
-            //needs fixing once again
-	        Quaternion targetRotation = 
-                              Quaternion.LookRotation(Vector3.down, cardSlot.transform.position-_cam.transform.position );
-
-       
-            
-            
             float dot = Vector3.Dot(-transform.position.normalized, _cam.transform.forward);
-	        dot = (dot - 0.1f)/(1f - 0.1f);
-	        dot = Mathf.Pow(Mathf.Clamp01(dot), 0.5f);
+	        dot = (dot - 0.01f)/(1f - 0.01f);
+	        dot = Mathf.Pow(Mathf.Clamp01(dot), 0.25f);
 	        float slerp = Mathf.SmoothStep(0f, 1f, dot);
-	        cardSlot.transform.rotation = Quaternion.Slerp(transform.rotation* faceDownRotation, transform.rotation*targetRotation, slerp);
+	        cardSlot.transform.localRotation = Quaternion.Slerp( faceDownRotation, targetRotation, slerp);
 
-
+	        //cardSlot.transform.rotation = transform.rotation*targetRotation;//test
 	    }
         
 	}

@@ -26,7 +26,7 @@ public class SpinTable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
 
     public void OnDrag(PointerEventData eventData)
     {
-        if (!_allowDrag)
+      /*  if (!_allowDrag)
         {
             _lastDragPos = eventData.worldPosition;
             return;
@@ -51,7 +51,7 @@ public class SpinTable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDra
 
             
         }
-        _lastDragPos = eventData.worldPosition;
+        _lastDragPos = eventData.worldPosition;*/
     }
 
     //todo: LateUpdate so it drags when you move it.
