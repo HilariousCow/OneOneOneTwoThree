@@ -54,6 +54,7 @@ public class HelpText : Singleton<HelpText>
         {
             foreach (TextMesh textMesh in _texts)
             {
+                textMesh.gameObject.SetActive(true);
                 textMesh.renderer.enabled = true;
                 textMesh.text = words;
             }
@@ -61,6 +62,7 @@ public class HelpText : Singleton<HelpText>
             yield return new WaitForSeconds(duration); //need to be realtime
             foreach (TextMesh textMesh in _texts)
             {
+                textMesh.gameObject.SetActive(false);
                 textMesh.renderer.enabled = false;
                 textMesh.text = "";
             }

@@ -70,7 +70,17 @@ public class CamerFOVController : MonoBehaviour
         //need to go both sides
 
 
-        Ray forwarTrace = new Ray(Camera.main.transform.position * 100f ,  -Camera.main.transform.position );
+        //try closest point on bounds.
+
+	    Vector3 closestPointOnBounds = Camera.main.transform.position;
+        
+	    closestPointOnBounds.x = Mathf.Clamp(closestPointOnBounds.x, _everything.min.x, _everything.max.x);
+        closestPointOnBounds.y = Mathf.Clamp(closestPointOnBounds.y, _everything.min.y, _everything.max.y);
+        closestPointOnBounds.z = Mathf.Clamp(closestPointOnBounds.z, _everything.min.z, _everything.max.z);
+
+	    Vector3 delta = (closestPointOnBounds - Camera.main.transform.position);
+        Vector3 reverseStartPos = (delta.normalized * delta.magnitude * 1.1f )+ Camera.main.transform.position;
+        Ray forwarTrace = new Ray(Camera.main.transform.position , reverseStartPos - Camera.main.transform.position);
         if (_everything.IntersectRay(forwarTrace, out forwardTraceDist))
         {
             forwardHitPos = forwarTrace.GetPoint(forwardTraceDist);
@@ -78,12 +88,12 @@ public class CamerFOVController : MonoBehaviour
         }
         else forwardHitPos = Vector3.zero;
 
+       
+        Ray positiveVerticalRay = new Ray((Camera.main.transform.up * 1000f) + forwardHitPos, forwardHitPos - (Camera.main.transform.up * 1000f) );
+        Ray positiveHorizontalRay = new Ray((Camera.main.transform.right * 1000f )+ forwardHitPos, forwardHitPos - (Camera.main.transform.right * 1000f) );
 
-        Ray positiveVerticalRay = new Ray(Camera.main.transform.up * 1000f + forwardHitPos, Camera.main.transform.up * -1000f + forwardHitPos);
-        Ray positiveHorizontalRay = new Ray(Camera.main.transform.right * 1000f + forwardHitPos, Camera.main.transform.right * -1000f + forwardHitPos);
-
-        Ray negativeVerticalRay = new Ray(-Camera.main.transform.up * 1000f + forwardHitPos, -Camera.main.transform.up * -1000f + forwardHitPos);
-        Ray negativeHorizontalRay = new Ray(-Camera.main.transform.right * 1000f + forwardHitPos, -Camera.main.transform.right * -1000f + forwardHitPos);
+        Ray negativeVerticalRay = new Ray((-Camera.main.transform.up * 1000f) + forwardHitPos, forwardHitPos - (-Camera.main.transform.up * 1000f) );
+        Ray negativeHorizontalRay = new Ray((-Camera.main.transform.right * 1000f) + forwardHitPos, forwardHitPos - (-Camera.main.transform.right * 1000f) );
 
        
         if (_everything.IntersectRay(positiveVerticalRay, out posVerticalDist ))
@@ -136,10 +146,11 @@ public class CamerFOVController : MonoBehaviour
 
         float dotLR = Vector3.Dot(MainGameInstance.transform.forward, transform.forward);
 	    dotLR = (dotLR + 1.0f)/2f;
-        RenderSettings.fogColor = Color.Lerp(BlackSideFog, WhiteSideFog, dotLR);
+        
+         
         RenderSettings.fogMode = FogMode.Linear;
-	    RenderSettings.fogStartDistance = Mathf.Lerp( Camera.main.nearClipPlane, Camera.main.farClipPlane, 0.6f);
-	    RenderSettings.fogEndDistance = Mathf.Lerp(Camera.main.nearClipPlane, Camera.main.farClipPlane, 1.0f);
+	    RenderSettings.fogStartDistance = Mathf.Lerp( Camera.main.nearClipPlane, Camera.main.farClipPlane, 0.5f);
+	    RenderSettings.fogEndDistance = Mathf.Lerp(Camera.main.nearClipPlane, Camera.main.farClipPlane, 0.7f);
 
         //this needs to be an event which the game triggers.
         if(MainGameInstance != null)
@@ -155,6 +166,7 @@ public class CamerFOVController : MonoBehaviour
             oppositeColor.w = 1f;
             Shader.SetGlobalColor("_OppositeOfBGColor", oppositeColor);
             Shader.SetGlobalColor("_BGColor", color);
+            RenderSettings.fogColor = color;
         }
 	   // transform.rotation = Quaternion.LookRotation(_game.MainStack.transform.position - transform.position, transform.up);
 	}
@@ -163,7 +175,7 @@ public class CamerFOVController : MonoBehaviour
     {
 
         Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(Vector3.zero,Camera.main.transform.position);
+        Gizmos.DrawLine(forwardHitPos, Camera.main.transform.position);
         Gizmos.DrawCube(forwardHitPos, Vector3.one * 0.5f);
 
         Gizmos.color = Color.green;

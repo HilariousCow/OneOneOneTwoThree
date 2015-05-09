@@ -11,7 +11,7 @@
 			
 			ZWrite Off
 			ZTest LEqual
-			
+			Fog { Mode Linear }
 			//Blend OneMinusDstColor OneMinusSrcColor
 			Blend SrcAlpha OneMinusSrcAlpha
 			CGPROGRAM

@@ -116,10 +116,10 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
          //   Vector3 delta = transform.TransformPoint(_clickOriginOffset) - Camera.main.transform.position;
 
             Vector3 forward = Camera.main.transform.forward.FlatY().normalized;
-            if (forward.magnitude < 0.0f)
+           /* if (forward.magnitude < 0.01f)
             {
                 forward = transform.parent.forward.FlatY().normalized;
-            }
+            }*/
 
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -133,7 +133,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 
 
             
-            Quaternion targetRot = Quaternion.LookRotation(forward, Vector3.Cross(Camera.main.transform.right, forward)) * Quaternion.AngleAxis(90f, Vector3.right);
+            Quaternion targetRot = Quaternion.LookRotation(forward) * Quaternion.AngleAxis(90f, Vector3.right);
             float angle = Quaternion.Angle(transform.rotation, targetRot) ;
 
 
