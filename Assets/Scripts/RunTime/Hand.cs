@@ -122,18 +122,16 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
             //this is working fine, but i'd love to do more bullshit.
 	        Quaternion pureForward = Quaternion.LookRotation(_cam.transform.forward);
             Quaternion diffOfCamera = Quaternion.Inverse(transform.rotation) * pureForward;
-            Quaternion targetRotation = Quaternion.AngleAxis(90, Vector3.right) * diffOfCamera;
+            Quaternion targetRotation = diffOfCamera * Quaternion.AngleAxis(90, Vector3.right);
 
 	        Quaternion faceDownRotation = Quaternion.identity;
-
 
             float dot = Vector3.Dot(-transform.position.normalized, _cam.transform.forward);
 	        dot = (dot - 0.01f)/(1f - 0.01f);
 	        dot = Mathf.Pow(Mathf.Clamp01(dot), 0.25f);
 	        float slerp = Mathf.SmoothStep(0f, 1f, dot);
 	        cardSlot.transform.localRotation = Quaternion.Slerp( faceDownRotation, targetRotation, slerp);
-
-	        //cardSlot.transform.rotation = transform.rotation*targetRotation;//test
+	
 	    }
         
 	}
@@ -186,12 +184,21 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
         transform.rotation = Quaternion.identity;
         foreach (CardSlot cardSlot in _slots)
         {
-            cardSlot.CardInSlot.transform.ResetToParent();//will be invisible to player.
+            cardSlot.CardInSlot.transform.ResetToParent();//will be invisible to player. // um. i think render bounds don't get updated until another frame, urgh.
         }
 
         Slots.PositionAlongLineCentered(transform.right, Gap, Vector3.zero);
         transform.rotation = currentRot;
         
+    }
+
+    internal void ShowHand(bool p)
+    {
+
+        foreach (var cardSlot in _slots)
+        {
+            cardSlot.gameObject.SetActive(p);
+        }
     }
 }
 namespace UnityEngine.EventSystems

@@ -70,8 +70,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     void Start()
     {
         //temp
-        StartCoroutine("LoopPhase");
-        //StartCoroutine("Toss");
+        //StartCoroutine("LoopPhase");
+        StartCoroutine("Toss");
         
     }
     IEnumerator Toss()
@@ -432,7 +432,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     {
         foreach (Hand hand in _hands)
         {
-            hand.gameObject.SetActive(false);
+            hand.ShowHand(false);
+            //hand.gameObject.SetActive(false);
         }
     }
 
@@ -441,7 +442,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     {
         foreach (Hand hand in _hands)
         {
-            hand.gameObject.SetActive(true);
+            hand.ShowHand(true);
+         //   hand.gameObject.SetActive(true);
         }
     }
 

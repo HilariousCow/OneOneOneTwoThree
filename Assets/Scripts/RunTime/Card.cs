@@ -133,12 +133,12 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 
 
             
-            Quaternion targetRot = Quaternion.LookRotation(forward, Vector3.up) * Quaternion.AngleAxis(90f, Vector3.right);
+            Quaternion targetRot = Quaternion.LookRotation(forward, Vector3.Cross(Camera.main.transform.right, forward)) * Quaternion.AngleAxis(90f, Vector3.right);
             float angle = Quaternion.Angle(transform.rotation, targetRot) ;
 
 
 
-            if (angle > 0.0f)
+            if (angle > 0.01f)
             {
                 angle += 0.5f;
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, Time.deltaTime*2f*angle);
