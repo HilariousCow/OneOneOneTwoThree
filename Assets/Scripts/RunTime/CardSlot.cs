@@ -13,6 +13,7 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     private Card _cardInSlot;
     private bool _highlightIfEmpty = false;
     private BoxCollider _collider;
+    private float _highlightDelay;
     void Awake()
     {
         _highlightEffect = GetComponentInChildren<SlotHighlightEffect>();
@@ -39,10 +40,16 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
         _nextTurnArrow.StopEffect();
     }
 
+    //set to offset animation so that it's clearer who will go first.
+    public void SetHighlightDelay(float delay)
+    {
+        _highlightEffect.SetDelay(delay);
+    }
+
     public void HighlightIfEmpty(bool highlight)
     {
         _highlightIfEmpty = highlight;
-
+       
         if (IsEmpty && _highlightIfEmpty)
         {
             StartEffect();
@@ -55,11 +62,19 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 
     private void StartEffect()
     {
-        _highlightEffect.StartEffect();
+        if (_highlightEffect != null)
+        {
+            _highlightEffect.StartEffect();
+        }
+
     }
+
     private void StopEffect()
     {
-        _highlightEffect.StopEffect();
+        if (_highlightEffect != null)
+        {
+            _highlightEffect.StopEffect();
+        }
     }
 
     public bool IsEmpty

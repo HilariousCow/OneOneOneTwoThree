@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: CardSlotHighlight
-  m_Shader: {fileID: 4800000, guid: 4af28ce0f04504344949d00fcf8c04e5, type: 3}
+  m_Shader: {fileID: 4800000, guid: b3dc01d8ef1fc6446a9ddd833aa25dac, type: 3}
   m_ShaderKeywords: []
   m_CustomRenderQueue: -1
   m_SavedProperties:
@@ -24,11 +24,7 @@ Material:
       data:
         first:
           name: _LineWidth
-        second: 50
-      data:
-        first:
-          name: _LoopOffset
-        second: 0
+        second: 125
       data:
         first:
           name: _Rate
@@ -37,6 +33,18 @@ Material:
         first:
           name: _InnerPow
         second: 8
+      data:
+        first:
+          name: _LoopOffset
+        second: 0
+      data:
+        first:
+          name: _InnerEdge
+        second: 0
+      data:
+        first:
+          name: _OuterEdge
+        second: 0
     m_Colors:
       data:
         first:

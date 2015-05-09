@@ -288,7 +288,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         TurnOnHands();
         ClearEmptySlotsInHands();
 
-        TurnOnCommitSlotInteractivity();
+        TurnOnCommitSlotInteractivity(MainStack.GetTopTokenSide());
         SetAllHandsToCommitSlot();
         TokenSide topAtBeginningOfOperation = _stacks[0].GetTopTokenSide();
 
@@ -478,11 +478,14 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         _scoreHand.gameObject.SetActive(true);
     }
 
-    private void TurnOnCommitSlotInteractivity()
+    private void TurnOnCommitSlotInteractivity(TokenSide startingCard)
     {
         Debug.Log("Turn on commit slots");
         foreach (CardSlot slot in _allCommitCardSlots)
         {
+            Hand owner = _slotsToHands[slot];
+            float delay = owner.PlayerSoRef.DesiredTokenSide == startingCard ? 0.0f : 1f;
+            slot.SetHighlightDelay(delay);
             slot.ShowSlot(true);
             slot.HighlightIfEmpty(true);
             slot.IsInteractive = true;

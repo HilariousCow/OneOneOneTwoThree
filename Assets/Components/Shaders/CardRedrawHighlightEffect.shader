@@ -2,6 +2,7 @@
 		Properties {
 		_Color ("Color", Color) = (1,1,1,1)
 		_LineWidth("LineWidth", Range (0,50)) =5
+		
 		_Rate("Rate", Range (0,4)) = 0
 		_InnerPow("_InnerPow", Range (0,8)) = 1
 	}
