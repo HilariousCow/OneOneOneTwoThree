@@ -54,12 +54,14 @@ public class HelpText : Singleton<HelpText>
         {
             foreach (TextMesh textMesh in _texts)
             {
+                textMesh.renderer.enabled = true;
                 textMesh.text = words;
             }
 
             yield return new WaitForSeconds(duration); //need to be realtime
             foreach (TextMesh textMesh in _texts)
             {
+                textMesh.renderer.enabled = false;
                 textMesh.text = "";
             }
         }
