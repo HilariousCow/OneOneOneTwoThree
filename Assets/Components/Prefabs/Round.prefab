@@ -51,6 +51,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &165074
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 465074}
+  - 23: {fileID: 2365074}
+  - 102: {fileID: 10265074}
+  m_Layer: 0
+  m_Name: RoundScoreAwardedText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &197004
 GameObject:
   m_ObjectHideFlags: 0
@@ -105,6 +122,18 @@ Transform:
   - {fileID: 435236}
   m_Father: {fileID: 497004}
   m_RootOrder: 0
+--- !u!4 &465074
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 165074}
+  m_LocalRotation: {x: .707106829, y: 0, z: 0, w: .707106829}
+  m_LocalPosition: {x: 0, y: -0, z: 1.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 497004}
+  m_RootOrder: 1
 --- !u!4 &497004
 Transform:
   m_ObjectHideFlags: 1
@@ -116,6 +145,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 435240}
+  - {fileID: 465074}
   m_Father: {fileID: 0}
   m_RootOrder: 0
 --- !u!23 &2335236
@@ -178,6 +208,26 @@ Renderer:
   m_ScaleInLightmap: 1
   m_SortingLayerID: 0
   m_SortingOrder: 0
+--- !u!23 &2365074
+Renderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 165074}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_LightmapIndex: 255
+  m_LightmapTilingOffset: {x: 1, y: 1, z: 0, w: 0}
+  m_Materials:
+  - {fileID: 2100000, guid: eddac2a82a93e8549b2f2e35e8636d6b, type: 2}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 0
+  m_LightProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
 --- !u!33 &3335236
 MeshFilter:
   m_ObjectHideFlags: 1
@@ -199,6 +249,27 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 135240}
   m_Mesh: {fileID: 4300008, guid: 455f023ffd219104a841bba78469718e, type: 3}
+--- !u!102 &10265074
+TextMesh:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 165074}
+  m_Text: 0
+  m_OffsetZ: 0
+  m_CharacterSize: .200000003
+  m_LineSpacing: 1
+  m_Anchor: 4
+  m_Alignment: 0
+  m_TabSize: 4
+  m_FontSize: 84
+  m_FontStyle: 0
+  m_RichText: 0
+  m_Font: {fileID: 12800000, guid: 6ff8135f78e2180428535390d98efd45, type: 3}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
 --- !u!114 &11497004
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -212,7 +283,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardSlotScoreKeepingPrefab: {fileID: 11464006, guid: 3bda4f1b3a11d7c4ebf6dd2cc173b7c0,
     type: 2}
-  CardSlots: []
+  RoundScoreAwarded: {fileID: 10265074}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

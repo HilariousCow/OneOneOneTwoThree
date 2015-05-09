@@ -141,7 +141,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         _stacks[0].CopyTokenPositions(0, lastToStopMoving);
         Destroy(lastToStopMoving.gameObject);
         Destroy(DropTable.gameObject);
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(1.5f);
      
 
 
@@ -165,7 +165,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 TurnOnJailSlotInteractivity();
                 SetAllHandsToJailCard();
 
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(.1f);
                 TurnOnHands();
                 HelpText.Instance.PlayMessage("PickReserve");
                 bool all = (_allJailCardSlots.FindAll(x => !x.IsEmpty).Count == _allJailCardSlots.Count);
@@ -180,7 +180,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                     all = (_allJailCardSlots.FindAll(x => !x.IsEmpty).Count == _allJailCardSlots.Count);
                 }
                 TurnOffJailSlotInteractivity();
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(.1f);
                 yield return StartCoroutine(MoveJailCardsUnderStack());
                 
                 break;

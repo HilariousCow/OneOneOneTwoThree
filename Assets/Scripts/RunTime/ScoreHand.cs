@@ -82,6 +82,8 @@ public class ScoreHand : MonoBehaviour
 
         Card winningCard = cardsPlayed.Find(x => x.PlayerSoRef.DesiredTokenSide == winningSide);
         Card losingCard = cardsPlayed.Find(x => x.PlayerSoRef.DesiredTokenSide != winningSide);
+        firstPlayedSlot.RemoveCardFromSlot();
+        secondPlayedSlot.RemoveCardFromSlot();
 
         currentRound.ResolveRound(winningCard, losingCard);
         Debug.Log(winningCard.PlayerSoRef.name + " wins round " + (_roundNumber + 1) + " for " + currentRound.RoundValue + "point(s)");
@@ -143,4 +145,6 @@ public class ScoreHand : MonoBehaviour
         //get round slot for round number
         
     }
+
+  //  public Vector3
 }

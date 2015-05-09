@@ -12,6 +12,7 @@ public class Round : MonoBehaviour {
     private Dictionary<Hand, int> _scoresForHands;
     private int _roundValue;
 
+    public TextMesh RoundScoreAwarded;
     
 
     public int RoundValue
@@ -20,7 +21,8 @@ public class Round : MonoBehaviour {
     }
 
     public void Init(List<Hand> hands, int roundNumber, MatchSettingsSO gameSettings)
-	{
+    {
+        RoundScoreAwarded.text = "";
 	    _hands = hands;
 	    _roundValue = gameSettings.RoundScores[roundNumber];
         _handToResultCardSlot = new Dictionary<Hand, CardSlot>();
@@ -53,9 +55,21 @@ public class Round : MonoBehaviour {
     internal void ResolveRound(Card winningCard, Card losingCard)
     {
         Hand winningHand = _hands.Find(x => x.PlayerSoRef == winningCard.PlayerSoRef);
+        Hand losingHand = _hands.Find(x => x.PlayerSoRef == losingCard.PlayerSoRef);
 
-        _scoresForHands[winningHand] += _roundValue;
+        CardSlot slotOfWinner = _handToResultCardSlot[winningHand];
+        CardSlot slotOfLoser = _handToResultCardSlot[losingHand];
 
+        Bounds boundsOfSlot = slotOfWinner.transform.RenderBounds();
+        slotOfWinner.transform.position -= winningHand.transform.forward * (boundsOfSlot.size.z * .35f);
+
+        slotOfLoser.transform.position = slotOfWinner.transform.position;
+        slotOfWinner.transform.position += transform.up*0.125f;
+        
+
+        
+
+        RoundScoreAwarded.text = _roundValue.ToString();
         List<Card> cards = new List<Card>(new Card[]{winningCard, losingCard});
         foreach (Card card in cards)
         {
@@ -63,5 +77,10 @@ public class Round : MonoBehaviour {
             CardSlot slot = _handToResultCardSlot[handForCard];
             slot.AddCardToSlot(card);
         }
+
+
+
+        _scoresForHands[winningHand] += _roundValue;
+
     }
 }
