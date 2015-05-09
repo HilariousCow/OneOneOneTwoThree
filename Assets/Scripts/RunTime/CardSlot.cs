@@ -7,7 +7,6 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
 {
     private SlotHighlightEffect _highlightEffect;
     private CardPlacementEffect _placementEffect;
-    private NextTurnArrow _nextTurnArrow;
     private bool _isInteractive = true;
     private Renderer _rend;
     private Card _cardInSlot;
@@ -18,7 +17,6 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     {
         _highlightEffect = GetComponentInChildren<SlotHighlightEffect>();
         _placementEffect = GetComponentInChildren<CardPlacementEffect>();
-        _nextTurnArrow = GetComponentInChildren<NextTurnArrow>();
         _rend = GetComponent<Renderer>();
         _collider = GetComponent<BoxCollider>();
     }
@@ -26,19 +24,11 @@ public class CardSlot : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPoin
     void Start()
     {
         StopEffect();
-        StopNextTurnArrowEffect();
+       
     }
 
 
-    public void StartNextTurnArrowEffect()
-    {
-        _nextTurnArrow.StartEffect();
-    }
-
-    public void StopNextTurnArrowEffect()
-    {
-        _nextTurnArrow.StopEffect();
-    }
+  
 
     //set to offset animation so that it's clearer who will go first.
     public void SetHighlightDelay(float delay)

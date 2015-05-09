@@ -295,4 +295,11 @@ public class Stack : MonoBehaviour
             rend.enabled = true;
         }
     }
+
+    //count down timer goes from 1..0. changes some kinda "count in" animation i guess.
+    //TODO
+    internal void SetCommitTime(float _commitTime)
+    {
+        
+    }
 }

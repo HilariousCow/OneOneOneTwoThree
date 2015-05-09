@@ -54,6 +54,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     public AIPlayer _whitePlayer;
     public AIPlayer _blackPlayer;
+    private float _commitTime;
 
     void Awake()
     {
@@ -172,12 +173,24 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 bool pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
 
                 ProdAIForMove();
-                while (!all || !pointDownMosty)
+                _commitTime = 1f;
+                while (!all || !pointDownMosty || _commitTime >= 0.0f)
                 {
 
                     yield return null;
                     pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
                     all = (_allJailCardSlots.FindAll(x => !x.IsEmpty).Count == _allJailCardSlots.Count);
+
+                    if(all && pointDownMosty)
+                    {
+                        _commitTime -= Time.deltaTime;
+                    }
+                    else
+                    {
+                        _commitTime = 1f;
+                    }
+
+                    MainStack.SetCommitTime(_commitTime);
                 }
                 TurnOffJailSlotInteractivity();
                 yield return new WaitForSeconds(.1f);
@@ -306,10 +319,10 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             CardSlot firstCardSlot =
                 slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide == topAtBeginningOfOperation);
           
-            firstCardSlot.StartNextTurnArrowEffect();
+          
             CardSlot secondCardSlot =
                 slotsForStack.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide != topAtBeginningOfOperation);
-            secondCardSlot.StopNextTurnArrowEffect();
+
         }
         //show first slot to apply graphic.
 
@@ -317,12 +330,23 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         bool all = (_allCommitCardSlots.FindAll(x => !x.IsEmpty).Count == _allCommitCardSlots.Count);
         bool pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
         ProdAIForMove();
-        while (!all || !pointDownMosty)
+        _commitTime = 1f;
+        while (!all || !pointDownMosty || _commitTime >= 0.0f)
         {
 
             yield return null;
             pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
             all = (_allCommitCardSlots.FindAll(x => !x.IsEmpty).Count == _allCommitCardSlots.Count);
+
+            if(all && pointDownMosty)
+            {
+                _commitTime -= Time.deltaTime;
+            }
+            else
+            {
+                _commitTime = 1f;
+            }
+            MainStack.SetCommitTime(_commitTime);
         }
 
         TurnOffCommitSlotInteractivity();
@@ -349,9 +373,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             CameraMain.SetTarget(_stacks[0].transform);
             CameraRigRoot.SetTarget(_slotsToHands[firstCardSlot].transform);
 
-            firstCardSlot.StartNextTurnArrowEffect();
+        
             yield return StartCoroutine(ApplyCardToStack(firstCardSlot, stack));
-            firstCardSlot.StopNextTurnArrowEffect();
+       
 
 
 
@@ -359,9 +383,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             CameraMain.SetTarget(_stacks[0].transform);
             CameraRigRoot.SetTarget(_slotsToHands[secondCardSlot].transform);
 
-            secondCardSlot.StartNextTurnArrowEffect();
+         
             yield return StartCoroutine(ApplyCardToStack(secondCardSlot, stack));
-            secondCardSlot.StopNextTurnArrowEffect();
+        
 
 
             //moving to score slots
@@ -641,13 +665,12 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                 CardSlot firstJailSlot = firstJailSlots[index];
                 CardSlot secondJailSlot = secondJailSlots[index];
 
-                firstJailSlot.StartNextTurnArrowEffect();
+             
                 yield return StartCoroutine(ApplyCardToStack(firstJailSlot, stack));
-                firstJailSlot.StopNextTurnArrowEffect();
+           
 
-                secondJailSlot.StartNextTurnArrowEffect();
+             
                 yield return StartCoroutine(ApplyCardToStack(secondJailSlot, stack));
-                secondJailSlot.StopNextTurnArrowEffect();
             }
 
             //todo: extract token side orders. yeah. much nicer. but how will black/white determin multiple players? arhgh.
