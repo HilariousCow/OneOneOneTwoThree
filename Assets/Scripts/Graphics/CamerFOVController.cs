@@ -35,17 +35,23 @@ public class CamerFOVController : MonoBehaviour
 	    MinorDistance = _everything.size.MinAxis();
 	}
 
+
+    private float forwardTraceDist;
+
     private float posVerticalDist;
     private float posHorizontalDist;
     private float negVerticalDist;
     private float negHorizontalDist;
 
+    private Vector3 forwardHitPos = Vector3.zero;
 
     private Vector3 posVerticalHitPos = Vector3.zero;
     private Vector3 posHorizontalHitPos = Vector3.zero;
 
     private Vector3 negVerticalHitPos = Vector3.zero;
     private Vector3 negHorizontalHitPos = Vector3.zero;
+
+
 
 	// Update is called once per frame
 	void Update ()
@@ -63,11 +69,21 @@ public class CamerFOVController : MonoBehaviour
         */
         //need to go both sides
 
-        Ray positiveVerticalRay = new Ray(Camera.main.transform.up * 1000f, Camera.main.transform.up * -1000f);
-        Ray positiveHorizontalRay = new Ray(Camera.main.transform.right * 1000f, Camera.main.transform.right * -1000f);
 
-        Ray negativeVerticalRay = new Ray(-Camera.main.transform.up * 1000f, -Camera.main.transform.up * -1000f);
-        Ray negativeHorizontalRay = new Ray(-Camera.main.transform.right * 1000f, -Camera.main.transform.right * -1000f);
+        Ray forwarTrace = new Ray(Camera.main.transform.position * 100f ,  -Camera.main.transform.position );
+        if (_everything.IntersectRay(forwarTrace, out forwardTraceDist))
+        {
+            forwardHitPos = forwarTrace.GetPoint(forwardTraceDist);
+            forwardHitPos = Vector3.Lerp(forwardHitPos, _everything.center, 0.1f);//aim just inward so that there's always a clean trace
+        }
+        else forwardHitPos = Vector3.zero;
+
+
+        Ray positiveVerticalRay = new Ray(Camera.main.transform.up * 1000f + forwardHitPos, Camera.main.transform.up * -1000f + forwardHitPos);
+        Ray positiveHorizontalRay = new Ray(Camera.main.transform.right * 1000f + forwardHitPos, Camera.main.transform.right * -1000f + forwardHitPos);
+
+        Ray negativeVerticalRay = new Ray(-Camera.main.transform.up * 1000f + forwardHitPos, -Camera.main.transform.up * -1000f + forwardHitPos);
+        Ray negativeHorizontalRay = new Ray(-Camera.main.transform.right * 1000f + forwardHitPos, -Camera.main.transform.right * -1000f + forwardHitPos);
 
        
         if (_everything.IntersectRay(positiveVerticalRay, out posVerticalDist ))
@@ -146,17 +162,21 @@ public class CamerFOVController : MonoBehaviour
     void OnDrawGizmos()
     {
 
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawLine(Vector3.zero,Camera.main.transform.position);
+        Gizmos.DrawCube(forwardHitPos, Vector3.one * 0.5f);
+
         Gizmos.color = Color.green;
-        Gizmos.DrawLine(Vector3.zero, Camera.main.transform.up * posVerticalDist);
+        Gizmos.DrawLine(forwardHitPos, posVerticalHitPos);
         Gizmos.DrawCube(posVerticalHitPos, Vector3.one * 0.5f);
-        Gizmos.DrawLine(Vector3.zero, -Camera.main.transform.up * negVerticalDist);
+        Gizmos.DrawLine(forwardHitPos, negVerticalHitPos);
         Gizmos.DrawCube(negVerticalHitPos, Vector3.one * 0.5f);
 
 
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(Vector3.zero, Camera.main.transform.right * posHorizontalDist);
+        Gizmos.DrawLine(forwardHitPos, posHorizontalHitPos);
         Gizmos.DrawCube(posHorizontalHitPos, Vector3.one * 0.5f);
-        Gizmos.DrawLine(Vector3.zero, -Camera.main.transform.right * negHorizontalDist);
+        Gizmos.DrawLine(forwardHitPos, negHorizontalHitPos);
         Gizmos.DrawCube(negHorizontalHitPos, Vector3.one * 0.5f);
 
 
