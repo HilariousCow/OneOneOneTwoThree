@@ -68,7 +68,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         _previewStack.transform.localRotation = Quaternion.AngleAxis(-90f, Vector3.right);
         Bounds stackBounds = PreviewStack.transform.RenderBounds();
 
-        _previewStack.transform.localPosition = Vector3.up * (stackBounds.size.y * 0.5f + 0.125f);//??
+        _previewStack.transform.localPosition = transform.up * (stackBounds.size.y * 0.75f + 0.125f);//??
 
         //_previewStack.PlayOperationLooping();
 

@@ -24,7 +24,7 @@ public class CamerFOVController : MonoBehaviour
 	    _cams = GetComponentsInChildren<Camera>();
 	    _game = FindObjectOfType<MainGame>();
 
-
+        UpdateDistances();
 	}
 
     private void UpdateDistances()
@@ -39,7 +39,7 @@ public class CamerFOVController : MonoBehaviour
 	void Update ()
 	{
 
-	    UpdateDistances();
+	   
 
         float dot = Vector3.Dot(Vector3.down, transform.forward);
 

@@ -6,17 +6,32 @@ ModelImporter:
     100000: //RootNode
     100002: Token
     100004: Token_Split
+    100006: CenterLine1Unit
+    100008: CenterLineCardWidth
+    100010: LineEnd
     400000: //RootNode
     400002: Token
     400004: Token_Split
+    400006: CenterLine1Unit
+    400008: CenterLineCardWidth
+    400010: LineEnd
     2300000: //RootNode
     2300002: Token
     2300004: Token_Split
+    2300006: CenterLine1Unit
+    2300008: CenterLineCardWidth
+    2300010: LineEnd
     3300000: //RootNode
     3300002: Token
     3300004: Token_Split
+    3300006: CenterLine1Unit
+    3300008: CenterLineCardWidth
+    3300010: LineEnd
     4300000: Token
     4300002: Token_Split
+    4300004: CenterLine1Unit
+    4300006: LineEnd
+    4300008: CenterLineCardWidth
     7400000: Default Take
     9500000: //RootNode
   materials:

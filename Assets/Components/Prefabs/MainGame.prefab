@@ -9,7 +9,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 426460}
   m_Layer: 0
-  m_Name: StackHandle
+  m_Name: ScoreHandle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -32,6 +32,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &197444
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 497444}
+  m_Layer: 0
+  m_Name: StackHandle
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!4 &426460
 Transform:
   m_ObjectHideFlags: 1
@@ -43,7 +58,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 439942}
-  m_RootOrder: 0
+  m_RootOrder: 1
 --- !u!4 &439942
 Transform:
   m_ObjectHideFlags: 1
@@ -54,8 +69,21 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 497444}
   - {fileID: 426460}
   m_Father: {fileID: 0}
+  m_RootOrder: 0
+--- !u!4 &497444
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 197444}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 439942}
   m_RootOrder: 0
 --- !u!114 &11416484
 MonoBehaviour:
@@ -86,7 +114,8 @@ MonoBehaviour:
   StackPrefab: {fileID: 11413316, guid: 17c665998c3939f4e9e1358460d569fe, type: 2}
   CardSlotPrefab: {fileID: 11464006, guid: 410e4590c904759488db3e79ab8c40a8, type: 2}
   ScoreHandPrefab: {fileID: 11415192, guid: 75255936caa3532489c31559e01b37cb, type: 2}
-  StackHandle: {fileID: 426460}
+  ScoreHandle: {fileID: 426460}
+  StackHandle: {fileID: 497444}
   DropTokens: {fileID: 11416498, guid: bf8af6b8b2897ee489da8dffdd5d35fb, type: 2}
   DropTable: {fileID: 0}
   CameraRigRoot: {fileID: 0}

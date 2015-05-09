@@ -5,28 +5,15 @@ using System.Linq;
 
 public class ScoreHand : MonoBehaviour
 {
-    public CardSlot CardSlotScoreKeepingPrefab;
+    public Round RoundPrefab;
+    private List<Round> _rounds;
+    private List<Hand> _hands;
+    private int _roundNumber = 0;
+    private int _numberOfRounds = 5;
 
-
-    public bool FinishedRound { get { return roundNumber == numberOfRounds; } }
+    public bool FinishedAllRounds { get { return _roundNumber == _rounds.Count; } }
     public bool GameIsATie { get
         {
-            
-            //reorder the scores from highest to lowest
-       /*     List<KeyValuePair<Hand, int>> sortedDict = (from entry in TotalledScores orderby entry.Value descending select entry).ToList();
-            int startScore = sortedDict[0].Value;
-            int numTiedForWin = 0;
-            foreach (KeyValuePair<Hand, int> keyValuePair in sortedDict)
-            {
-                numTiedForWin++;
-                if(keyValuePair.Value < startScore)//no longer equal
-                {
-                    break;
-                }
-            }
-
-            return numTiedForWin > 1;*/
-
             int score = -1;
             foreach (KeyValuePair<Hand, int> totalledScore in TotalledScores)
             {
@@ -50,151 +37,110 @@ public class ScoreHand : MonoBehaviour
         get
         {
             Dictionary<Hand, int> scores  = new Dictionary<Hand, int>();
-            foreach (Hand hand in _scores.Keys)
-            {
-                List<int> score = _scores[hand];
 
-                scores.Add(hand, score.Sum());
+            foreach (Hand hand in _hands)
+            {
+                scores.Add(hand, 0);
+                foreach (Round round in _rounds)
+                {
+                   scores[hand] += round.GetScoreForHand(hand);
+                }
             }
+
             return scores;
         }
     }
-    private Dictionary<Hand, List<CardSlot>> _roundScoresPerHand;
-    private Dictionary<Hand, List<int>> _scores;
-
-    private List<int> _roundScores;
-    private int roundNumber = 0;
-    private int numberOfRounds = 5;
-
-    
-    internal void Init(List<Hand> _hands, MatchSettingsSO _matchSettings)
+  
+    internal void Init(List<Hand> hands, MatchSettingsSO _matchSettings)
     {
-        roundNumber = 0;
-        numberOfRounds = _matchSettings.NumberOfRounds;
-
-        List<CardSO> _setOfCardsForMatch = new List<CardSO>(_matchSettings.CardsPerHand);
-        _roundScoresPerHand = new Dictionary<Hand, List<CardSlot>>();
-        _scores = new Dictionary<Hand, List<int>>();
-        _roundScores = new List<int>(_matchSettings.RoundScores);
-        foreach (Hand hand in _hands)
+        _roundNumber = 0;
+        _numberOfRounds = _matchSettings.NumberOfRounds;
+        _hands = hands;
+        _rounds = new List<Round>();
+        for (int i = 0; i < _numberOfRounds; i++)
         {
-            List<CardSlot> trackers = new List<CardSlot>();
-            List<int> scores = new List<int>();
-            for (int index = 0; index < numberOfRounds; index++)
-            {
-                CardSO cardSo = _setOfCardsForMatch[index];
-                CardSlot slot = transform.InstantiateChild<CardSlot>(CardSlotScoreKeepingPrefab);
-                slot.transform.rotation = hand.transform.rotation;
-
-                
-                slot.gameObject.name = hand.gameObject.name + "_Round_" + (index + 1).ToString();
-                slot.IsInteractive = false;//never interactive
-                trackers.Add(slot);
-
-                scores.Add(0);
-            }
-            _scores.Add(hand, scores);
-            trackers.PositionAlongLineCentered(Vector3.right, 0.5f, Vector3.zero);
-            /*Vector3 moveRight = Vector3.right*trackers.WorldBounds().size.x;
-
-            foreach (CardSlot cardSlot in trackers)
-            {
-                cardSlot.transform.position += moveRight;
-            }*/
-            //trackers.PositionAlongLineCentered(Vector3.left, 0.5f, Vector3.right * trackers.WorldBounds().size.x);
-
-            _roundScoresPerHand.Add(hand, trackers);
-            
+            Round round = transform.InstantiateChild<Round>(RoundPrefab);
+            round.Init(hands, i, _matchSettings);
+            _rounds.Add(round);
         }
 
-        //hide them.
+        _rounds.PositionAlongLineCentered(Vector3.right, 0.5f, Vector3.zero);
+     
     }
 
     
     //These come in the order they were played - will change to list in time
     //todo: score per stack or what?
-    internal IEnumerator AddRound(Stack stack, CardSlot firstCommitCardslot, CardSlot secondCommitCardSlot)
+    internal IEnumerator RoundResolution(Stack stack, CardSlot firstPlayedSlot, CardSlot secondPlayedSlot)
     {
-        Card firstCard = firstCommitCardslot.CardInSlot;
-        Card secondCard = secondCommitCardSlot.CardInSlot;
 
-        Hand firstHand = _roundScoresPerHand.Keys.FirstOrDefault(x => x.PlayerSoRef == firstCard.PlayerSoRef);
-        Hand secondHand = _roundScoresPerHand.Keys.FirstOrDefault(x => x.PlayerSoRef == secondCard.PlayerSoRef);
+        Round currentRound = _rounds[_roundNumber];
 
-        CardSlot firstSlot = _roundScoresPerHand[firstHand][roundNumber];
-        CardSlot secondSlot = _roundScoresPerHand[secondHand][roundNumber];
+        TokenSide winningSide = stack.GetTopTokenSide();
 
-        
+        List<Card> cardsPlayed = new List<Card>(new Card[]{firstPlayedSlot.CardInSlot,secondPlayedSlot.CardInSlot});
 
-        firstSlot.AddCardToSlot(firstCommitCardslot.RemoveCardFromSlot());
-        yield return new WaitForSeconds(0.6f);
-        secondSlot.AddCardToSlot(secondCommitCardSlot.RemoveCardFromSlot());
+        Card winningCard = cardsPlayed.Find(x => x.PlayerSoRef.DesiredTokenSide == winningSide);
+        Card losingCard = cardsPlayed.Find(x => x.PlayerSoRef.DesiredTokenSide != winningSide);
 
-        if (stack.GetTopTokenSide() == firstCard.PlayerSoRef.DesiredTokenSide)
-        {
-
-            Debug.Log(firstCard.PlayerSoRef.name + " wins round " + (roundNumber + 1) + " for " + _roundScores[roundNumber] + "point(s)");
-            PositionWinningCard(firstCard, firstSlot, firstHand);
-
-        }
-        else
-        {
-
-            Debug.Log(secondCard.PlayerSoRef.name + " wins round " + (roundNumber + 1) + " for " + _roundScores[roundNumber] + "point(s)");
-            PositionWinningCard(secondCard, secondSlot, secondHand);
-        }
-
+        currentRound.ResolveRound(winningCard, losingCard);
+        Debug.Log(winningCard.PlayerSoRef.name + " wins round " + (_roundNumber + 1) + " for " + currentRound.RoundValue + "point(s)");
+          
         //"Black wins 1 point"
         yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine(stack.GetTopTokenSide().ToString()));
         yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("Wins"));
-        yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine(_roundScores[roundNumber].ToString() + " point"));
+        yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine(currentRound.RoundValue.ToString() + " point"));
         //flash a score point here or something?
 
-        if (roundNumber > 0)
+        if (_roundNumber > 0)
         {
             yield return new WaitForSeconds(1.6f);
             yield return StartCoroutine(TellMeTheScores());
         }
 
 
-        roundNumber++;
+        _roundNumber++;
     }
     public IEnumerator AnnouceRoundNumber()
     {
         SoundPlayer.Instance.PlaySound("Round");
         yield return new WaitForSeconds(0.6f);
-        SoundPlayer.Instance.PlaySound((roundNumber+1).ToString());
+        SoundPlayer.Instance.PlaySound((_roundNumber+1).ToString());
         yield return new WaitForSeconds(0.6f);
     }
 
     IEnumerator TellMeTheScores()
     {
-        
-
-        foreach (KeyValuePair<Hand, List<int>> keyValuePair in _scores)
+        foreach (Hand hand in _hands)
         {
-            TokenSide side = keyValuePair.Key.PlayerSoRef.DesiredTokenSide;
+            TokenSide side = hand.PlayerSoRef.DesiredTokenSide;
             SoundPlayer.Instance.PlaySound(side.ToString());
-
             yield return new WaitForSeconds(0.6f);
-            SoundPlayer.Instance.PlaySound(TotalledScores[keyValuePair.Key].ToString());
+            SoundPlayer.Instance.PlaySound(TotalledScores[hand].ToString());
 
             yield return new WaitForSeconds(0.6f);
         }
     }
 
-    private void PositionWinningCard(Card firstCard, CardSlot firstSlot, Hand firstHand)
+
+    void LateUpdate()
     {
-        _scores[firstHand][roundNumber] = _roundScores[roundNumber]; //claim the points
+        transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero,
+                                                       (transform.localPosition.magnitude + 0.1f) * Time.deltaTime * 5f);
 
-        firstSlot.transform.position =
-            firstSlot.transform.position + Vector3.up*0.125f;
-
-        firstSlot.transform.position =
-            firstSlot.transform.position +
-            -firstSlot.transform.forward*firstCard.transform.RenderBounds().size.z*
-            (float) _roundScores[roundNumber]/5f;
+        Quaternion targetRot = Quaternion.identity;
+        float angle = Quaternion.Angle(transform.localRotation, targetRot);
+        if (angle > 0.0f)
+        {
+            angle += 10.0f;
+            transform.localRotation = Quaternion.RotateTowards(transform.localRotation, targetRot,
+                                                               Time.deltaTime * angle * 5f);
+        }
     }
 
-   
+    internal void StartNewRound()
+    {
+        //get round slot for round number
+        
+    }
 }

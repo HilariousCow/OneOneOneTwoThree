@@ -23,7 +23,10 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     public Stack StackPrefab;
     public CardSlot CardSlotPrefab;
     public ScoreHand ScoreHandPrefab;
+    public Transform ScoreHandle;
+
     public Transform StackHandle;
+  
 
     public Token DropTokens;
     public Collider DropTable;
@@ -234,7 +237,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             Card tieBreakerCard = jailslot.RemoveCardFromSlot();
             CameraMain.SetTarget(jailslot.transform);
 
-            jailslot.transform.position = _stacks[0].transform.position + transform.right * -9f;
+            jailslot.transform.position = _stacks[0].transform.position + transform.right * 9f;
             jailslot.transform.rotation = Quaternion.LookRotation(transform.right, Vector3.up);
             if (topAtBeginningOfOperation == hand.PlayerSoRef.DesiredTokenSide)
             {
@@ -280,7 +283,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         CameraRigRoot.SetTarget(null);
         yield return StartCoroutine(_scoreHand.AnnouceRoundNumber());
 
-
+        _scoreHand.StartNewRound();//position current card slots under
         
         TurnOnHands();
         ClearEmptySlotsInHands();
@@ -362,11 +365,12 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
 
             //moving to score slots
+            //no longer occurring?
             CameraRigRoot.SetTarget(_scoreHand.transform);
             CameraMain.SetTarget(_scoreHand.transform);
             TurnOnScoreHands();
     
-            yield return StartCoroutine(_scoreHand.AddRound(stack, firstCardSlot, secondCardSlot));
+            yield return StartCoroutine(_scoreHand.RoundResolution(stack, firstCardSlot, secondCardSlot));
             CameraRigRoot.SetTarget(_stacks[0].transform);
             yield return new WaitForSeconds(0.5f);
 
@@ -375,7 +379,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         }
         
 
-        if (_scoreHand.FinishedRound )
+        if (_scoreHand.FinishedAllRounds )
         {
             Debug.Log("Rounds are over");
             StartCoroutine(ResolutionPhase());
@@ -648,7 +652,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
           
           
 
-        //    yield return StartCoroutine(_scoreHand.AddRound(stack, slot, secondCardSlot));
+        //    yield return StartCoroutine(_scoreHand.RoundResolution(stack, slot, secondCardSlot));
             sides.Add(stack.GetTopTokenSide());
             yield return new WaitForSeconds(0.5f);
 
@@ -829,10 +833,10 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
 
         //spawn score hand
-        _scoreHand = transform.InstantiateChild(ScoreHandPrefab);
+        _scoreHand = ScoreHandle.InstantiateChild(ScoreHandPrefab);
         _scoreHand.Init(_hands, _matchSettings);
 
-        _scoreHand.transform.localPosition = Vector3.right * ((_scoreHand.transform.RenderBounds().size.x *0.75f) + 10f);
+        ScoreHandle.transform.localPosition = Vector3.right * ((_scoreHand.transform.RenderBounds().size.x * 0.75f) + 10f);
         //spawn cards but don't put them anywhere or maybe put them on the score hand
 
         //reposition slots infront of stacks
