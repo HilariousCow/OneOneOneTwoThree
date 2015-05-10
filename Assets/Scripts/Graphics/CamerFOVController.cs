@@ -23,7 +23,7 @@ public class CamerFOVController : MonoBehaviour
 	{
 	    _cams = GetComponentsInChildren<Camera>();
 	    _game = FindObjectOfType<MainGame>();
-
+        UpdateDistances();
         
 	}
 
@@ -57,7 +57,7 @@ public class CamerFOVController : MonoBehaviour
 	void Update ()
 	{
 
-        UpdateDistances();
+     
 
         float dot = Vector3.Dot(Vector3.down, transform.forward);
 
@@ -72,7 +72,7 @@ public class CamerFOVController : MonoBehaviour
 
         //try closest point on bounds.
 
-	    Vector3 closestPointOnBounds = Camera.main.transform.position;
+/*	    Vector3 closestPointOnBounds = Camera.main.transform.position;
         
 	    closestPointOnBounds.x = Mathf.Clamp(closestPointOnBounds.x, _everything.min.x, _everything.max.x);
         closestPointOnBounds.y = Mathf.Clamp(closestPointOnBounds.y, _everything.min.y, _everything.max.y);
@@ -125,13 +125,18 @@ public class CamerFOVController : MonoBehaviour
         float fovForEverything = Mathf.Max(Mathf.Max(posVerticalDist, negVerticalDist), 
             Mathf.Max(posHorizontalDist / Camera.main.aspect,
             negHorizontalDist / Camera.main.aspect));
-        //float fovForEverything =  _everything.size.magnitude * Camera.main.aspect;
 
 
 
+        */
+        float fovForEverything =  _everything.size.magnitude * Camera.main.aspect;
 
+
+
+	    float rollDot = Mathf.Abs(Vector3.Dot(transform.right, Vector3.down));
+	    float fovRoll = Mathf.Lerp(1.32f, 0.78f, rollDot);
 	    float radiusOfEverything = _everything.size.magnitude ;
-        fovForEverything = Mathf.Rad2Deg * Mathf.Atan2(fovForEverything,  transform.position.magnitude) *2f;
+        fovForEverything = Mathf.Rad2Deg * Mathf.Atan2(fovForEverything, transform.position.magnitude) * fovRoll;
 
 	   // fovForEverything = 90f;///TEEEEEMPPP!!
         //tween to target fov
@@ -144,9 +149,7 @@ public class CamerFOVController : MonoBehaviour
             cam.farClipPlane = Mathf.Clamp(transform.localPosition.magnitude + radiusOfEverything, 0.1f, 10000f);
         }
 
-        float dotLR = Vector3.Dot(MainGameInstance.transform.forward, transform.forward);
-	    dotLR = (dotLR + 1.0f)/2f;
-        
+       
          
         RenderSettings.fogMode = FogMode.Linear;
 	    RenderSettings.fogStartDistance = Mathf.Lerp( Camera.main.nearClipPlane, Camera.main.farClipPlane, 0.5f);
@@ -174,7 +177,7 @@ public class CamerFOVController : MonoBehaviour
     void OnDrawGizmos()
     {
 
-        Gizmos.color = Color.cyan;
+     /*   Gizmos.color = Color.cyan;
         Gizmos.DrawLine(forwardHitPos, Camera.main.transform.position);
         Gizmos.DrawCube(forwardHitPos, Vector3.one * 0.5f);
 
@@ -191,7 +194,7 @@ public class CamerFOVController : MonoBehaviour
         Gizmos.DrawLine(forwardHitPos, negHorizontalHitPos);
         Gizmos.DrawCube(negHorizontalHitPos, Vector3.one * 0.5f);
 
-
+        */
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(_everything.center, _everything.size);
         
