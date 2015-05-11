@@ -392,7 +392,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
 
         _scoreHand.transform.parent = null;
-        ScoreHandle.transform.position = -_scoreHand.GetCurrentRoundSlotPosition();
+        ScoreHandle.transform.localPosition = -_scoreHand.GetCurrentRoundSlotPosition();
         _scoreHand.transform.parent = ScoreHandle;
 
         yield return StartCoroutine(_scoreHand.RoundResolution(MainStack, firstCardSlot, secondCardSlot));
