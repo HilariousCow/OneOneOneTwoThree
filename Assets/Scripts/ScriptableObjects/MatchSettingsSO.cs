@@ -13,7 +13,6 @@ public enum TieBreakerStyle
 public class MatchSettingsSO : ScriptableObject
 {
 
-    public int NumberOfStacks = 1;
     public int NumberOfRounds = 5;
     public int[] RoundScores = new int[] {1, 1, 1, 2, 3};
     public StackSO StackStyle;
