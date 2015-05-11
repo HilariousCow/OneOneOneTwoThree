@@ -88,10 +88,12 @@ public class ScoreHand : MonoBehaviour
         currentRound.ResolveRound(winningCard, losingCard);
         Debug.Log(winningCard.PlayerSoRef.name + " wins round " + (_roundNumber + 1) + " for " + currentRound.RoundValue + "point(s)");
           
+
+
         //"Black wins 1 point"
         yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine(stack.GetTopTokenSide().ToString()));
         yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("Wins"));
-        yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine(currentRound.RoundValue.ToString() + " point"));
+        yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine(currentRound.RoundValue.ToString() + " point"));*/
         //flash a score point here or something?
 
         if (_roundNumber > 0)
@@ -100,7 +102,7 @@ public class ScoreHand : MonoBehaviour
             yield return StartCoroutine(TellMeTheScores());
         }
 
-
+        yield return null;
         _roundNumber++;
     }
     public IEnumerator AnnouceRoundNumber()
@@ -147,4 +149,9 @@ public class ScoreHand : MonoBehaviour
     }
 
   //  public Vector3
+
+    internal Vector3 GetCurrentRoundSlotPosition()
+    {
+        return _rounds[_roundNumber].transform.localPosition;
+    }
 }

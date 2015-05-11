@@ -370,17 +370,19 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         CameraMain.SetTarget(MainStack.transform);
         CameraRigRoot.SetTarget(_slotsToHands[firstCardSlot].transform);
 
-
         yield return StartCoroutine(ApplyCardToStack(firstCardSlot, MainStack));
-
 
         CameraMain.SetTarget(MainStack.transform);
         CameraRigRoot.SetTarget(_slotsToHands[secondCardSlot].transform);
 
-
         yield return StartCoroutine(ApplyCardToStack(secondCardSlot, MainStack));
-    
 
+        yield return new WaitForSeconds(0.5f);
+        MainStack.transform.parent = null;
+
+        StackHandle.transform.position = Vector3.zero;
+        
+        MainStack.transform.parent = StackHandle;
 
         //moving to score slots
         //no longer occurring?
@@ -388,9 +390,15 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         CameraMain.SetTarget(_scoreHand.transform);
         TurnOnScoreHands();
 
+
+        _scoreHand.transform.parent = null;
+        ScoreHandle.transform.position = -_scoreHand.GetCurrentRoundSlotPosition();
+        _scoreHand.transform.parent = ScoreHandle;
+
         yield return StartCoroutine(_scoreHand.RoundResolution(MainStack, firstCardSlot, secondCardSlot));
         CameraRigRoot.SetTarget(MainStack.transform);
         yield return new WaitForSeconds(0.5f);
+
 
 
         CameraMain.SetTarget(MainStack.transform);
@@ -407,6 +415,10 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             Debug.Log("Starting new round");
             StartCoroutine("LoopPhase");//go again.    
         }
+
+        _scoreHand.transform.parent = null;
+        ScoreHandle.transform.position = -_scoreHand.GetCurrentRoundSlotPosition();
+        _scoreHand.transform.parent = ScoreHandle;
 
     }
 
@@ -475,7 +487,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         stack.transform.parent = null;
 
-        StackHandle.transform.position = Vector3.zero;
+        StackHandle.transform.position = StackHandle.transform.position.FlatZ().FlatX();
         StackHandle.transform.rotation = Quaternion.LookRotation(-firstCard.transform.position.FlatY(), Vector3.up);
 
         stack.transform.parent = StackHandle;
@@ -590,7 +602,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
                                         Quaternion.AngleAxis(180f, Vector3.forward);
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(MainStack.AnimateCardEffectOnStack(tieBreaker));
-        //  stack.ApplyCardToStack(firstCard);..temp remove
+       
         yield return new WaitForSeconds(0.5f);
 
         Destroy(tieBreaker.gameObject);
@@ -652,6 +664,12 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
 
             yield return StartCoroutine(ApplyCardToStack(secondJailSlot, MainStack));
+            yield return new WaitForSeconds(0.5f);
+            MainStack.transform.parent = null;
+
+            StackHandle.transform.position = Vector3.zero;
+
+            MainStack.transform.parent = StackHandle;
         }
 
         //todo: extract token side orders. yeah. much nicer. but how will black/white determin multiple players? arhgh.
@@ -939,4 +957,6 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         }
     }
 
+
+    
 }

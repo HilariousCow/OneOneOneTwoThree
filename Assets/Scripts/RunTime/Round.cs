@@ -11,6 +11,7 @@ public class Round : MonoBehaviour {
     private Dictionary<Hand, CardSlot> _handToResultCardSlot;
     private Dictionary<Hand, int> _scoresForHands;
     private int _roundValue;
+    private int _numberOfRounds;
 
     public TextMesh RoundScoreAwarded;
     
@@ -25,8 +26,10 @@ public class Round : MonoBehaviour {
         RoundScoreAwarded.text = "";
 	    _hands = hands;
 	    _roundValue = gameSettings.RoundScores[roundNumber];
+        _numberOfRounds = gameSettings.NumberOfRounds;
         _handToResultCardSlot = new Dictionary<Hand, CardSlot>();
         _scoresForHands = new Dictionary<Hand, int>();
+
         foreach (Hand hand in _hands)
 	    {
             CardSlot slot = transform.InstantiateChild<CardSlot>(CardSlotScoreKeepingPrefab);
@@ -61,15 +64,26 @@ public class Round : MonoBehaviour {
         CardSlot slotOfLoser = _handToResultCardSlot[losingHand];
 
         Bounds boundsOfSlot = slotOfWinner.transform.RenderBounds();
-        slotOfWinner.transform.position -= winningHand.transform.forward * (boundsOfSlot.size.z * .35f);
+        slotOfWinner.transform.position -= winningHand.transform.forward * (boundsOfSlot.size.z * .6f);
 
         slotOfLoser.transform.position = slotOfWinner.transform.position;
-        slotOfWinner.transform.position += transform.up*0.125f;
-        
+
+        slotOfWinner.transform.position += transform.up*0.25f;
+        //offset to reveal a point.
+
+        float baseGap = boundsOfSlot.size.z/7f;//blank space either side of the dots
+        float scoreGap = (boundsOfSlot.size.z - (baseGap *2f)) 
+            * ((float)_roundValue / (float)_numberOfRounds);
+        slotOfWinner.transform.position -= winningHand.transform.forward * (baseGap + scoreGap);
 
         
 
         RoundScoreAwarded.text = _roundValue.ToString();
+        RoundScoreAwarded.transform.position = slotOfLoser.transform.position;
+        RoundScoreAwarded.transform.localPosition = Vector3.Reflect(RoundScoreAwarded.transform.localPosition,
+                                                                    transform.forward);
+
+
         List<Card> cards = new List<Card>(new Card[]{winningCard, losingCard});
         foreach (Card card in cards)
         {

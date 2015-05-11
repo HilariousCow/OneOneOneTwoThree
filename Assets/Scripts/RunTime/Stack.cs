@@ -245,11 +245,13 @@ public class Stack : MonoBehaviour
         {
             //always try to move to your home position
 
-          
+            float dotDown = Vector3.Dot(Camera.main.transform.forward, Vector3.down);
+            dotDown = 1f - Mathf.Clamp01(dotDown);
+            Vector3 targetPosition = Vector3.Lerp(transform.parent.position, transform.parent.TransformPoint(Vector3.up * 10f), dotDown);
+            transform.localScale = Vector3.one*(1f + dotDown * 3f);
 
-
-            transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero,
-                                                          (transform.localPosition.magnitude + 0.1f)*Time.deltaTime*5f);
+            transform.position = Vector3.MoveTowards(transform.position, targetPosition,
+                                                          ((transform.position - targetPosition).magnitude + 0.1f) * Time.deltaTime * 5f);
 
            
 
