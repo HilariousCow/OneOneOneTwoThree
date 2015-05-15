@@ -17,7 +17,7 @@
 			ZTest LEqual
 			ColorMask 0
 			Offset -10,-10
-			//Blend SrcAlpha OneMinusSrcAlpha
+			Blend SrcAlpha OneMinusSrcAlpha
 			
 			CGPROGRAM
 
@@ -105,6 +105,7 @@
  
 			struct v2f {
 				float4 pos		: SV_POSITION;
+				float4 extraPos		: TANGENT;
 				float4 color : COLOR;
 				float3 normal	: NORMAL;
 				float2 uv		: TEXCOORD0;
@@ -126,14 +127,27 @@
 				
 				//o.color = lerp(_OppositeOfBGColor, float4(0,0,0,1), _OuterEdge);
 				o.color = _OppositeOfBGColor;
-				o.color.a = (1-abs(_OuterEdge-_InnerEdge)) * 10;
+				//o.color.a = (1-abs(_OuterEdge-_InnerEdge)) * 10;
 				o.uv = MultiplyUV (UNITY_MATRIX_TEXTURE0, v.texcoord);
+				o.extraPos = o.pos;
 				return o; 
 			}
 
 			float4 frag (v2f i) : COLOR
 			{
-		
+				float aspect = _ScreenParams.x/ _ScreenParams.y;
+				float hatch = (i.extraPos.x*aspect+i.extraPos.y)/i.extraPos.w;
+				hatch = (frac(hatch*25) * 2) -1;//repeat -1..+1
+				
+				hatch = abs(hatch);
+				hatch -= 0.5f;
+				hatch *=100;
+				hatch += 0.5f;
+				float lineDelta = _OuterEdge - _InnerEdge;
+				hatch += (lineDelta) * 75;// * lineDelta * 20;
+				//frac();
+				i.color.a = 1;//saturate(frac(length(i.extraPos.xz/i.extraPos.w) * 5) - 0.5 * 2);
+				i.color.a = hatch;
 				return i.color;//i.color;//*10;
 			}
 			
