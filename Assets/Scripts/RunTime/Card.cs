@@ -43,6 +43,10 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         get { return _previewStack; }
     }
 
+    public void ShowDescriptionText(bool enableText)
+    {
+        DescriptionText.renderer.enabled = enableText;
+    }
     public void Init(CardSO cardSo, StackSO stackSo, PlayerSO playerSo)
     {
         DescriptionText.text = cardSo.name;
@@ -148,7 +152,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         {
             //always try to move to your home position
 
-            if (transform.parent != null)
+            if (transform.parent != null || transform.parent.parent != null)
             {
 
                 transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero,

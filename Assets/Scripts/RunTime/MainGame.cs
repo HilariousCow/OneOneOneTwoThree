@@ -378,9 +378,18 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         yield return StartCoroutine(ApplyCardToStack(secondCardSlot, MainStack));
 
         yield return new WaitForSeconds(0.5f);
+
+
         MainStack.transform.parent = null;
 
-        StackHandle.transform.position = Vector3.zero;
+
+        firstCardSlot.CardInSlot.transform.parent = firstCardSlot.transform;
+        secondCardSlot.CardInSlot.transform.parent = firstCardSlot.transform; 
+
+        firstCardSlot.CardInSlot.ShowDescriptionText(false);
+        secondCardSlot.CardInSlot.ShowDescriptionText(false);
+
+        StackHandle.transform.localPosition = Vector3.zero;
         
         MainStack.transform.parent = StackHandle;
 
@@ -453,25 +462,26 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     IEnumerator ApplyCardToStack( CardSlot slot, Stack stack)
     {
-        Vector3 slotStartPos = slot.transform.position;
+        Vector3 slotStartPos = slot.transform.localPosition;
         Vector3 slotShowOffPosition = slot.transform.position/2f + Vector3.up*15f;
         Card firstCard = slot.CardInSlot;
     //    Debug.Log("Showing first card" + firstCard.gameObject.name + " from slot: " + slot.gameObject.name);
         firstCard.IdleAnim();
-        firstCard.transform.parent = null;
+        firstCard.transform.parent = transform;
 
         slot.transform.position = slotShowOffPosition;
 
-        slot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.right);
+        slot.transform.localRotation *= Quaternion.AngleAxis(180f, Vector3.right);
         //firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.right);
         firstCard.transform.parent = slot.transform;
-        
+        firstCard.ShowDescriptionText(true);
         yield return StartCoroutine(firstCard.PreviewStack.AnimateCardEffectOnStack(firstCard));
+        
         firstCard.IdleAnim();
         yield return new WaitForSeconds(0.3f);//show top for 0.5
         //move stack to new target pos
-      
-        stack.transform.parent = null;
+
+        stack.transform.parent = transform;
         stack.transform.rotation = Quaternion.LookRotation(-firstCard.transform.position.FlatY(), Vector3.up);
 
         StackHandle.transform.position = firstCard.PreviewStack.transform.position + Vector3.up * 5f;
@@ -485,17 +495,18 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
       
         yield return new WaitForSeconds(1.0f);//show top for 0.5
 
-        stack.transform.parent = null;
+        stack.transform.parent = transform;
 
         StackHandle.transform.position = StackHandle.transform.position.FlatZ().FlatX();
         StackHandle.transform.rotation = Quaternion.LookRotation(-firstCard.transform.position.FlatY(), Vector3.up);
 
         stack.transform.parent = StackHandle;
-        firstCard.transform.parent = null;
-        slot.transform.rotation *= Quaternion.AngleAxis(180f, Vector3.right);
-        slot.transform.position = slotStartPos;
-        //firstCard.transform.localRotation *= Quaternion.AngleAxis(160f, Vector3.right);
-        firstCard.transform.parent = slot.transform; 
+
+        //todo: unflip after both are applied.
+        firstCard.transform.parent = transform;
+        slot.transform.localRotation *= Quaternion.AngleAxis(180f, Vector3.right);
+        slot.transform.localPosition = slotStartPos;
+
         yield return new WaitForSeconds(0.25f);//show top for 0.5
     }
 
@@ -664,7 +675,17 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
 
             yield return StartCoroutine(ApplyCardToStack(secondJailSlot, MainStack));
+
+
             yield return new WaitForSeconds(0.5f);
+
+
+            firstJailSlot.CardInSlot.transform.parent = firstJailSlot.transform;
+            secondJailSlot.CardInSlot.transform.parent = secondJailSlot.transform;
+
+            firstJailSlot.CardInSlot.ShowDescriptionText(false);
+            secondJailSlot.CardInSlot.ShowDescriptionText(false);
+
             MainStack.transform.parent = null;
 
             StackHandle.transform.position = Vector3.zero;

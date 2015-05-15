@@ -9,7 +9,7 @@
 			
 			Cull Off
 			
-			ZWrite Off
+			ZWrite On
 			ZTest LEqual
 			Fog { Mode Linear }
 			//Blend OneMinusDstColor OneMinusSrcColor
