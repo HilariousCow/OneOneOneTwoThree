@@ -13,8 +13,8 @@
 			ZWrite Off
 			ZTest On
 			
-			Blend OneMinusDstColor OneMinusSrcColor //negative color
-			
+			//Blend OneMinusDstColor OneMinusSrcColor //negative color
+			Blend SrcAlpha OneMinusSrcAlpha
 			CGPROGRAM
 
 			#pragma vertex vert
@@ -25,6 +25,8 @@
 			
 		
 			sampler2D _MainTex;
+			float4 _BGColor;
+			float4 _OppositeOfBGColor;
 			
 			struct appdata {
 				float4 vertex	: POSITION;
@@ -49,6 +51,7 @@
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
 			//	o.normal = (mul((float3x3)UNITY_MATRIX_MVP, v.normal));
 				o.color = v.color;// * _Color;
+				o.color.rgb = _OppositeOfBGColor.rgb;
 				o.uv = MultiplyUV (UNITY_MATRIX_TEXTURE0, v.texcoord);
 				return o; 
 			}
@@ -56,8 +59,9 @@
 			float4 frag (v2f i) : COLOR
 			{
 				float4 biasCoord = half4(i.uv.x,i.uv.y,0.0,_MainTexBias);
-				float4 outColor = tex2Dbias(_MainTex, biasCoord) * i.color;
-				
+				float alpha =tex2Dbias(_MainTex, biasCoord);
+				float4 outColor = i.color;
+				outColor.a *= alpha;
 				return outColor;
 			}
 			

@@ -52,9 +52,15 @@
 				
 				//fun stuff with world space.
 				float dist = (o.pos.x*o.pos.x+o.pos.z*o.pos.z)*0.01;
-				o.color.a = sin(dist + _Time.y*2);
+				o.color.a = sin(dist + _Time.y*0.8);
 				o.color.a *= 0.5;
 				o.color.a = saturate(o.color.a);
+				
+				o.pos.y -= o.color.a;
+			//	o.pos.x = sign(o.pos.x) *( pow( abs(o.pos.x)+o.color.a,0.2*o.color.a+.9))   ;
+			//	o.pos.z = sign(o.pos.z) *( pow( abs(o.pos.z)+o.color.a,0.2*o.color.a+.9))  ;
+				
+			//	o.pos.y -= (o.pos.x*o.pos.x + o.pos.z * o.pos.z) *0.0125;
 				
 				o.pos =  mul(UNITY_MATRIX_VP, o.pos);
 				o.uv = MultiplyUV (UNITY_MATRIX_TEXTURE0, v.texcoord);

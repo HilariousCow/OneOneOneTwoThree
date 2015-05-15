@@ -9,7 +9,8 @@ public class Hand : MonoBehaviour, IDropCardOnCardSlot
 {
     public CardSlot CardSlotPrefab;
 
-    public TextMesh PlayerGameState;//Score: {Round 1} {Black 1, White 0} {Your card goes first/second}
+    public TextMesh HelpText;
+    public TextMesh StatusText;//Score: {Round 1} {Black 1, White 0} {Your card goes first/second}
 
     public float Gap = 0.25f;
     private List<CardSlot> _slots;
