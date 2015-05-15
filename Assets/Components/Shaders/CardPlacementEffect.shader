@@ -89,6 +89,7 @@
 			#pragma fragmentoption ARB_precision_hint_fastest
 			#include "UnityCG.cginc"
 			
+			float4 _BGColor;
 			float4 _OppositeOfBGColor;
 			float _LineWidth;
 			float _OuterEdge;
