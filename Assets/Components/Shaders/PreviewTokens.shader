@@ -105,18 +105,22 @@
 			 
 				//o.pos.xy += o.normal.xy * 0.0050f * o.pos.z;// / o.pos.z * 10.0f;
 	
+				float fres = 1- ( saturate(dot( UNITY_MATRIX_IT_MV[2].xyz, -v.normal)));
+				fres = 1- pow(fres, 1);
+	
 				float2 pixelSize = (1/_ScreenParams.xy) * _LineWidth;
 				o.pos.xy += (o.normal.xy * pixelSize)* o.pos.z;// * o.pos.z;
 				//o.pos.z += o.normal.z*pixelSize;
 				
 				o.color = v.color;
+				o.color.a = fres;
 				o.uv = MultiplyUV (UNITY_MATRIX_TEXTURE0, v.texcoord);
 				return o; 
 			}
 
 			float4 frag (v2f i) : COLOR
 			{
-				float4 outColor  = float4(1,1,1,1);
+				float4 outColor  = float4(1,1,1,i.color.a);
 				
 				return outColor;
 			}

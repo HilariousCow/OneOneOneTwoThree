@@ -69,9 +69,9 @@
 			ZWrite Off
 			ZTest LEqual
 			//Fog Disable
-			//Blend SrcAlpha OneMinusSrcAlpha
-			Blend OneMinusDstColor OneMinusSrcColor 
-			
+			Blend SrcAlpha OneMinusSrcAlpha
+		//	Blend OneMinusDstColor OneMinusSrcColor 
+		
 			CGPROGRAM
 
 			#pragma vertex vert
@@ -81,6 +81,10 @@
 			
 			float4 _Color;
 			float _LineWidth;
+			
+			float4 _BGColor;
+			float4 _OppositeOfBGColor;
+			
 			struct appdata {
 				float4 vertex	: POSITION;
 				float4 color : COLOR;
@@ -104,13 +108,16 @@
 				o.normal   = mul ((float3x3)UNITY_MATRIX_IT_MV, v.normal);
 				//float2 offset = TransformViewToProjection(o.normal.xy);
 			 
-			
+				
+				float fres = 1- ( saturate(dot( UNITY_MATRIX_IT_MV[2].xyz, -v.normal)));
+				fres = 1- pow(fres, 40);
 				
 				float2 pixelSize = (1/_ScreenParams.xy) * _LineWidth;
 				o.pos.xy += (o.normal.xy * pixelSize)* o.pos.z;// * o.pos.z;
 				o.pos.z+= pixelSize;
 				
-				o.color = v.color;
+				o.color = _OppositeOfBGColor;
+				o.color.a = fres;
 				o.uv = MultiplyUV (UNITY_MATRIX_TEXTURE0, v.texcoord);
 				return o; 
 			}
@@ -120,7 +127,7 @@
 				/*float4 outColor  = _Color;
 				outColor.xyz= 1 - outColor.xyz;
 				return outColor;*/
-				return float4(1,1,1,1);
+				return  i.color;
 			}
 			
 			ENDCG

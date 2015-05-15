@@ -380,7 +380,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         yield return new WaitForSeconds(0.5f);
 
 
-        MainStack.transform.parent = null;
+        MainStack.transform.parent = transform;
 
 
         firstCardSlot.CardInSlot.transform.parent = firstCardSlot.transform;
@@ -400,14 +400,17 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         TurnOnScoreHands();
 
 
-        _scoreHand.transform.parent = null;
+        _scoreHand.transform.parent = transform;
         ScoreHandle.transform.localPosition = -_scoreHand.GetCurrentRoundSlotPosition();
+        ScoreHandle.transform.localRotation = Quaternion.identity;
+
         _scoreHand.transform.parent = ScoreHandle;
 
         yield return StartCoroutine(_scoreHand.RoundResolution(MainStack, firstCardSlot, secondCardSlot));
         CameraRigRoot.SetTarget(MainStack.transform);
         yield return new WaitForSeconds(0.5f);
 
+     
 
 
         CameraMain.SetTarget(MainStack.transform);
@@ -425,9 +428,11 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             StartCoroutine("LoopPhase");//go again.    
         }
 
-        _scoreHand.transform.parent = null;
-        ScoreHandle.transform.position = -_scoreHand.GetCurrentRoundSlotPosition();
+        _scoreHand.transform.parent = transform;
+        ScoreHandle.transform.localPosition = Vector3.right * 20f;
+        ScoreHandle.transform.localRotation = Quaternion.AngleAxis(90, Vector3.forward);
         _scoreHand.transform.parent = ScoreHandle;
+
 
     }
 
@@ -463,7 +468,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     IEnumerator ApplyCardToStack( CardSlot slot, Stack stack)
     {
         Vector3 slotStartPos = slot.transform.localPosition;
-        Vector3 slotShowOffPosition = slot.transform.position/2f + Vector3.up*15f;
+        Vector3 slotShowOffPosition = slot.transform.position/1.5f + Vector3.up*15f;
         Card firstCard = slot.CardInSlot;
     //    Debug.Log("Showing first card" + firstCard.gameObject.name + " from slot: " + slot.gameObject.name);
         firstCard.IdleAnim();

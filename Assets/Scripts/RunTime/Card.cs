@@ -152,7 +152,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
         {
             //always try to move to your home position
 
-            if (transform.parent != null || transform.parent.parent != null)
+            if (transform.parent != null && transform.parent.parent != null)
             {
 
                 transform.localPosition = Vector3.MoveTowards(transform.localPosition, Vector3.zero,

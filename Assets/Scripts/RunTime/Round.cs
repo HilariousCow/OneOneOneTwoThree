@@ -64,24 +64,24 @@ public class Round : MonoBehaviour {
         CardSlot slotOfLoser = _handToResultCardSlot[losingHand];
 
         Bounds boundsOfSlot = slotOfWinner.transform.RenderBounds();
-        slotOfWinner.transform.position -= winningHand.transform.forward * (boundsOfSlot.size.z * .6f);
+        slotOfWinner.transform.localPosition -= transform.parent.InverseTransformDirection( winningHand.transform.forward ) * (boundsOfSlot.size.z * .6f);
 
-        slotOfLoser.transform.position = slotOfWinner.transform.position;
+        slotOfLoser.transform.localPosition = slotOfWinner.transform.localPosition;
 
-        slotOfWinner.transform.position += transform.up*0.25f;
+        slotOfWinner.transform.localPosition += Vector3.up * 0.25f;
         //offset to reveal a point.
 
         float baseGap = boundsOfSlot.size.z/7f;//blank space either side of the dots
         float scoreGap = (boundsOfSlot.size.z - (baseGap *2f)) 
             * ((float)_roundValue / (float)_numberOfRounds);
-        slotOfWinner.transform.position -= winningHand.transform.forward * (baseGap + scoreGap);
+        slotOfWinner.transform.localPosition -= transform.parent.InverseTransformDirection( winningHand.transform.forward) * (baseGap + scoreGap);
 
         
 
         RoundScoreAwarded.text = _roundValue.ToString();
-        RoundScoreAwarded.transform.position = slotOfLoser.transform.position;
+        RoundScoreAwarded.transform.localPosition = slotOfLoser.transform.localPosition;
         RoundScoreAwarded.transform.localPosition = Vector3.Reflect(RoundScoreAwarded.transform.localPosition,
-                                                                    transform.forward);
+                                                                    Vector3.forward);
 
 
         List<Card> cards = new List<Card>(new Card[]{winningCard, losingCard});
