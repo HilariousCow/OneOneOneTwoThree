@@ -9,10 +9,11 @@ using UnityEngine.EventSystems;
 public class SliderBox : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
 
+    public AISelectionViz AIVizPrefab;
     public Transform Outside;
 
     internal AIPlayer SelectedObject;
-    internal List<AIPlayer> AIs;
+    internal List<AISelectionViz> AIs;
 
 
     private bool _isDragging = false;
@@ -22,21 +23,39 @@ public class SliderBox : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void Init(List<AIPlayer> items)
     {
+        
+        SelectedObject = GetCurrentlySelectedObject();
 
 
-        AIs = new List<AIPlayer>(items);
+        AIs = new List<AISelectionViz>();
+        for (int index = 0; index < items.Count; index++)
+        {
+            float fraction = (float)index/items.Count - 1;
+            fraction *= Mathf.PI*2f;
+            Vector3 pos = new Vector3(Mathf.Sin(fraction), 5.0f, Mathf.Cos(fraction));
+
+
+            AIPlayer aiPlayer = items[index];
+            AISelectionViz viz = Outside.transform.InstantiateChild(AIVizPrefab);
+           
+            viz.Init(aiPlayer);
+
+            viz.transform.localPosition = pos;
+            viz.transform.localRotation = Quaternion.LookRotation(Vector3.forward, pos);
+
+
+            AIs.Add(viz);
+        }
+
         SelectedObject = GetCurrentlySelectedObject();
     }
 
-    private AIPlayer GetCurrentlySelectedObject()
+    public AIPlayer GetCurrentlySelectedObject()
     {
         return (from AIPlayer n in AIs orderby Vector3.Dot(n.transform.up, transform.up) select n).FirstOrDefault();
     }
 
-    private int GetSelectedIndex()
-    {
-        return AIs.IndexOf(GetCurrentlySelectedObject());
-    }
+  
 
 	// Use this for initialization
 	void Start () {

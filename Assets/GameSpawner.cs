@@ -3,7 +3,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.EventSystems;
 
-public class GameSpawner : MonoBehaviour, IPointerClickHandler
+public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
 {
     //point to settings
 
@@ -51,10 +51,15 @@ public class GameSpawner : MonoBehaviour, IPointerClickHandler
 
     public void SpawnGame()
     {
+
+        _whitePlayer = _sliderBoxWhite.GetCurrentlySelectedObject();
+        _blackPlayer = _sliderBoxBlack.GetCurrentlySelectedObject();
+
         _mainGameInstance = (Instantiate(MainGamePrefab.gameObject) as GameObject).GetComponent<MainGame>();
 
         _mainGameInstance.Init(_chosenMatchStyle, _whitePlayer, _blackPlayer);
 
+        gameObject.SetActive(false);
     }
 
 
@@ -65,5 +70,8 @@ public class GameSpawner : MonoBehaviour, IPointerClickHandler
         SpawnGame();
     }
 
-
+    public void TurnOn()
+    {
+        gameObject.SetActive(true);
+    }
 }
