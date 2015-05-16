@@ -28,7 +28,7 @@ public class SliderBox : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         {
             float fraction = (float)index/items.Count - 1;
             fraction *= Mathf.PI*2f;
-            Vector3 pos = new Vector3(Mathf.Sin(fraction), Mathf.Cos(fraction), 0.0f) * 5f;
+            Vector3 pos = new Vector3(Mathf.Sin(fraction), Mathf.Cos(fraction), 0.0f) * 2f;
 
 
             AIPlayer aiPlayer = items[index];

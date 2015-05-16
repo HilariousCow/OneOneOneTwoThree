@@ -16991,7 +16991,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 12329421e1ee7df46ab26e938127e597, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2300000, guid: 12329421e1ee7df46ab26e938127e597, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -31721,7 +31721,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 487350, guid: 2aee2921a64788e46945f8b4ddace64d, type: 2}
       propertyPath: m_RootOrder
-      value: 7
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 2aee2921a64788e46945f8b4ddace64d, type: 2}
@@ -37728,7 +37728,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d04758b16060fd4fb5d87bb5e20f43b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MainGameInstance: {fileID: 0}
   RelationshipBetweenSideAndTopFOV:
     serializedVersion: 2
     m_Curve:
@@ -49282,7 +49281,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 431806, guid: 4753cec8ea10d394a98d2867ee986c9d, type: 2}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 11431808, guid: 4753cec8ea10d394a98d2867ee986c9d, type: 2}
       propertyPath: MainGameInstance

@@ -51,8 +51,13 @@
 				
 				
 				//fun stuff with world space.
-				float dist = (o.pos.x*o.pos.x+o.pos.z*o.pos.z)*0.01;
-				o.color.a = sin(dist + _Time.y*0.8);
+				float3 orig1 = o.pos - float3(0, -10, 10);
+				float3 orig2 = o.pos - float3(0, 10, -10);
+				float dist1 = (orig1.x*orig1.x+orig1.z*orig1.z)*0.01;
+				float dist2 = (orig2.x*orig2.x+orig2.z*orig2.z)*0.01;
+				float dist = dist1 + dist2;
+				
+				o.color.a = sin(dist + _Time.y*8.8);
 				o.color.a *= 0.5;
 				o.color.a = saturate(o.color.a);
 				
@@ -72,7 +77,7 @@
 			float4 frag (v2f i) : COLOR
 			{
 				float4 outColor = i.color;
-				outColor.a = i.color.r * i.color.a;
+				outColor.a = i.color.r * i.color.a * 0.2f;
 				//outColor.rgb = lerp(_BGColor,_OppositeOfBGColor.rgb, outColor.a);
 				outColor.rgb = _OppositeOfBGColor.rgb;
 				return outColor;
