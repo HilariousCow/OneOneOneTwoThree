@@ -103,6 +103,9 @@ public class Round : MonoBehaviour {
         yield return new WaitForSeconds(0.5f);
         slotOfWinner.AddCardToSlot(winningCard);
 
+
+        losingCard.PreviewStack.gameObject.SetActive(false);
+        winningCard.PreviewStack.gameObject.SetActive(false);
         _scoresForHands[winningHand] += _roundValue;
 
     }
