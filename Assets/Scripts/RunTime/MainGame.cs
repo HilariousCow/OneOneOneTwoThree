@@ -33,8 +33,6 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     public Collider DropTablePrefab;
     private Collider _dropTable;
 
-    public FollowTransform CameraRigRoot;
-    public LookAtTransform CameraMain;
     internal Stack MainStack;
     //public TextMesh TestMeshPrefab;
 
@@ -67,16 +65,6 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     void Awake()
     {
 
-
-
-       // Init(MatchToUseDefault, AIPrefab, AIPrefab);
-        Init(MatchToUseDefault, null, null);
-        Screen.sleepTimeout = SleepTimeout.NeverSleep;
-
-        GetComponent<HelpText>().Init(this);
-        FindObjectOfType<CamerFOVController>().SetMainGame(this);
-
-        _dropTable = transform.InstantiateChild(DropTablePrefab.gameObject).GetComponent<Collider>();
         
     }
 
@@ -125,7 +113,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         tokenB.rigidbody.AddForce(Vector3.down, ForceMode.VelocityChange);
         tokenB.rigidbody.AddTorque(UnityEngine.Random.rotation.eulerAngles*2f, ForceMode.VelocityChange);
 
-        CameraRigRoot.SetTarget(tokenB.transform);
+      
         foreach (Renderer  rend in StackHandle.GetComponentsInChildren<Renderer>())
         {
             rend.enabled = false;
@@ -157,7 +145,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         Time.timeScale = 1.0f;
         Time.fixedDeltaTime = 1f / 60f;
 
-        CameraRigRoot.SetTarget(null);
+      
         yield return new WaitForSeconds(0.5f);
         MainStack.CopyTokenPositions(1, other);
 
@@ -279,8 +267,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             
             CardSlot jailslot = _handsToJailCards[hand][0];
             Card tieBreakerCard = jailslot.RemoveCardFromSlot();
-            CameraMain.SetTarget(jailslot.transform);
-
+        
             jailslot.transform.position = MainStack.transform.position + transform.right * 9f;
             jailslot.transform.rotation = Quaternion.LookRotation(transform.right, Vector3.up);
             if (topAtBeginningOfOperation == hand.PlayerSoRef.DesiredTokenSide)
@@ -340,8 +327,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     }
     IEnumerator ChooseAndApplyPhase()
     {
-        CameraMain.SetTarget(MainStack.transform);
-        CameraRigRoot.SetTarget(null);
+      
         yield return StartCoroutine(_scoreHand.AnnouceRoundNumber());
 
         _scoreHand.StartNewRound(); //position current card slots under
@@ -411,14 +397,10 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
 
         //first to go
-        CameraMain.SetTarget(MainStack.transform);
-        CameraRigRoot.SetTarget(_slotsToHands[firstCardSlot].transform);
-
+     
         yield return StartCoroutine(ApplyCardToStack(firstCardSlot, MainStack));
 
-        CameraMain.SetTarget(MainStack.transform);
-        CameraRigRoot.SetTarget(_slotsToHands[secondCardSlot].transform);
-
+     
         yield return StartCoroutine(ApplyCardToStack(secondCardSlot, MainStack));
 
         yield return new WaitForSeconds(0.5f);
@@ -451,8 +433,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     //moving to score slots
         //no longer occurring?
-        CameraRigRoot.SetTarget(_scoreHand.transform);
-        CameraMain.SetTarget(_scoreHand.transform);
+    
         TurnOnScoreHands();
 
 
@@ -464,7 +445,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         yield return new WaitForSeconds(0.5f);//give it some time to position or the positions will be screwey
 
         yield return StartCoroutine(_scoreHand.RoundResolution(MainStack, firstCardSlot, secondCardSlot));
-        CameraRigRoot.SetTarget(MainStack.transform);
+       
         yield return new WaitForSeconds(0.5f);
 
         _scoreHand.transform.parent = transform;
@@ -475,13 +456,6 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         yield return StartCoroutine(_scoreHand.TellMeTheScores());
         
      
-
-
-        CameraMain.SetTarget(MainStack.transform);
-    
-        
-
-
         _scoreHand.transform.parent = transform;
         ScoreHandle.transform.localPosition = Vector3.right * 20f;
         ScoreHandle.transform.localRotation = Quaternion.AngleAxis(90, Vector3.forward) * Quaternion.AngleAxis(90, Vector3.up);
@@ -795,6 +769,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("Wins"));
 
         Application.LoadLevel(0);//todo: destroy self, go back to spawn screen.
+
+        GameSpawner.Instance.TurnOn();
+        Destroy(gameObject);
     }
 
     
@@ -961,6 +938,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             _blackPlayer.Init(Hands[1]);
         }
 
+        GetComponent<HelpText>().Init(this);
+        _dropTable = transform.InstantiateChild(DropTablePrefab.gameObject).GetComponent<Collider>();
+        FindObjectOfType<CamerFOVController>().SetMainGame(this);
     }
 
 

@@ -4,7 +4,6 @@ using System.Collections;
 public class CamerFOVController : MonoBehaviour
 {
 
-    public MainGame MainGameInstance;
     public AnimationCurve RelationshipBetweenSideAndTopFOV;
     public float AdditionalMindistance = 10;
     public Color BlackSideFog;
@@ -23,13 +22,14 @@ public class CamerFOVController : MonoBehaviour
 	{
 	    _cams = GetComponentsInChildren<Camera>();
 	    _game = FindObjectOfType<MainGame>();
-        UpdateDistances();
-        
+
+        _everything = new Bounds(Vector3.zero, Vector3.one * 100f);
 	}
 
     public void SetMainGame(MainGame mainGame)
     {
-        MainGameInstance = mainGame;
+        _game = mainGame;
+        UpdateDistances();
     }
     private void UpdateDistances()
     {
@@ -95,9 +95,9 @@ public class CamerFOVController : MonoBehaviour
 	    RenderSettings.fogEndDistance = Mathf.Lerp(Camera.main.nearClipPlane, Camera.main.farClipPlane, 0.7f);
 
         //this needs to be an event which the game triggers.
-        if(MainGameInstance != null)
+        if (_game != null)
         {
-            Vector4 targetColor = MainGameInstance.MainStack.GetTopTokenSide() == TokenSide.White
+            Vector4 targetColor = _game.MainStack.GetTopTokenSide() == TokenSide.White
                                       ? WhiteSideFog
                                       : BlackSideFog;
             Vector4 color = FirstCamera.backgroundColor;

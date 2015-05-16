@@ -25,7 +25,10 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
 
     public void Awake()
     {
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+
         SpawnInterface();
+
     }
 
     private void SpawnInterface()
@@ -35,13 +38,15 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
 
         _sliderBoxWhite = transform.InstantiateChild(SliderBoxPrefab);
         _sliderBoxWhite.transform.localPosition = Vector3.forward * 10f;
+        _sliderBoxWhite.Init(new List<AIPlayer>(AllAIStyles));
+
+
+
+
 
         _sliderBoxBlack = transform.InstantiateChild(SliderBoxPrefab);
         _sliderBoxBlack.transform.localPosition = Vector3.forward * -10f;
         _sliderBoxBlack.transform.localRotation *= Quaternion.AngleAxis(180, Vector3.up);
-
-
-        _sliderBoxWhite.Init(new List<AIPlayer>(AllAIStyles));
         _sliderBoxBlack.Init(new List<AIPlayer>(AllAIStyles));
 
 
@@ -52,14 +57,16 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
     public void SpawnGame()
     {
 
-        _whitePlayer = _sliderBoxWhite.GetCurrentlySelectedObject();
-        _blackPlayer = _sliderBoxBlack.GetCurrentlySelectedObject();
+        _whitePlayer = _sliderBoxWhite.GetCurrentlySelectedObject().AiPlayerPrefab;
+        _blackPlayer = _sliderBoxBlack.GetCurrentlySelectedObject().AiPlayerPrefab;
+        
+        _chosenMatchStyle = AllMatchStyles[0];//todo: slider for mode.
 
         _mainGameInstance = (Instantiate(MainGamePrefab.gameObject) as GameObject).GetComponent<MainGame>();
 
         _mainGameInstance.Init(_chosenMatchStyle, _whitePlayer, _blackPlayer);
 
-        gameObject.SetActive(false);
+        
     }
 
 
@@ -67,6 +74,7 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        gameObject.SetActive(false);
         SpawnGame();
     }
 

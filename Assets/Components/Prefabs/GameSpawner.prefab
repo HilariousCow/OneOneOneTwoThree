@@ -10,6 +10,7 @@ GameObject:
   - 4: {fileID: 472558}
   - 114: {fileID: 11472558}
   - 65: {fileID: 6521694}
+  - 114: {fileID: 11488144}
   m_Layer: 0
   m_Name: GameSpawner
   m_TagString: Untagged
@@ -24,7 +25,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 172558}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.78227115, y: -.196601391, z: -1.50475812}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -64,6 +65,17 @@ MonoBehaviour:
   - {fileID: 11489520, guid: 76bd9259171ecc84f9bb59c8119c7451, type: 2}
   - {fileID: 11489520, guid: 76bd9259171ecc84f9bb59c8119c7451, type: 2}
   MainGamePrefab: {fileID: 11439942, guid: f44e8d6892c69944ea6ed94d67282542, type: 2}
+--- !u!114 &11488144
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 172558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ee3cea8aaa554b41a6cae9d57a615b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

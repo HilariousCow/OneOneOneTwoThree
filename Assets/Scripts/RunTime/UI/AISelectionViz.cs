@@ -3,11 +3,12 @@ using System.Collections;
 
 public class AISelectionViz : MonoBehaviour
 {
-    private AIPlayer _aiPlayerPrefab;
+    public AIPlayer AiPlayerPrefab { get; private set; }
+
 	
 
     internal void Init(AIPlayer aiPlayer)
     {
-        _aiPlayerPrefab = aiPlayer;
+        AiPlayerPrefab = aiPlayer;
     }
 }

@@ -25,6 +25,7 @@ GameObject:
   - 4: {fileID: 439942}
   - 114: {fileID: 11439942}
   - 114: {fileID: 11416484}
+  - 114: {fileID: 11408372}
   m_Layer: 0
   m_Name: MainGame
   m_TagString: Untagged
@@ -85,6 +86,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 439942}
   m_RootOrder: 0
+--- !u!114 &11408372
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 139942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4ee3cea8aaa554b41a6cae9d57a615b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SpinThing: []
+  Cam: {fileID: 0}
 --- !u!114 &11416484
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -118,10 +132,6 @@ MonoBehaviour:
   StackHandle: {fileID: 497444}
   DropTokens: {fileID: 11416498, guid: bf8af6b8b2897ee489da8dffdd5d35fb, type: 2}
   DropTablePrefab: {fileID: 6587744, guid: e59a64cf5eefc8b4fa9ffc7ededbd9bc, type: 2}
-  CameraRigRoot: {fileID: 0}
-  CameraMain: {fileID: 0}
-  _whitePlayer: {fileID: 0}
-  _blackPlayer: {fileID: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

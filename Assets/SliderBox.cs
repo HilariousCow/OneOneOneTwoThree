@@ -12,7 +12,7 @@ public class SliderBox : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     public AISelectionViz AIVizPrefab;
     public Transform Outside;
 
-    internal AIPlayer SelectedObject;
+    internal AISelectionViz SelectedObject;
     internal List<AISelectionViz> AIs;
 
 
@@ -23,16 +23,12 @@ public class SliderBox : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void Init(List<AIPlayer> items)
     {
-        
-        SelectedObject = GetCurrentlySelectedObject();
-
-
         AIs = new List<AISelectionViz>();
         for (int index = 0; index < items.Count; index++)
         {
             float fraction = (float)index/items.Count - 1;
             fraction *= Mathf.PI*2f;
-            Vector3 pos = new Vector3(Mathf.Sin(fraction), 5.0f, Mathf.Cos(fraction));
+            Vector3 pos = new Vector3(Mathf.Sin(fraction), Mathf.Cos(fraction), 0.0f) * 5f;
 
 
             AIPlayer aiPlayer = items[index];
@@ -50,9 +46,9 @@ public class SliderBox : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         SelectedObject = GetCurrentlySelectedObject();
     }
 
-    public AIPlayer GetCurrentlySelectedObject()
+    public AISelectionViz GetCurrentlySelectedObject()
     {
-        return (from AIPlayer n in AIs orderby Vector3.Dot(n.transform.up, transform.up) select n).FirstOrDefault();
+        return (from AISelectionViz n in AIs orderby Vector3.Dot(n.transform.up, transform.up) ascending select n).LastOrDefault();
     }
 
   
@@ -65,7 +61,7 @@ public class SliderBox : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 	// Update is called once per frame
 	void Update () {
 
-	    if (_isDragging)
+/*	    if (_isDragging)
 	    {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -85,7 +81,7 @@ public class SliderBox : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
                                                                    Time.deltaTime*angle*5f);
             }
 
-	    }
+	    }*/
 	}
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -101,7 +97,7 @@ public class SliderBox : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         Vector3 currentLocalPos = transform.InverseTransformPoint( eventData.worldPosition );
         Vector3 delta = currentLocalPos - _localStartDragPos;
 
-        Outside.localRotation *= Quaternion.AngleAxis(delta.x * 360, Vector3.forward);
+        Outside.localRotation *= Quaternion.AngleAxis(-delta.x * 30, Vector3.forward);
 
 
         _localStartDragPos = currentLocalPos;
