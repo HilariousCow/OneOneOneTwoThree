@@ -61,7 +61,7 @@ public class Round : MonoBehaviour {
 
     }
 
-    internal void ResolveRound(Card winningCard, Card losingCard)
+    internal IEnumerator ResolveRound(Card winningCard, Card losingCard)
     {
         Hand winningHand = _hands.Find(x => x.PlayerSoRef == winningCard.PlayerSoRef);
         Hand losingHand = _hands.Find(x => x.PlayerSoRef == losingCard.PlayerSoRef);
@@ -90,15 +90,18 @@ public class Round : MonoBehaviour {
                                                                     Vector3.forward);
 
 
-        List<Card> cards = new List<Card>(new Card[]{winningCard, losingCard});
+      /*  List<Card> cards = new List<Card>(new Card[]{winningCard, losingCard});
         foreach (Card card in cards)
         {
             Hand handForCard = _hands.Find(x => x.PlayerSoRef == card.PlayerSoRef);
             CardSlot slot = _handToResultCardSlot[handForCard];
             slot.AddCardToSlot(card);
-        }
+            yield return new WaitForSeconds(0.5f);
+        }*/
 
-
+        slotOfLoser.AddCardToSlot(losingCard);
+        yield return new WaitForSeconds(0.5f);
+        slotOfWinner.AddCardToSlot(winningCard);
 
         _scoresForHands[winningHand] += _roundValue;
 

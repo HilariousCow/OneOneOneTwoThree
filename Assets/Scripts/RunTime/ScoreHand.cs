@@ -6,6 +6,9 @@ using System.Linq;
 public class ScoreHand : MonoBehaviour
 {
     public Round RoundPrefab;
+    public TextMesh BlackScore;
+    public TextMesh WhiteScore;
+
     private List<Round> _rounds;
     private List<Hand> _hands;
     private int _roundNumber = 0;
@@ -65,7 +68,9 @@ public class ScoreHand : MonoBehaviour
         }
 
         _rounds.PositionAlongLineCentered(Vector3.right, 0.5f, Vector3.zero);
-     
+
+        BlackScore.text = "";
+        WhiteScore.text = "";
     }
 
     
@@ -73,6 +78,8 @@ public class ScoreHand : MonoBehaviour
     //todo: score per stack or what?
     internal IEnumerator RoundResolution(Stack stack, CardSlot firstPlayedSlot, CardSlot secondPlayedSlot)
     {
+        BlackScore.text = "";
+        WhiteScore.text = "";
 
         Round currentRound = _rounds[_roundNumber];
 
@@ -85,7 +92,9 @@ public class ScoreHand : MonoBehaviour
         firstPlayedSlot.RemoveCardFromSlot();
         secondPlayedSlot.RemoveCardFromSlot();
 
-        currentRound.ResolveRound(winningCard, losingCard);
+        yield return StartCoroutine(currentRound.ResolveRound(winningCard, losingCard));
+
+
         Debug.Log(winningCard.PlayerSoRef.name + " wins round " + (_roundNumber + 1) + " for " + currentRound.RoundValue + "point(s)");
           
 
@@ -96,11 +105,7 @@ public class ScoreHand : MonoBehaviour
         yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine(currentRound.RoundValue.ToString() + " point"));
         //flash a score point here or something?
 
-        if (_roundNumber > 0)
-        {
-            yield return new WaitForSeconds(1.6f);
-            yield return StartCoroutine(TellMeTheScores());
-        }
+      
 
         yield return null;
         _roundNumber++;
@@ -113,17 +118,30 @@ public class ScoreHand : MonoBehaviour
         yield return new WaitForSeconds(0.6f);
     }
 
-    IEnumerator TellMeTheScores()
+    public IEnumerator TellMeTheScores()
     {
-        foreach (Hand hand in _hands)
+        yield return new WaitForSeconds(0.6f);
+        if (_roundNumber > 0)
         {
-            TokenSide side = hand.PlayerSoRef.DesiredTokenSide;
-            SoundPlayer.Instance.PlaySound(side.ToString());
-            yield return new WaitForSeconds(0.6f);
-            SoundPlayer.Instance.PlaySound(TotalledScores[hand].ToString());
+          
+            foreach (Hand hand in _hands)
+            {
+                TokenSide side = hand.PlayerSoRef.DesiredTokenSide;
+                SoundPlayer.Instance.PlaySound(side.ToString());
+                if (side == TokenSide.Black) BlackScore.text = "Black:";
+                if (side == TokenSide.White) WhiteScore.text = "White:";
 
-            yield return new WaitForSeconds(0.6f);
+                yield return new WaitForSeconds(0.6f);
+                string scoreString = TotalledScores[hand].ToString();
+                SoundPlayer.Instance.PlaySound(scoreString);
+
+                if (side == TokenSide.Black) BlackScore.text = "Black: " + scoreString;
+                if (side == TokenSide.White) WhiteScore.text = "White: " + scoreString;
+
+                yield return new WaitForSeconds(0.6f);
+            }
         }
+        
     }
 
 

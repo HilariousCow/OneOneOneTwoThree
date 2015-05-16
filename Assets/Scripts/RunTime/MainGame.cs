@@ -423,17 +423,18 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         yield return new WaitForSeconds(0.5f);
 
 
-        MainStack.transform.parent = transform;
+        
 
 
-        firstCardSlot.CardInSlot.transform.parent = firstCardSlot.transform;
-        secondCardSlot.CardInSlot.transform.parent = firstCardSlot.transform;
+   //     firstCardSlot.CardInSlot.transform.parent = firstCardSlot.transform;
+  //      secondCardSlot.CardInSlot.transform.parent = firstCardSlot.transform;
 
         firstCardSlot.CardInSlot.ShowDescriptionText(false);
         secondCardSlot.CardInSlot.ShowDescriptionText(false);
 
-        StackHandle.transform.localPosition = Vector3.zero;
 
+        MainStack.transform.parent = transform;
+        StackHandle.transform.localPosition = Vector3.zero;
         MainStack.transform.parent = StackHandle;
 
 
@@ -459,11 +460,19 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         ScoreHandle.transform.localRotation = Quaternion.identity;
 
         _scoreHand.transform.parent = ScoreHandle;
+        yield return new WaitForSeconds(0.5f);//give it some time to position or the positions will be screwey
 
         yield return StartCoroutine(_scoreHand.RoundResolution(MainStack, firstCardSlot, secondCardSlot));
         CameraRigRoot.SetTarget(MainStack.transform);
         yield return new WaitForSeconds(0.5f);
 
+        _scoreHand.transform.parent = transform;
+        ScoreHandle.transform.localPosition = Vector3.zero;
+        ScoreHandle.transform.localRotation = Quaternion.AngleAxis(90, Vector3.up);
+        _scoreHand.transform.parent = ScoreHandle;
+
+        yield return StartCoroutine(_scoreHand.TellMeTheScores());
+        
      
 
 
@@ -474,7 +483,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         _scoreHand.transform.parent = transform;
         ScoreHandle.transform.localPosition = Vector3.right * 20f;
-        ScoreHandle.transform.localRotation = Quaternion.AngleAxis(90, Vector3.forward);
+        ScoreHandle.transform.localRotation = Quaternion.AngleAxis(90, Vector3.forward) * Quaternion.AngleAxis(90, Vector3.up);
         _scoreHand.transform.parent = ScoreHandle;
 
 
@@ -621,7 +630,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     {
         TurnOffHands();
         yield return new WaitForSeconds(1f);
-        if( gameObject.activeSelf /*_scoreHand.GameIsATie*/ )//temp pretend it's always a tie.
+        if( _scoreHand.GameIsATie )//temp pretend it's always a tie.
         {
             Debug.Log("Game is a draw");
             yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("TieGame"));
