@@ -322,7 +322,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     IEnumerator PlayRoundPhase()
     {
-        yield return StartCoroutine(LoopPhase());
+        yield return StartCoroutine(ChooseAndApplyPhase());
         yield return StartCoroutine(ShowScoresPhase());
 
         if (_scoreHand.FinishedAllRounds)
@@ -337,7 +337,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         }
 
     }
-    IEnumerator LoopPhase()
+    IEnumerator ChooseAndApplyPhase()
     {
         CameraMain.SetTarget(MainStack.transform);
         CameraRigRoot.SetTarget(null);
@@ -621,7 +621,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     {
         TurnOffHands();
         yield return new WaitForSeconds(1f);
-        if(_scoreHand.GameIsATie )
+        if( gameObject.activeSelf /*_scoreHand.GameIsATie*/ )//temp pretend it's always a tie.
         {
             Debug.Log("Game is a draw");
             yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("TieGame"));
@@ -680,13 +680,13 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         yield return new WaitForSeconds(1f);
 
 
-        StartCoroutine(DeclareWinner(MainStack.GetTopTokenSide()));
+        yield return StartCoroutine(DeclareWinner(MainStack.GetTopTokenSide()));
       
     }
 
     private IEnumerator TieBreakGoldenGoal()
     {
-        StartCoroutine(PlayRoundPhase());//one more phase but don't score
+        yield return StartCoroutine(ChooseAndApplyPhase());//one more phase but don't score
         //are all sides the same?
         TokenSide firstSide = MainStack.GetTopTokenSide();
 
@@ -1045,5 +1045,17 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     }
 
 
-    
+    void Update()
+    {
+        //temp fastforward
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            Time.timeScale = 4f;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            Time.timeScale = 1f;
+        }
+    }
 }
