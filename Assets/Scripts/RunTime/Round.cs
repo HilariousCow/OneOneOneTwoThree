@@ -85,9 +85,13 @@ public class Round : MonoBehaviour {
         
 
         RoundScoreAwarded.text = _roundValue.ToString();
-        RoundScoreAwarded.transform.localPosition = slotOfLoser.transform.localPosition;
-        RoundScoreAwarded.transform.localPosition = Vector3.Reflect(RoundScoreAwarded.transform.localPosition,
-                                                                    Vector3.forward);
+        RoundScoreAwarded.transform.localPosition = Vector3.up*2f;
+        RoundScoreAwarded.transform.localRotation =
+            Quaternion.LookRotation(transform.parent.InverseTransformDirection(winningHand.transform.forward)) * Quaternion.AngleAxis(90f, Vector3.right);
+
+     //   RoundScoreAwarded.transform.localPosition = slotOfWinner.transform.localPosition + transform.parent.InverseTransformDirection(-winningHand.transform.forward * _cardBoundsAtStart.size.z * 1f);
+        /*RoundScoreAwarded.transform.localPosition = Vector3.Reflect(RoundScoreAwarded.transform.localPosition,
+                                                                    Vector3.forward);*/
 
 
       /*  List<Card> cards = new List<Card>(new Card[]{winningCard, losingCard});
