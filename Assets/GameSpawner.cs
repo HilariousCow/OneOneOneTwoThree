@@ -26,30 +26,32 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
     public void Awake()
     {
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
-
         SpawnInterface();
+       
 
     }
 
+ 
     private void SpawnInterface()
     {
-     
+
+        if (_sliderBoxWhite == null)
+        {
+
+            _sliderBoxWhite = transform.InstantiateChild(SliderBoxPrefab);
+            _sliderBoxWhite.transform.localPosition = Vector3.forward*10f;
+            _sliderBoxWhite.Init(new List<AIPlayer>(AllAIStyles));
 
 
-        _sliderBoxWhite = transform.InstantiateChild(SliderBoxPrefab);
-        _sliderBoxWhite.transform.localPosition = Vector3.forward * 10f;
-        _sliderBoxWhite.Init(new List<AIPlayer>(AllAIStyles));
 
 
 
+            _sliderBoxBlack = transform.InstantiateChild(SliderBoxPrefab);
+            _sliderBoxBlack.transform.localPosition = Vector3.forward*-10f;
+            _sliderBoxBlack.transform.localRotation *= Quaternion.AngleAxis(180, Vector3.up);
+            _sliderBoxBlack.Init(new List<AIPlayer>(AllAIStyles));
 
-
-        _sliderBoxBlack = transform.InstantiateChild(SliderBoxPrefab);
-        _sliderBoxBlack.transform.localPosition = Vector3.forward * -10f;
-        _sliderBoxBlack.transform.localRotation *= Quaternion.AngleAxis(180, Vector3.up);
-        _sliderBoxBlack.Init(new List<AIPlayer>(AllAIStyles));
-
-
+        }
         //got to make a "go" button.
     }
 

@@ -54,7 +54,7 @@
 				float3 orig1 = o.pos - float3(0, -10, 10);
 				float3 orig2 = o.pos - float3(0, 10, -10);
 				float dist1 = (orig1.x*orig1.x+orig1.z*orig1.z)*0.01;
-				float dist2 = (orig2.x*orig2.x+orig2.z*orig2.z)*0.01;
+				float dist2 = (orig2.x*orig2.x+orig2.z*orig2.z)*0.1;
 				float dist = dist1 + dist2;
 				
 				o.color.a = sin(dist + _Time.y*8.8);

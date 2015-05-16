@@ -768,8 +768,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine(winner.ToString()));
         yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("Wins"));
 
-        Application.LoadLevel(0);//todo: destroy self, go back to spawn screen.
-
+     
         GameSpawner.Instance.TurnOn();
         Destroy(gameObject);
     }
