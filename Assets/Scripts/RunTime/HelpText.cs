@@ -11,15 +11,15 @@ public class HelpText : Singleton<HelpText>
     private TextMesh[] _texts;
       
 	// Use this for initialization
-	public void Init ()
+	public void Init (MainGame mainGame)
 	{
 
 
-	    Hand[] hands = FindObjectsOfType<Hand>();
+        Hand[] hands = mainGame.Hands.ToArray();
         List<TextMesh> textInHands = new List<TextMesh>();
 	    foreach (Hand hand in hands)
 	    {
-	        TextMesh foundText = hand.GetComponentInChildren<TextMesh>();
+	        TextMesh foundText = hand.HelpText;
 	        textInHands.Add(foundText);
             if(hand.PlayerSoRef.DesiredTokenSide == TokenSide.White)
             {

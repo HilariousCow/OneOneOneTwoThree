@@ -27,6 +27,10 @@ public class CamerFOVController : MonoBehaviour
         
 	}
 
+    public void SetMainGame(MainGame mainGame)
+    {
+        MainGameInstance = mainGame;
+    }
     private void UpdateDistances()
     {
 
@@ -64,71 +68,6 @@ public class CamerFOVController : MonoBehaviour
         float funDot = Mathf.Pow(Mathf.Clamp01(dot ), 0.6f);
         transform.localPosition = Vector3.back * (Mathf.Lerp(MinorDistance, MajorDistance, 1f - funDot) + AdditionalMindistance);
 
-      /*   posVerticalDist = Mathf.Abs( Vector3.Dot(Camera.main.transform.up, _everything.size));
-         posHorizontalDist = Mathf.Abs( Vector3.Dot(Camera.main.transform.right, _everything.size) * Camera.main.aspect);
-        */
-        //need to go both sides
-
-
-        //try closest point on bounds.
-
-/*	    Vector3 closestPointOnBounds = Camera.main.transform.position;
-        
-	    closestPointOnBounds.x = Mathf.Clamp(closestPointOnBounds.x, _everything.min.x, _everything.max.x);
-        closestPointOnBounds.y = Mathf.Clamp(closestPointOnBounds.y, _everything.min.y, _everything.max.y);
-        closestPointOnBounds.z = Mathf.Clamp(closestPointOnBounds.z, _everything.min.z, _everything.max.z);
-
-	    Vector3 delta = (closestPointOnBounds - Camera.main.transform.position);
-        Vector3 reverseStartPos = (delta.normalized * delta.magnitude * 1.1f )+ Camera.main.transform.position;
-        Ray forwarTrace = new Ray(Camera.main.transform.position , reverseStartPos - Camera.main.transform.position);
-        if (_everything.IntersectRay(forwarTrace, out forwardTraceDist))
-        {
-            forwardHitPos = forwarTrace.GetPoint(forwardTraceDist);
-            forwardHitPos = Vector3.Lerp(forwardHitPos, _everything.center, 0.1f);//aim just inward so that there's always a clean trace
-        }
-        else forwardHitPos = Vector3.zero;
-
-       
-        Ray positiveVerticalRay = new Ray((Camera.main.transform.up * 1000f) + forwardHitPos, forwardHitPos - (Camera.main.transform.up * 1000f) );
-        Ray positiveHorizontalRay = new Ray((Camera.main.transform.right * 1000f )+ forwardHitPos, forwardHitPos - (Camera.main.transform.right * 1000f) );
-
-        Ray negativeVerticalRay = new Ray((-Camera.main.transform.up * 1000f) + forwardHitPos, forwardHitPos - (-Camera.main.transform.up * 1000f) );
-        Ray negativeHorizontalRay = new Ray((-Camera.main.transform.right * 1000f) + forwardHitPos, forwardHitPos - (-Camera.main.transform.right * 1000f) );
-
-       
-        if (_everything.IntersectRay(positiveVerticalRay, out posVerticalDist ))
-        {
-            posVerticalHitPos = positiveVerticalRay.GetPoint(posVerticalDist);
-            posVerticalDist = posVerticalHitPos.magnitude;
-        }
-
-        if (_everything.IntersectRay(positiveHorizontalRay, out posHorizontalDist))
-        {
-            posHorizontalHitPos = positiveHorizontalRay.GetPoint(posHorizontalDist);
-            posHorizontalDist = posHorizontalHitPos.magnitude;
-        }
-
-        //negs
-
-        if (_everything.IntersectRay(negativeVerticalRay, out negVerticalDist))
-        {
-            negVerticalHitPos = negativeVerticalRay.GetPoint(negVerticalDist);
-            negVerticalDist = negVerticalHitPos.magnitude;
-        }
-
-        if (_everything.IntersectRay(negativeHorizontalRay, out negHorizontalDist))
-        {
-            negHorizontalHitPos = negativeHorizontalRay.GetPoint(negHorizontalDist);
-            negHorizontalDist = negHorizontalHitPos.magnitude;
-        }
-
-        float fovForEverything = Mathf.Max(Mathf.Max(posVerticalDist, negVerticalDist), 
-            Mathf.Max(posHorizontalDist / Camera.main.aspect,
-            negHorizontalDist / Camera.main.aspect));
-
-
-
-        */
         float fovForEverything =  _everything.size.magnitude * Camera.main.aspect;
 
 
@@ -171,30 +110,25 @@ public class CamerFOVController : MonoBehaviour
             Shader.SetGlobalColor("_BGColor", color);
             RenderSettings.fogColor = color;
         }
+        else
+        {
+            Vector4 color = FirstCamera.backgroundColor;
+            
+            FirstCamera.backgroundColor = color;
+
+            Vector4 oppositeColor = Vector4.one - color;
+            oppositeColor.w = 1f;
+            Shader.SetGlobalColor("_OppositeOfBGColor", oppositeColor);
+            Shader.SetGlobalColor("_BGColor", color);
+            RenderSettings.fogColor = color;
+        }
 	   // transform.rotation = Quaternion.LookRotation(_game.MainStack.transform.position - transform.position, transform.up);
 	}
 
     void OnDrawGizmos()
     {
 
-     /*   Gizmos.color = Color.cyan;
-        Gizmos.DrawLine(forwardHitPos, Camera.main.transform.position);
-        Gizmos.DrawCube(forwardHitPos, Vector3.one * 0.5f);
-
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(forwardHitPos, posVerticalHitPos);
-        Gizmos.DrawCube(posVerticalHitPos, Vector3.one * 0.5f);
-        Gizmos.DrawLine(forwardHitPos, negVerticalHitPos);
-        Gizmos.DrawCube(negVerticalHitPos, Vector3.one * 0.5f);
-
-
-        Gizmos.color = Color.red;
-        Gizmos.DrawLine(forwardHitPos, posHorizontalHitPos);
-        Gizmos.DrawCube(posHorizontalHitPos, Vector3.one * 0.5f);
-        Gizmos.DrawLine(forwardHitPos, negHorizontalHitPos);
-        Gizmos.DrawCube(negHorizontalHitPos, Vector3.one * 0.5f);
-
-        */
+    
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireCube(_everything.center, _everything.size);
         

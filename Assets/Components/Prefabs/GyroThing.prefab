@@ -423,7 +423,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_EventMask:
     serializedVersion: 2
-    m_Bits: 4294966527
+    m_Bits: 4294965503
 --- !u!114 &11431808
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -452,8 +452,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
   AdditionalMindistance: 12
-  BlackSideFog: {r: .955420017, g: .963235319, b: .927822232, a: 1}
-  WhiteSideFog: {r: .0652573556, g: .107695229, b: .125, a: 1}
+  BlackSideFog: {r: 0, g: 0, b: 0, a: 1}
+  WhiteSideFog: {r: 1, g: 1, b: 1, a: 1}
   FirstCamera: {fileID: 2031804}
 --- !u!114 &11474934
 MonoBehaviour:

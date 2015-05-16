@@ -29,7 +29,9 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
   
 
     public Token DropTokens;
-    public Collider DropTable;
+
+    public Collider DropTablePrefab;
+    private Collider _dropTable;
 
     public FollowTransform CameraRigRoot;
     public LookAtTransform CameraMain;
@@ -50,26 +52,49 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     private List<CardSlot> _allJailCardSlots;
 
 
-    public AIPlayer _whitePlayer;
-    public AIPlayer _blackPlayer;
+
+    private AIPlayer _whitePlayer;
+    private AIPlayer _blackPlayer;
+
+
     private float _commitTime;
+
+    public List<Hand> Hands
+    {
+        get { return _hands; }
+    }
 
     void Awake()
     {
-        AIPlayer whitePlayer = null;// transform.InstantiateChild<AIPlayer>(AIPrefab);
-        
-        AIPlayer blackPlayer = null;
-        Init(MatchToUseDefault, whitePlayer, blackPlayer);
+
+
+
+        Init(MatchToUseDefault, AIPrefab, AIPrefab);
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
-        HelpText.Instance.Init();
+        GetComponent<HelpText>().Init(this);
+        FindObjectOfType<CamerFOVController>().SetMainGame(this);
+
+        _dropTable = transform.InstantiateChild(DropTablePrefab.gameObject).GetComponent<Collider>();
+        
+    }
+
+   
+
+    void OnDestroy()
+    {
+        CamerFOVController fov = FindObjectOfType<CamerFOVController>();
+        if (fov != null)
+        {
+            fov.SetMainGame(null);
+        }
     }
 
     void Start()
     {
         //temp
-        //StartCoroutine("LoopPhase");
-        StartCoroutine("Toss");
+        
+        StartCoroutine(Toss());
         
     }
     IEnumerator Toss()
@@ -141,12 +166,12 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         MainStack.CopyTokenPositions(0, lastToStopMoving);
         Destroy(lastToStopMoving.gameObject);
-        Destroy(DropTable.gameObject);
+        Destroy(_dropTable.gameObject);
         yield return new WaitForSeconds(1.5f);
      
 
 
-        StartCoroutine("IntroPhase");
+        StartCoroutine(IntroPhase());
     }
 
     
@@ -159,10 +184,10 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         {
 
             case TieBreakerStyle.FlipStack:
-                TurnOffCommitSlotInteractivity();
+                
                 break;
             case TieBreakerStyle.UseJailCards:
-                TurnOffCommitSlotInteractivity();
+              
                 TurnOnJailSlotInteractivity();
                 SetAllHandsToJailCard();
 
@@ -204,7 +229,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             default:
                 throw new ArgumentOutOfRangeException();
         }
-        StartCoroutine(LoopPhase());
+
+        StartCoroutine(PlayRoundPhase());
        
     }
 
@@ -236,8 +262,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     private GameState GetCurrentGameState()
     {
         GameState state = new GameState();
-        state.WhitePlayer = _hands[0];
-        state.BlackPlayer = _hands[1];
+        state.WhitePlayer = Hands[0];
+        state.BlackPlayer = Hands[1];
         state.StackState = MainStack;
 
         return state;//todo: previous plays in order by both.
@@ -247,7 +273,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     {
         TokenSide topAtBeginningOfOperation = MainStack.GetTopTokenSide();
 
-        foreach (Hand hand in _hands)
+        foreach (Hand hand in Hands)
         {
             
             CardSlot jailslot = _handsToJailCards[hand][0];
@@ -275,7 +301,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     private void SetAllHandsToJailCard()
     {
-        foreach (Hand hand in _hands)
+        foreach (Hand hand in Hands)
         {
             CardSlot jailSlot = _handsToJailCards[hand][0];
             hand.AutoPlacementTargetSlot = jailSlot;
@@ -286,7 +312,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     private void SetAllHandsToCommitSlot()
     {
-        foreach (Hand hand in _hands)
+        foreach (Hand hand in Hands)
         {
             CardSlot targetSlot = _handsToCommitSlots[hand][0];
             hand.AutoPlacementTargetSlot = targetSlot;
@@ -294,14 +320,31 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     }
 
+    IEnumerator PlayRoundPhase()
+    {
+        yield return StartCoroutine(LoopPhase());
+        yield return StartCoroutine(ShowScoresPhase());
+
+        if (_scoreHand.FinishedAllRounds)
+        {
+            Debug.Log("Rounds are over");
+            StartCoroutine(ResolutionPhase());
+        }
+        else
+        {
+            Debug.Log("Starting new round");
+            StartCoroutine(PlayRoundPhase());//go again.    
+        }
+
+    }
     IEnumerator LoopPhase()
     {
         CameraMain.SetTarget(MainStack.transform);
         CameraRigRoot.SetTarget(null);
         yield return StartCoroutine(_scoreHand.AnnouceRoundNumber());
 
-        _scoreHand.StartNewRound();//position current card slots under
-        
+        _scoreHand.StartNewRound(); //position current card slots under
+
         TurnOnHands();
         ClearEmptySlotsInHands();
 
@@ -312,20 +355,20 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine(topAtBeginningOfOperation.ToString()));
         yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("GoFirst"));
 
-        
+
         //find whose is applied first for this stack
 
-      
+
         //todo: extract token side orders. yeah. much nicer. but how will black/white determin multiple players? arhgh.
         //so, big assumptions here.
         CardSlot firstCardSlot =
             _allCommitCardSlots.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide == topAtBeginningOfOperation);
-      
-      
+
+
         CardSlot secondCardSlot =
             _allCommitCardSlots.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide != topAtBeginningOfOperation);
 
-    
+
         //show first slot to apply graphic.
 
         Debug.LogWarning("Watching for all slots to be filled");
@@ -340,7 +383,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             pointDownMosty = Vector3.Dot(Vector3.down, Camera.main.transform.forward) > 0.707f;
             all = (_allCommitCardSlots.FindAll(x => !x.IsEmpty).Count == _allCommitCardSlots.Count);
 
-            if(all && pointDownMosty)
+            if (all && pointDownMosty)
             {
                 _commitTime -= Time.deltaTime;
             }
@@ -359,12 +402,12 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         //todo: if both stacks are not the same on top, send back the cards.
 
-   
+
         //find whose is applied first for this stack
-        
+
 
         //todo: extract token side orders. yeah. much nicer. but how will black/white determin multiple players? arhgh.
- 
+
 
         //first to go
         CameraMain.SetTarget(MainStack.transform);
@@ -384,16 +427,27 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
 
         firstCardSlot.CardInSlot.transform.parent = firstCardSlot.transform;
-        secondCardSlot.CardInSlot.transform.parent = firstCardSlot.transform; 
+        secondCardSlot.CardInSlot.transform.parent = firstCardSlot.transform;
 
         firstCardSlot.CardInSlot.ShowDescriptionText(false);
         secondCardSlot.CardInSlot.ShowDescriptionText(false);
 
         StackHandle.transform.localPosition = Vector3.zero;
-        
+
         MainStack.transform.parent = StackHandle;
 
-        //moving to score slots
+
+    }
+
+
+    IEnumerator ShowScoresPhase()
+    {
+        CardSlot firstCardSlot =
+           _allCommitCardSlots.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide == MainStack.GetTopTokenSide());
+        CardSlot secondCardSlot =
+            _allCommitCardSlots.Find(x => _slotsToHands[x].PlayerSoRef.DesiredTokenSide != MainStack.GetTopTokenSide());
+
+    //moving to score slots
         //no longer occurring?
         CameraRigRoot.SetTarget(_scoreHand.transform);
         CameraMain.SetTarget(_scoreHand.transform);
@@ -417,16 +471,6 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
     
         
 
-        if (_scoreHand.FinishedAllRounds )
-        {
-            Debug.Log("Rounds are over");
-            StartCoroutine(ResolutionPhase());
-        }
-        else
-        {
-            Debug.Log("Starting new round");
-            StartCoroutine("LoopPhase");//go again.    
-        }
 
         _scoreHand.transform.parent = transform;
         ScoreHandle.transform.localPosition = Vector3.right * 20f;
@@ -438,7 +482,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     private void ClearEmptySlotsInHands()
     {
-        foreach (Hand hand in _hands)
+        foreach (Hand hand in Hands)
         {
             hand.ClearOutEmptySlotsAndReorganize();
         }
@@ -448,7 +492,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     private void TurnOffHands()
     {
-        foreach (Hand hand in _hands)
+        foreach (Hand hand in Hands)
         {
             hand.ShowHand(false);
             //hand.gameObject.SetActive(false);
@@ -458,7 +502,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     private void TurnOnHands()
     {
-        foreach (Hand hand in _hands)
+        foreach (Hand hand in Hands)
         {
             hand.ShowHand(true);
          //   hand.gameObject.SetActive(true);
@@ -582,15 +626,23 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             Debug.Log("Game is a draw");
             yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("TieGame"));
             yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("TieBreaker"));
-            
-            if (_matchSettings.TieBreaker == TieBreakerStyle.FlipStack)
+
+            switch (_matchSettings.TieBreaker)
             {
-                yield return StartCoroutine(TieBreakFilp());
+                case TieBreakerStyle.FlipStack:
+                    yield return StartCoroutine(TieBreakFilp());
+                    break;
+                case TieBreakerStyle.UseJailCards:
+                    yield return StartCoroutine(TieBreakJailCards());
+                    break;
+                case TieBreakerStyle.GoldenGoal:
+                    yield return StartCoroutine(TieBreakGoldenGoal());
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-            else if (_matchSettings.TieBreaker == TieBreakerStyle.UseJailCards)
-            {
-                yield return StartCoroutine(TieBreak());
-            }
+
+         
         }
         else
         {
@@ -632,20 +684,28 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
       
     }
 
-    private IEnumerator TieBreak()
+    private IEnumerator TieBreakGoldenGoal()
+    {
+        StartCoroutine(PlayRoundPhase());//one more phase but don't score
+        //are all sides the same?
+        TokenSide firstSide = MainStack.GetTopTokenSide();
+
+        yield return StartCoroutine(DeclareWinner(firstSide));
+    }
+
+    private IEnumerator TieBreakJailCards()
     {
         Debug.Log("Doing tie breaker cards.");
         yield return null;
 
         TokenSide topAtBeginningOfOperation = MainStack.GetTopTokenSide();
-        List<TokenSide> sides = new List<TokenSide>();
-     
+      
         //find whose is applied first for this stack
         List<CardSlot> firstJailSlots =
-            _handsToJailCards[_hands.Find(x => x.PlayerSoRef.DesiredTokenSide == topAtBeginningOfOperation)];
+            _handsToJailCards[Hands.Find(x => x.PlayerSoRef.DesiredTokenSide == topAtBeginningOfOperation)];
 
         List<CardSlot> secondJailSlots =
-            _handsToJailCards[_hands.Find(x => x.PlayerSoRef.DesiredTokenSide != topAtBeginningOfOperation)];
+            _handsToJailCards[Hands.Find(x => x.PlayerSoRef.DesiredTokenSide != topAtBeginningOfOperation)];
 
         //reposition
         for (int index = 0; index < secondJailSlots.Count; index++)
@@ -703,26 +763,17 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
       
       
 
-    //    yield return StartCoroutine(_scoreHand.RoundResolution(stack, slot, secondCardSlot));
-        sides.Add(MainStack.GetTopTokenSide());
-        yield return new WaitForSeconds(0.5f);
+//    yield return StartCoroutine(_scoreHand.RoundResolution(stack, slot, secondCardSlot));
+      yield return new WaitForSeconds(1.5f);
 
         
 
-        yield return new WaitForSeconds(1f);
 
         //are all sides the same?
-        TokenSide firstSide = sides.PeekFront();
-        if (sides.Count(x => x == firstSide) == sides.Count)
-        {
-            yield return StartCoroutine(DeclareWinner(firstSide));
-        }
-        else
-        {
-            //now what?
-            Debug.LogError("Don't know how to resolve tie for multi stack games");
-            yield return StartCoroutine(TieBreak());
-        }
+        TokenSide firstSide = MainStack.GetTopTokenSide();
+      
+        yield return StartCoroutine(DeclareWinner(firstSide));
+       
 
     }
 
@@ -733,7 +784,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
         yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine(winner.ToString()));
         yield return StartCoroutine(HelpText.Instance.PlayMessageCoroutine("Wins"));
 
-        Application.LoadLevel(0);
+        Application.LoadLevel(0);//todo: destroy self, go back to spawn screen.
     }
 
     
@@ -742,6 +793,16 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
     public void Init(MatchSettingsSO matchSettings, AIPlayer whitePlayer, AIPlayer blackPlayer)
     {
+        if (whitePlayer != null)
+        {
+            _whitePlayer = transform.InstantiateChild<AIPlayer>(AIPrefab);
+        }
+
+        if (blackPlayer != null)
+        {
+            _blackPlayer = transform.InstantiateChild<AIPlayer>(AIPrefab);
+        }
+
         _matchSettings = matchSettings;
 
         //spawn stack
@@ -769,7 +830,7 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
             Hand hand = transform.InstantiateChild(HandPrefab);
             hand.Init(playerSo, _matchSettings);
 
-            _hands.Add(hand);
+            Hands.Add(hand);
 
             foreach (CardSlot handSlot in hand.Slots)
             {
@@ -828,11 +889,11 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         //POSITIONING OF ROOT ELEMENTS
         //reposition hands around a circle
-        for (int index = 0; index < _hands.Count; index++)
+        for (int index = 0; index < Hands.Count; index++)
         {
-            float frac = index/(float)_hands.Count;
+            float frac = index/(float)Hands.Count;
            
-            Hand hand = _hands[index];
+            Hand hand = Hands[index];
             Bounds bounds = hand.transform.RenderBounds();
 
             hand.transform.position = hand.transform.position.SinCosY(frac) * bounds.size.x*0.5f;
@@ -871,23 +932,23 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
         //spawn score hand
         _scoreHand = ScoreHandle.InstantiateChild(ScoreHandPrefab);
-        _scoreHand.Init(_hands, _matchSettings);
+        _scoreHand.Init(Hands, _matchSettings);
 
         ScoreHandle.transform.localPosition = Vector3.right * ((_scoreHand.transform.RenderBounds().size.x * 0.75f) + 10f);
         //spawn cards but don't put them anywhere or maybe put them on the score hand
 
         //reposition slots infront of stacks
 
-        if(whitePlayer!=null)
+        if (_whitePlayer != null)
         {
-            _whitePlayer = whitePlayer;
-            _whitePlayer.Init(_hands[0]);
+         
+            _whitePlayer.Init(Hands[0]);
         }
 
-        if (blackPlayer != null)
+        if (_blackPlayer != null)
         {
-            _blackPlayer = whitePlayer;
-            _blackPlayer.Init(_hands[1]);
+           
+            _blackPlayer.Init(Hands[1]);
         }
 
     }

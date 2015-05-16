@@ -13,7 +13,7 @@ GameObject:
   - 114: {fileID: 11416498}
   - 54: {fileID: 5416498}
   - 64: {fileID: 6416498}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: DropToken
   m_TagString: Untagged
   m_Icon: {fileID: 0}

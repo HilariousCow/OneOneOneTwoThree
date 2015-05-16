@@ -107,7 +107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54f233278f08f0349ba436f6b99c9e79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MatchToUseDefault: {fileID: 11400000, guid: 6646d4c13db618540b8aefc1ca1f15bc, type: 2}
+  MatchToUseDefault: {fileID: 11400000, guid: 9d02847cd7fc0c240b24753014e115d4, type: 2}
   AIPrefab: {fileID: 11489520, guid: 76bd9259171ecc84f9bb59c8119c7451, type: 2}
   HandPrefab: {fileID: 11480704, guid: 7bfcb5d5ac9cbba4c8121216d9156ec3, type: 2}
   CardPrefab: {fileID: 11470552, guid: 3c1de2ca03a40b94b90e999fa2d6afc4, type: 2}
@@ -117,7 +117,7 @@ MonoBehaviour:
   ScoreHandle: {fileID: 426460}
   StackHandle: {fileID: 497444}
   DropTokens: {fileID: 11416498, guid: bf8af6b8b2897ee489da8dffdd5d35fb, type: 2}
-  DropTable: {fileID: 0}
+  DropTablePrefab: {fileID: 6587744, guid: e59a64cf5eefc8b4fa9ffc7ededbd9bc, type: 2}
   CameraRigRoot: {fileID: 0}
   CameraMain: {fileID: 0}
   _whitePlayer: {fileID: 0}

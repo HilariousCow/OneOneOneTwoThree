@@ -14,7 +14,8 @@ public class Round : MonoBehaviour {
     private int _numberOfRounds;
 
     public TextMesh RoundScoreAwarded;
-    
+
+    private Bounds _cardBoundsAtStart;
 
     public int RoundValue
     {
@@ -33,6 +34,7 @@ public class Round : MonoBehaviour {
         foreach (Hand hand in _hands)
 	    {
             CardSlot slot = transform.InstantiateChild<CardSlot>(CardSlotScoreKeepingPrefab);
+            _cardBoundsAtStart = slot.transform.RenderBounds();
             slot.transform.rotation = hand.transform.rotation;
 
 
@@ -43,7 +45,11 @@ public class Round : MonoBehaviour {
             _handToResultCardSlot.Add(hand, slot);
 
             _scoresForHands.Add(hand, 0);
+
+	        
 	    }
+
+        
 	}
 
   
@@ -63,16 +69,16 @@ public class Round : MonoBehaviour {
         CardSlot slotOfWinner = _handToResultCardSlot[winningHand];
         CardSlot slotOfLoser = _handToResultCardSlot[losingHand];
 
-        Bounds boundsOfSlot = slotOfWinner.transform.RenderBounds();
-        slotOfWinner.transform.localPosition -= transform.parent.InverseTransformDirection( winningHand.transform.forward ) * (boundsOfSlot.size.z * .6f);
+
+        slotOfWinner.transform.localPosition -= transform.parent.InverseTransformDirection(winningHand.transform.forward) * (_cardBoundsAtStart.size.z * 1f);
 
         slotOfLoser.transform.localPosition = slotOfWinner.transform.localPosition;
 
         slotOfWinner.transform.localPosition += Vector3.up * 0.25f;
         //offset to reveal a point.
 
-        float baseGap = boundsOfSlot.size.z/7f;//blank space either side of the dots
-        float scoreGap = (boundsOfSlot.size.z - (baseGap *2f)) 
+        float baseGap = _cardBoundsAtStart.size.z / 7f;//blank space either side of the dots
+        float scoreGap = (_cardBoundsAtStart.size.z - (baseGap * 2f)) 
             * ((float)_roundValue / (float)_numberOfRounds);
         slotOfWinner.transform.localPosition -= transform.parent.InverseTransformDirection( winningHand.transform.forward) * (baseGap + scoreGap);
 
