@@ -9,6 +9,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 472558}
   - 114: {fileID: 11472558}
+  - 65: {fileID: 6521694}
   m_Layer: 0
   m_Name: GameSpawner
   m_TagString: Untagged
@@ -28,6 +29,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
+--- !u!65 &6521694
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 172558}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 40, y: 1, z: 5}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &11472558
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -39,6 +52,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9133c63ea5c00b44c99a163f0ec8777c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SliderBoxPrefab: {fileID: 11431510, guid: 16d656ffc8ce8df4fbab469399126d65, type: 2}
   AllMatchStyles:
   - {fileID: 11400000, guid: b34030f5743184b45b8d804db6abebe5, type: 2}
   - {fileID: 11400000, guid: 6646d4c13db618540b8aefc1ca1f15bc, type: 2}
@@ -46,7 +60,10 @@ MonoBehaviour:
   AllAIStyles:
   - {fileID: 11489520, guid: 76bd9259171ecc84f9bb59c8119c7451, type: 2}
   - {fileID: 0}
-  MainGamePrefab: {fileID: 0}
+  - {fileID: 11489520, guid: 76bd9259171ecc84f9bb59c8119c7451, type: 2}
+  - {fileID: 11489520, guid: 76bd9259171ecc84f9bb59c8119c7451, type: 2}
+  - {fileID: 11489520, guid: 76bd9259171ecc84f9bb59c8119c7451, type: 2}
+  MainGamePrefab: {fileID: 11439942, guid: f44e8d6892c69944ea6ed94d67282542, type: 2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
