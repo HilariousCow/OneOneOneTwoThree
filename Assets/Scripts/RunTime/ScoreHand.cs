@@ -121,7 +121,7 @@ public class ScoreHand : MonoBehaviour
     public IEnumerator TellMeTheScores()
     {
         yield return new WaitForSeconds(0.6f);
-        if (_roundNumber > 0)
+        if (_roundNumber > 1)
         {
           
             foreach (Hand hand in _hands)

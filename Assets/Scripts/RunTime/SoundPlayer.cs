@@ -30,7 +30,7 @@ public class SoundPlayer : Singleton<SoundPlayer>
         AudioClip clip = AllSounds.Find(x => x.name == name);
      
         _source.PlayOneShot(clip);
-        yield return new WaitForSeconds(clip.length * 0.8f);
+        yield return new WaitForSeconds(clip.length * 0.6f);
         
     }
 

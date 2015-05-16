@@ -22,6 +22,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     private Vector3 _startDifferenceToCamera = Vector3.zero;
     private bool _hoverOver = false;
     private float _dragStartTime = 0f;
+    private int _dragPointerID = -1;
     public PlayerSO PlayerSoRef
     {
         get { return _playerSoRef; }
@@ -125,7 +126,16 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
                 forward = transform.parent.forward.FlatY().normalized;
             }*/
 
+            //which touch?
+
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (_dragPointerID != -1)
+            {
+                Touch touch = Input.GetTouch(_dragPointerID);
+                ray = Camera.main.ScreenPointToRay(touch.position);
+            }
+
 
             Vector3 targetPosition = ray.origin + ray.direction.normalized *  (_startDifferenceToCamera.magnitude * 0.5f);
             targetPosition += Vector3.up * 2.5f * Mathf.Clamp01(Vector3.Dot(forward, ray.direction.normalized));
@@ -179,6 +189,8 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        _dragPointerID = eventData.pointerId;
+        //Debug.Log("Drag id:" + eventData.pointerId);
         DescriptionText.renderer.enabled = true;
        // Debug.Log("Beginning drag on" + gameObject.name);
         CachedCollider.enabled = false;//this causes preview to stop playing
@@ -220,6 +232,7 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
     //should really only reposition if you weren't reassigned by others.
     public void OnEndDrag(PointerEventData eventData)
     {
+        _dragPointerID = -1;
         DescriptionText.renderer.enabled = false;
         _clickOriginOffset = Vector3.zero;
         

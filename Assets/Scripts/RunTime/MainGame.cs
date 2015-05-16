@@ -69,7 +69,8 @@ public class MainGame : MonoBehaviour, IDropCardOnCardSlot, IPointerClickOnCard
 
 
 
-        Init(MatchToUseDefault, AIPrefab, AIPrefab);
+       // Init(MatchToUseDefault, AIPrefab, AIPrefab);
+        Init(MatchToUseDefault, null, null);
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
 
         GetComponent<HelpText>().Init(this);
