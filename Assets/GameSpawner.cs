@@ -7,9 +7,12 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
 {
     //point to settings
 
-    public SliderBox SliderBoxPrefab;
-    private SliderBox _sliderBoxWhite;
-    private SliderBox _sliderBoxBlack;
+    public SliderBoxAIPlayer AIPlayerSliderBoxPrefab;
+    public SliderBoxMatchSetting MatchSettingSliderBoxPrefab;
+
+    private SliderBoxAIPlayer _sliderBoxWhite;
+    private SliderBoxAIPlayer _sliderBoxBlack;
+    private SliderBoxMatchSetting _sliderMatchSettings;
 
     public MatchSettingsSO[] AllMatchStyles;
     public AIPlayer[] AllAIStyles;
@@ -39,7 +42,7 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
         if (_sliderBoxWhite == null)
         {
 
-            _sliderBoxWhite = transform.InstantiateChild(SliderBoxPrefab);
+            _sliderBoxWhite = transform.InstantiateChild(AIPlayerSliderBoxPrefab);
             _sliderBoxWhite.transform.localPosition = Vector3.forward*10f;
             _sliderBoxWhite.Init(new List<AIPlayer>(AllAIStyles));
 
@@ -47,7 +50,7 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
 
 
 
-            _sliderBoxBlack = transform.InstantiateChild(SliderBoxPrefab);
+            _sliderBoxBlack = transform.InstantiateChild(AIPlayerSliderBoxPrefab);
             _sliderBoxBlack.transform.localPosition = Vector3.forward*-10f;
             _sliderBoxBlack.transform.localRotation *= Quaternion.AngleAxis(180, Vector3.up);
             _sliderBoxBlack.Init(new List<AIPlayer>(AllAIStyles));

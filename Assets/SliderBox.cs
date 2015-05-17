@@ -6,14 +6,14 @@ using UnityEngine.EventSystems;
 
 
 
-public class SliderBox : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class SliderBox<T> : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler where T : Object
 {
-
-    public AISelectionViz AIVizPrefab;
+    //erk :(
+    public SliderOption<T> AIVizPrefab;
     public Transform Outside;
 
-    internal AISelectionViz SelectedObject;
-    internal List<AISelectionViz> AIs;
+    internal SliderOption<T> SelectedObject;
+    internal List<SliderOption<T>> AIs;
 
 
     private bool _isDragging = false;
@@ -21,9 +21,9 @@ public class SliderBox : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     private Vector3 _localStartDragPos;
 
 
-    public void Init(List<AIPlayer> items)
+    public void Init(List<T> items)
     {
-        AIs = new List<AISelectionViz>();
+        AIs = new List<SliderOption<T>>();
         for (int index = 0; index < items.Count; index++)
         {
             float fraction = (float)index/items.Count - 1;
@@ -31,8 +31,8 @@ public class SliderBox : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
             Vector3 pos = new Vector3(Mathf.Sin(fraction), Mathf.Cos(fraction), 0.0f) * 2f;
 
 
-            AIPlayer aiPlayer = items[index];
-            AISelectionViz viz = Outside.transform.InstantiateChild(AIVizPrefab);
+            T aiPlayer = items[index];
+            SliderOption<T> viz = Outside.transform.InstantiateChild(AIVizPrefab);
            
             viz.Init(aiPlayer);
 
@@ -46,9 +46,9 @@ public class SliderBox : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         SelectedObject = GetCurrentlySelectedObject();
     }
 
-    public AISelectionViz GetCurrentlySelectedObject()
+    public SliderOption<T> GetCurrentlySelectedObject()
     {
-        return (from AISelectionViz n in AIs orderby Vector3.Dot(n.transform.up, transform.up) ascending select n).LastOrDefault();
+        return (from SliderOption<T> n in AIs orderby Vector3.Dot(n.transform.up, transform.up) ascending select n).LastOrDefault();
     }
 
   

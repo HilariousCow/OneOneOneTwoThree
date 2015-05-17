@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AISelectionViz : MonoBehaviour
+public class SliderOption<T> : MonoBehaviour where T : Object
 {
-    public AIPlayer AiPlayerPrefab { get; private set; }
+    public T AiPlayerPrefab { get; private set; }
     public TextMesh NameOfAi;
 	
 
-    internal void Init(AIPlayer aiPlayer)
+    internal void Init(T aiPlayer)
     {
         if(aiPlayer != null)
         {
-            NameOfAi.text = aiPlayer.gameObject.name;
+            NameOfAi.text = aiPlayer.name;
         }
         else
         {

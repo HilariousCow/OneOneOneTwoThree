@@ -53,7 +53,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9133c63ea5c00b44c99a163f0ec8777c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SliderBoxPrefab: {fileID: 11431510, guid: 16d656ffc8ce8df4fbab469399126d65, type: 2}
+  AIPlayerSliderBoxPrefab: {fileID: 11431510, guid: 16d656ffc8ce8df4fbab469399126d65,
+    type: 2}
+  MatchSettingSliderBoxPrefab: {fileID: 11431510, guid: c77f135beb4b27b478cae4efe30d1c3f,
+    type: 2}
   AllMatchStyles:
   - {fileID: 11400000, guid: 9d02847cd7fc0c240b24753014e115d4, type: 2}
   - {fileID: 11400000, guid: 6646d4c13db618540b8aefc1ca1f15bc, type: 2}

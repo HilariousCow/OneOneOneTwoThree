@@ -30,7 +30,7 @@ GameObject:
   - 33: {fileID: 3331512}
   - 23: {fileID: 2331512}
   m_Layer: 0
-  m_Name: SliderBox
+  m_Name: SliderBoxAIPlayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -192,10 +192,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 131512}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 987b29bdc5af93e489f74f11edadb760, type: 3}
+  m_Script: {fileID: 11500000, guid: eeb00a9b15a6bce408a104646d0057c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AIVizPrefab: {fileID: 11465622, guid: 98a9eb34157ed1f44bf1ad572104ff50, type: 2}
   Outside: {fileID: 486864}
 --- !u!1001 &100100000
 Prefab:
