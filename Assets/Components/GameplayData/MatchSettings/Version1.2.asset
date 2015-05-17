@@ -11,6 +11,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c5a6b6f36190f142a50586037ac4a26, type: 3}
   m_Name: Version1.2
   m_EditorClassIdentifier: 
+  RulesName: Version 1.2
+  Description: Six cards, five rounds. Only use the left over cards for a tie breaker
+    round.
   NumberOfRounds: 5
   RoundScores: 0100000001000000010000000200000003000000
   StackStyle: {fileID: 11400000, guid: d2dada4cd54072545896e52b22cc7f1f, type: 2}

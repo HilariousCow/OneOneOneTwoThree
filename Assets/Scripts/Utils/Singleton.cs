@@ -12,7 +12,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         {
             if(_instance == null)
             {
-                _instance = (T)FindObjectOfType(typeof (T));
+                _instance = (T)FindObjectOfType(typeof (T));//note that this won't find anything if the object is not active!
                 if(_instance == null)
                 {
                     GameObject go = new GameObject(typeof(T).ToString());
@@ -25,9 +25,9 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         }
     }
 
-    void Awake()
+    public virtual void Awake()
     {
-        _instance = (T)FindObjectOfType(typeof (T));
+        _instance =(T)FindObjectOfType(typeof(T));
     }
 
     public static bool Exists()

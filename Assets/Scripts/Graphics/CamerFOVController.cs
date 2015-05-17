@@ -23,7 +23,7 @@ public class CamerFOVController : MonoBehaviour
 	    _cams = GetComponentsInChildren<Camera>();
 	    _game = FindObjectOfType<MainGame>();
 
-        _everything = new Bounds(Vector3.zero, Vector3.one * 100f);
+	    UpdateDistances();
 	}
 
     public void SetMainGame(MainGame mainGame)
@@ -31,13 +31,20 @@ public class CamerFOVController : MonoBehaviour
         _game = mainGame;
         UpdateDistances();
     }
+
     private void UpdateDistances()
     {
-
-        _everything = _game.transform.RenderBounds();
-	    MajorDistance = _everything.size.magnitude*2f;
-	    MinorDistance = _everything.size.MinAxis();
-	}
+        if (_game != null)
+        {
+            _everything = _game.transform.RenderBounds();
+            MajorDistance = _everything.size.magnitude*2f;
+            MinorDistance = _everything.size.MinAxis();
+        }
+        else
+        {
+            _everything = new Bounds(Vector3.zero, Vector3.one * 100f);
+        }
+    }
 
 
     private float forwardTraceDist;

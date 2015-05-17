@@ -55,9 +55,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SliderBoxPrefab: {fileID: 11431510, guid: 16d656ffc8ce8df4fbab469399126d65, type: 2}
   AllMatchStyles:
-  - {fileID: 11400000, guid: b34030f5743184b45b8d804db6abebe5, type: 2}
-  - {fileID: 11400000, guid: 6646d4c13db618540b8aefc1ca1f15bc, type: 2}
   - {fileID: 11400000, guid: 9d02847cd7fc0c240b24753014e115d4, type: 2}
+  - {fileID: 11400000, guid: 6646d4c13db618540b8aefc1ca1f15bc, type: 2}
+  - {fileID: 11400000, guid: b34030f5743184b45b8d804db6abebe5, type: 2}
   AllAIStyles:
   - {fileID: 11489520, guid: 76bd9259171ecc84f9bb59c8119c7451, type: 2}
   - {fileID: 0}

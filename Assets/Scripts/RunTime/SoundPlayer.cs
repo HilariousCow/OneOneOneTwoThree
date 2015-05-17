@@ -8,10 +8,10 @@ public class SoundPlayer : Singleton<SoundPlayer>
     private AudioSource _source;
     
     public List<AudioClip> AllSounds;
-    public void Awake()
+    public override void Awake()
     {
         _source = GetComponent<AudioSource>();
-        
+        base.Awake();
     }
 
     public void PlaySound(string name)

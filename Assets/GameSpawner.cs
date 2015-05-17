@@ -23,11 +23,12 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
     private MainGame _mainGameInstance;
 
 
-    public void Awake()
+    public override void Awake()
     {
+      
         Screen.sleepTimeout = SleepTimeout.NeverSleep;
         SpawnInterface();
-       
+        base.Awake();
 
     }
 

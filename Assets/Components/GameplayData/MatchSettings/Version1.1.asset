@@ -11,7 +11,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c5a6b6f36190f142a50586037ac4a26, type: 3}
   m_Name: Version1.1
   m_EditorClassIdentifier: 
-  NumberOfStacks: 1
+  RulesName: Version 1.1
+  Description: Six cards, Five rounds, Commit a Tie Breaker card each at the beginning
+    of the game.
   NumberOfRounds: 5
   RoundScores: 0100000001000000010000000200000003000000
   StackStyle: {fileID: 11400000, guid: d2dada4cd54072545896e52b22cc7f1f, type: 2}
