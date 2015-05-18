@@ -25,7 +25,7 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
     public MainGame MainGamePrefab;
     private MainGame _mainGameInstance;
 
-
+    private bool _upsideDown = false;
     public override void Awake()
     {
       
@@ -70,7 +70,7 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
         _mainGameInstance = (Instantiate(MainGamePrefab.gameObject) as GameObject).GetComponent<MainGame>();
 
         _mainGameInstance.Init(_chosenMatchStyle, _whitePlayer, _blackPlayer);
-
+        gameObject.SetActive(false);
         
     }
 
@@ -79,12 +79,37 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        gameObject.SetActive(false);
-        SpawnGame();
+        
+      //  SpawnGame();
     }
 
     public void TurnOn()
     {
+     
+        _upsideDown = false;
+            
         gameObject.SetActive(true);
+    }
+
+    void Update()
+    {
+        float dot = Vector3.Dot(Camera.main.transform.forward, Vector3.up);
+        if (_upsideDown)
+        {
+            
+            if (dot > 0.707f)
+            {
+                _upsideDown = true;
+            }
+        }
+        else
+        {
+            
+            if (dot < -0.707f)
+            {
+                SpawnGame();
+            }
+        }
+
     }
 }
