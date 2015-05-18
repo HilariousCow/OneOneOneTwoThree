@@ -9,6 +9,8 @@ using UnityEngine.EventSystems;
 public class SliderBox<T> : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler where T : Object
 {
     //erk :(
+    //maybe make it a game object so i can get a ref, then cast/get component on it?
+    public GameObject SliderItemPrefab;
     public SliderOption<T> AIVizPrefab;
     public Transform Outside;
 
@@ -32,7 +34,9 @@ public class SliderBox<T> : MonoBehaviour, IBeginDragHandler, IDragHandler, IEnd
 
 
             T aiPlayer = items[index];
-            SliderOption<T> viz = Outside.transform.InstantiateChild(AIVizPrefab);
+
+            GameObject slideItem = Outside.transform.InstantiateChild(SliderItemPrefab);
+            SliderOption<T> viz = slideItem.GetComponent<SliderOption<T>>();
            
             viz.Init(aiPlayer);
 

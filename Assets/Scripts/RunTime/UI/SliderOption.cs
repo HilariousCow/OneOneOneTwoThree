@@ -3,7 +3,7 @@ using System.Collections;
 
 public class SliderOption<T> : MonoBehaviour where T : Object
 {
-    public T AiPlayerPrefab { get; private set; }
+    public T SelectedItem { get; private set; }
     public TextMesh NameOfAi;
 	
 
@@ -18,6 +18,6 @@ public class SliderOption<T> : MonoBehaviour where T : Object
             NameOfAi.text = "You";
             NameOfAi.transform.localRotation *= Quaternion.AngleAxis(180f, Vector3.forward);
         }
-        AiPlayerPrefab = aiPlayer;
+        SelectedItem = aiPlayer;
     }
 }

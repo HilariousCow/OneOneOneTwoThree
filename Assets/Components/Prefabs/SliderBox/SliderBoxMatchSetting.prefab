@@ -195,6 +195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5d41190a4db9174684dda5a2e516740, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SliderItemPrefab: {fileID: 165622, guid: a87bdd12ee6f1b943b46443b5930e7c6, type: 2}
   Outside: {fileID: 486864}
 --- !u!1001 &100100000
 Prefab:

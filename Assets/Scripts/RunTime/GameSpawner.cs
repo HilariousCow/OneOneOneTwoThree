@@ -46,14 +46,13 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
             _sliderBoxWhite.transform.localPosition = Vector3.forward*10f;
             _sliderBoxWhite.Init(new List<AIPlayer>(AllAIStyles));
 
-
-
-
-
             _sliderBoxBlack = transform.InstantiateChild(AIPlayerSliderBoxPrefab);
             _sliderBoxBlack.transform.localPosition = Vector3.forward*-10f;
             _sliderBoxBlack.transform.localRotation *= Quaternion.AngleAxis(180, Vector3.up);
             _sliderBoxBlack.Init(new List<AIPlayer>(AllAIStyles));
+
+            _sliderMatchSettings = transform.InstantiateChild(MatchSettingSliderBoxPrefab);
+            _sliderMatchSettings.Init(new List<MatchSettingsSO>(AllMatchStyles));
 
         }
         //got to make a "go" button.
@@ -63,10 +62,10 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
     public void SpawnGame()
     {
 
-        _whitePlayer = _sliderBoxWhite.GetCurrentlySelectedObject().AiPlayerPrefab;
-        _blackPlayer = _sliderBoxBlack.GetCurrentlySelectedObject().AiPlayerPrefab;
-        
-        _chosenMatchStyle = AllMatchStyles[0];//todo: slider for mode.
+        _whitePlayer = _sliderBoxWhite.GetCurrentlySelectedObject().SelectedItem;
+        _blackPlayer = _sliderBoxBlack.GetCurrentlySelectedObject().SelectedItem;
+
+        _chosenMatchStyle = _sliderMatchSettings.GetCurrentlySelectedObject().SelectedItem;//todo: slider for mode.
 
         _mainGameInstance = (Instantiate(MainGamePrefab.gameObject) as GameObject).GetComponent<MainGame>();
 
