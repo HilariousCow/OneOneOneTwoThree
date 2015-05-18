@@ -96,19 +96,20 @@ public class GameSpawner : Singleton<GameSpawner>, IPointerClickHandler
         float dot = Vector3.Dot(Camera.main.transform.forward, Vector3.up);
         if (_upsideDown)
         {
-            
-            if (dot > 0.707f)
-            {
-                _upsideDown = true;
-            }
-        }
-        else
-        {
-            
             if (dot < -0.707f)
             {
                 SpawnGame();
             }
+           
+        }
+        else
+        {
+
+            if (dot > 0.707f)
+            {
+                _upsideDown = true;
+            }
+            
         }
 
     }
